@@ -26,39 +26,8 @@
     :facility facility
     :version [0 1 0]))
 
-(defmethod dda-crate/dda-install facility [dda-crate config]
+(defmethod dda-crate/dda-test facility [dda-crate config]
   (res/define-resources-apt)
   (res/test-package-not-installed "cowsay"))
 
 (def with-serverstate (dda-crate/create-server-spec ServerstateCrate))
-
-
-;;; Do a small local test
-
-(require '(pallet.api))
-(require '(pallet.compute))
-(require '(pallet.compute.node-list))
-(require '[org.domaindrivenarchitecture.pallet.commons.session-tools :as st])
-
-(def mygroup
-  (pallet.api/group-spec
-    "mygroup" :extends [with-serverstate]))
-(def localhost-node
-  (pallet.compute.node-list/make-node 
-    "localhost-node" "mygroup" "127.1.1.1" :ubuntu :id :localhost-node))
-(def node-list
-  (pallet.compute/instantiate-provider
-    "node-list" :node-list [localhost-node]))
-
-(defn run []
-  
-(st/emit-xml-to-file 
-  "/home/jat/Schreibtisch/session.xml"
-  (st/explain-session-xml                   
-    (pallet.api/lift
-      mygroup
-      :user (pallet.api/make-user "pallet")
-      :compute node-list
-      :phase '(:settings :install))))
-
-)
