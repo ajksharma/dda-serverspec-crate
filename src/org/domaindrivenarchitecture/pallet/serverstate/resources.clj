@@ -187,7 +187,7 @@
   "Tests if a file matches a regular expression."
   [package]
   (test-script res-id-apt-packages (script-test-package-installed package)))
-
+test
 (script/defscript script-test-package-not-installed
   "Tests if a package is NOT installed. Prints the version if installed and 
    fails if package is installed."
@@ -208,31 +208,72 @@
 
 
 ;;; Predefined resource: open ports
+(def res-id-open-ports "dda-serverstate_open-ports")
+(defn define-resources-netstat
+  "Defines the netstat resource. 
+   This is automatically done serverstate crate is used."
+  []
+  (define-resource-from-script res-id-open-ports "netstat -tulpen"))
 
-; idea: use sth like netstat -tulpen
+(script/defscript script-test-port-open
+  "Checks if a port is open."
+  [port-number])
+(script/defimpl script-test-port-open :default 
+  [port-number]
+  (if ("grep " (str ":" ~port-number))
+    (do 
+      (println (str "The port " ~port-number " is open"))
+      (exit 0))
+    (do 
+      (println (str "The port  " ~port-number " is not open."))
+      (exit 1))))
+(defn test-port-open
+  "Tests if a created resource is not empty (=success) or is empty (=failure)"
+  [port-number]
+  (test-script  res-id-open-ports (script-test-port-open port-number)))
+
+(script/defscript script-test-port-open
+  "Checks if a port is open on a specified process-name."
+  [port-number process-name])
+(script/defimpl script-test-port-open :default 
+  [port-number process-name]
+  (if (pipe ("grep " (str ":" ~port-number)) ("grep " ~process-name))
+    (do 
+      (println (str "The port " ~port-number " is open on process " ~process-name))
+      (exit 0))
+    (do 
+      (println (str "The port  " ~port-number " is not open on process " ~process-name))
+      (exit 1))))
+(defn test-port-open
+  "Tests if a created resource is not empty (=success) or is empty (=failure)"
+  [port-number process-name]
+  (test-script  res-id-open-ports (script-test-port-open port-number process-name)))
+
 
 
 ;;; Predefined resource: running processes
+(def res-id-running-processes "dda-serverstate_running-processes")
+;test if a process is running
+(defn define-resources-ps
+  "Defines the ospackages resource. 
+   This is automatically done serverstate crate is used."
+  []
+  (define-resource-from-script res-id-running-processes "ps -ef"))
 
-; idea use sth like ps -ef
-;probably easier and better: pgrep process-name
-; exit-code 0 on one or more processes
-(script/defscript process-running?
+(script/defscript script-test-process-running
   "Checks if a process is running."
   [process-name])
-(script/defimpl process-running? :default 
+(script/defimpl script-test-process-running :default 
   [process-name]
-  (if (= 0 @(~"pgrep " ~process-name))
+  (if ("pgrep " ~process-name)
     (do 
-      (println (str "The process " @process-name " is running"))
-      (exit 1))
+      (println (str "The process " ~process-name " is running"))
+      (exit 0))
     (do 
-      (println (str "The process " @process-name " is currently not running"))
-      (exit 0))))
-(defn test-firefox-running?
+      (println (str "The process " ~process-name " is currently not running"))
+      (exit 1))))
+
+(defn test-process-running
   "Tests if a created resource is not empty (=success) or is empty (=failure)"
-  [res-id]
-  (test-script res-id (process-running? "firefox")))
-
-
-
+  [process-name]
+  (test-script  res-id-running-processes (script-test-process-running process-name)))
