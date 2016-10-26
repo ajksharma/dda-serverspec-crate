@@ -16,7 +16,9 @@
 
 (ns org.domaindrivenarchitecture.pallet.serverstate
   (:require
-    [org.domaindrivenarchitecture.pallet.serverstate.resources :as res]
+    [org.domaindrivenarchitecture.pallet.serverstate.apt :as apt-tests]
+    [org.domaindrivenarchitecture.pallet.serverstate.ports :as ports-test]
+    [org.domaindrivenarchitecture.pallet.serverstate.processes :as processes-test]
     [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]))
 
 (def facility :dda-serverstate)
@@ -27,12 +29,8 @@
     :version [0 1 0]))
 
 (defmethod dda-crate/dda-test facility [dda-crate config]
-  (res/define-resources-ps)
-  (res/test-process-running "bash")
-  (res/define-resources-netstat)
-  (res/test-port-open 42 "dnsmasq")
-  ;(res/define-resources-apt)
-  ;(res/test-package-not-installed "cowsay")
-  )
+  (apt-tests/define-resources-apt)
+  (ports-test/define-resources-netstat)
+  (processes-test/define-resources-ps))
 
 (def with-serverstate (dda-crate/create-server-spec ServerstateCrate))
