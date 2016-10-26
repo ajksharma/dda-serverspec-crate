@@ -45,8 +45,6 @@
   (println "Testing if user pallet exists.")
   (= 1 (count (filter #(= (first %) "pallet") user-list))))
 
-
-
 (defmethod dda-crate/dda-test facility [dda-crate config]
   (res/define-resource-from-script 
     ::user-list 
@@ -55,20 +53,19 @@
   (tests/testclj-resource 
     ::user-list
     test-palletuser-existing)
-(tests/testnode-resource
-  ::user-list
-  (script
-   (set! exitcode 0)
-   (while 
-     ("read" line)
-     (set! user @((pipe (println @line) ("cut -f1 -d:")))) 
-     (set! homedir @((pipe (println @line) ("cut -f2 -d:"))))
-     (if (not (directory? @homedir))
-       (do
-         (println "Home" @homedir "of user" @user "does not exist!")
-         (set! exitcode 1))))
-   ("exit" @exitcode)))
-  
+  (tests/testnode-resource
+    ::user-list
+	  (script
+	   (set! exitcode 0)
+	   (while 
+	     ("read" line)
+	     (set! user @((pipe (println @line) ("cut -f1 -d:")))) 
+	     (set! homedir @((pipe (println @line) ("cut -f2 -d:"))))
+	     (if (not (directory? @homedir))
+	       (do
+	         (println "Home" @homedir "of user" @user "does not exist!")
+	         (set! exitcode 1))))
+	   ("exit" @exitcode)))
   )
 
 (def with-serverstate (dda-crate/create-server-spec ServerstateCrate))

@@ -44,6 +44,8 @@
      * execute script on target node and save result"
   {:pallet/plan-fn true}
   [resource-key script & {:keys [transform-fn]}]
+ (actions/as-action
+    (logging/info "got transform-fn" (str transform-fn) (fn? transform-fn)))
   ; create the script file in the state directory
   (actions/remote-file 
     (resource-script-path (name resource-key))
