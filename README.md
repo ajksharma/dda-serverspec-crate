@@ -11,7 +11,7 @@ This crate realizes the execution of tests. The concept of the usage is to __def
 Resources are outputs of bash scripts that are executed on the tested node. A resource is made up of
 
   * a unique __resource-key__, which must be used to identify the resource in tests
-  * a __ bash script__, which creates the resource and the 
+  * a __bash script__, which creates the resource and the 
   * __output__ of this script. If we refer to "the output resource" we might write short "the resource" itself. 
   
 To ensure uniqueness of resource-keys you should use namespaced keywords like `::my-example-resource`.
