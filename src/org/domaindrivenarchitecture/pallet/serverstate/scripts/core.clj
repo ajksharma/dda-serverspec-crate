@@ -54,15 +54,21 @@
         create-resource-path))
       )))
 
+(defn keyword-to-filename
+  "Transforms a (possibly) namespaced keyword used as resource-key
+   to a filename for the resource."
+  [resource-key]
+  (str (or (namespace resource-key) "no-namespace") "." (name resource-key)))
+
 (defn resource-file-path
   "Path to the resource file of a given res-id."
   [resource-key]
-  (str (resource-folder-path) "/" (name resource-key) ".rc"))
+  (str (resource-folder-path) "/" (keyword-to-filename resource-key) ".rc"))
 
 (defn resource-script-path
   "Path to the script for creation of the resource file of a given res-id."
   [resource-key]
-  (str (resource-folder-path) "/" (name resource-key) ".sh"))
+  (str (resource-folder-path) "/" (keyword-to-filename resource-key) ".sh"))
 
 (script/defscript script-run-resource 
   "This script (explained in stevedore) runs the resource script and copys

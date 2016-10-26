@@ -22,8 +22,8 @@
     [pallet.script :as script]
     [pallet.script.lib :as lib]))
 
-(def res-key-apt-packages :dda-serverstate-apt-packages)
-(def res-key-apt-repositories :dda-serverstate-apt-repositories)
+(def res-key-apt-packages ::dda-serverstate-apt-packages)
+(def res-key-apt-repositories ::dda-serverstate-apt-repositories)
 
 (defn define-resources-apt
   "Defines the ospackages resource. 
