@@ -33,7 +33,7 @@ Example: Create a resource containing all users and their home directories.
 (res/define-resource-from-script ::user-list "cut -d: -f1,6 /etc/passwd")
 ```
 
-This uses `cut` select only the first the sixth entry from the passwd-file. The resource will look like this:
+This uses `cut` select only the first the sixth entries from the passwd-file. The resource will look like this:
 ```
 root:/root
 daemon:/usr/sbin
