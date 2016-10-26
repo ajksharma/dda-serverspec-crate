@@ -15,10 +15,68 @@
 ; limitations under the License.
 (ns org.domaindrivenarchitecture.pallet.crate.run-on-pallet-node
   (:require
-      [org.domaindrivenarchitecture.pallet.serverstate :as serverstate]
-      [org.domaindrivenarchitecture.pallet.serverstate.tests :as tests])
+    [org.domaindrivenarchitecture.pallet.serverstate :as serverstate]
+    [org.domaindrivenarchitecture.pallet.serverstate.resources :as res]
+    [org.domaindrivenarchitecture.pallet.serverstate.tests :as tests]
+    [org.domaindrivenarchitecture.pallet.serverstate.apt :as apt-tests]
+    [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]
+    [pallet.stevedore :refer :all]
+    [pallet.script.lib :as lib])
   (:gen-class :main true))
- 
+
+(def facility :dda-serverstate-test)
+
+(def ServerstateTestCrate 
+  (dda-crate/make-dda-crate
+    :facility facility
+    :version [0 1 0]))
+
+(defn transform-user-list
+  [output] 
+  (filter #(= 2 (count %)) 
+    (map #(clojure.string/split % #":") (clojure.string/split-lines output))))
+
+(defn test-palletuser-existing
+  "Tests if there is a pallet user in the user-list. Here user-list must be
+   a vector of entries where every entry is a vector containing username and
+   homefolder as string.
+   
+   e.g: [ [\"root\" \"/root\"] ... ] "
+  [user-list]
+  (println "Testing if user pallet exists.")
+  (= 1 (count (filter #(= (first %) "pallet") user-list))))
+
+(defmethod dda-crate/dda-test facility [dda-crate config]
+  
+  (res/define-resource-from-script 
+    ::user-list 
+    "cut -d: -f1,6 /etc/passwd" 
+    :transform-fn transform-user-list)
+  (tests/testclj-resource 
+    ::user-list
+    test-palletuser-existing)
+  (tests/testnode-resource
+    ::user-list
+	  (script
+	   (set! exitcode 0)
+	   (while 
+	     ("read" line)
+	     (set! user @((pipe (println @line) ("cut -f1 -d:")))) 
+	     (set! homedir @((pipe (println @line) ("cut -f2 -d:"))))
+	     (if (not (directory? @homedir))
+	       (do
+	         (println "Home" @homedir "of user" @user "does not exist!")
+	         (set! exitcode 1))))
+	   ("exit" @exitcode)))
+  
+  (apt-tests/test-package-installed "cowsay"))
+
+(def with-serverstate-test (dda-crate/create-server-spec ServerstateTestCrate))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (require '(pallet.api))
 (require '(pallet.compute))
 (require '(pallet.compute.node-list))
@@ -27,7 +85,7 @@
 
 (def mygroup
   (pallet.api/group-spec
-    "mygroup" :extends [serverstate/with-serverstate]))
+    "mygroup" :extends [serverstate/with-serverstate with-serverstate-test]))
 (def localhost-node
   (pallet.compute.node-list/make-node 
     "localhost-node" "mygroup" "127.1.1.1" :ubuntu :id :localhost-node))

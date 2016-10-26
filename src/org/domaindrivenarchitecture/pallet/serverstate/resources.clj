@@ -48,11 +48,11 @@
     (logging/info "got transform-fn" (str transform-fn) (fn? transform-fn)))
   ; create the script file in the state directory
   (actions/remote-file 
-    (resource-script-path (name resource-key))
+    (resource-script-path resource-key)
     :content script :owner "pallet" :group "pallet" :mode "700")
   ; create an empty file for the script resource
   (actions/file 
-    (resource-file-path (name resource-key))
+    (resource-file-path resource-key)
     :owner "pallet" :group "pallet" :mode "600")
   ; execute the script and save nv for transform output to settings
   (let [nv (actions/exec-script (script-run-resource ~resource-key))

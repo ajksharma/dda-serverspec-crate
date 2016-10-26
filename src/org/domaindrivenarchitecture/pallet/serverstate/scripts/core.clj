@@ -61,12 +61,12 @@
   (str (or (namespace resource-key) "no-namespace") "." (name resource-key)))
 
 (defn resource-file-path
-  "Path to the resource file of a given res-id."
+  "Path to the resource file of a given resource-key."
   [resource-key]
   (str (resource-folder-path) "/" (keyword-to-filename resource-key) ".rc"))
 
 (defn resource-script-path
-  "Path to the script for creation of the resource file of a given res-id."
+  "Path to the script for creation of the resource file of a given resource-key."
   [resource-key]
   (str (resource-folder-path) "/" (keyword-to-filename resource-key) ".sh"))
 
