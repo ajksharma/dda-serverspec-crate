@@ -13,14 +13,16 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-(ns org.domaindrivenarchitecture.pallet.crate.instantiate-existing-init
+(ns org.domaindrivenarchitecture.pallet.crate.run-on-pallet-node
   (:require
-      [org.domaindrivenarchitecture.pallet.serverstate :as serverstate])
+      [org.domaindrivenarchitecture.pallet.serverstate :as serverstate]
+      [org.domaindrivenarchitecture.pallet.serverstate.tests :as tests])
   (:gen-class :main true))
  
 (require '(pallet.api))
 (require '(pallet.compute))
 (require '(pallet.compute.node-list))
+(require '[clojure.inspector :as inspector])
 (require '[org.domaindrivenarchitecture.pallet.commons.session-tools :as st])
 
 (def mygroup
@@ -33,12 +35,12 @@
   (pallet.compute/instantiate-provider
     "node-list" :node-list [localhost-node]))
 
-(defn -main [outpath]
-  (st/emit-xml-to-file 
-    outpath
-    (st/explain-session-xml                   
-      (pallet.api/lift
-        mygroup
-        :user (pallet.api/make-user "pallet")
-        :compute node-list
-        :phase '(:settings :test)))))
+(defn -main []
+  (let [session (pallet.api/lift
+                  mygroup
+                  :user (pallet.api/make-user "pallet")
+                  :compute node-list
+                  :phase '(:settings :test))]
+  (inspector/inspect-tree 
+    {:session session
+     :test-result (tests/test-result session)})))
