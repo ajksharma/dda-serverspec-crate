@@ -6,7 +6,7 @@ This crate realizes the execution of tests. The concept of the usage is to __def
 
 ## Usage documentation
 
-### Resources
+### Resources: Overview
 
 Resources are outputs of bash scripts that are executed on the tested node. A resource is made up of
 
@@ -20,7 +20,7 @@ Aside to the output, there is the __transformed output__ of the script belonging
 
 For each phase run a __resource directory__ is created in `/home/pallet/state` and for each defined resource with a unique resource-key there will be a corresponding script (.sh) and output (.rc) file. 
 
-### Defining Resources
+### Resources: Defining 
 
 Resources are defined using `define-resource-from-script` by providing a script and resource-key. 
 
@@ -55,7 +55,7 @@ You might also use the whole file as a resource which means we just create a cop
 (res/define-resource-from-file ::passwd-file "/etc/passwd")
 ```
 
-### Transforming Resources
+### Resources: Transforming 
 
 Having a large string as resource might not be very convenient to work with. You can
 specify a transform-fn when defining resource to parse the result. If no transformer
@@ -143,6 +143,12 @@ Example: Check if all home directories are existing
          (set! exitcode 1))))
    ("exit" @exitcode)))
 ```
+
+### Results
+
+Results can be created by applying `test-results` to the pallet session after
+execution. See ```integration``` folder for a complete example.
+
 
 ## Predefined resources and tests
 
