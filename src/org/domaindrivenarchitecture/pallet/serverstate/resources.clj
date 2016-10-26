@@ -215,3 +215,24 @@
 ;;; Predefined resource: running processes
 
 ; idea use sth like ps -ef
+;probably easier and better: pgrep process-name
+; exit-code 0 on one or more processes
+(script/defscript process-running?
+  "Checks if a process is running."
+  [process-name])
+(script/defimpl process-running? :default 
+  [process-name]
+  (if (= 0 @(~"pgrep " ~process-name))
+    (do 
+      (println (str "The process " @process-name " is running"))
+      (exit 1))
+    (do 
+      (println (str "The process " @process-name " is currently not running"))
+      (exit 0))))
+(defn test-firefox-running?
+  "Tests if a created resource is not empty (=success) or is empty (=failure)"
+  [res-id]
+  (test-script res-id (process-running? "firefox")))
+
+
+

@@ -27,7 +27,8 @@
     :version [0 1 0]))
 
 (defmethod dda-crate/dda-test facility [dda-crate config]
-  (res/define-resources-apt)
-  (res/test-package-not-installed "cowsay"))
+  ;(res/define-resources-apt)
+  ;(res/test-package-not-installed "cowsay")
+  (res/test-firefox-running? "test"))
 
 (def with-serverstate (dda-crate/create-server-spec ServerstateCrate))
