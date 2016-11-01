@@ -65,4 +65,4 @@
    or the resource file cannot be created."
   [resource-key file & transform-fn]
   (let [script (script (lib/cat ~file))]
-(define-resource-from-script resource-key script transform-fn)))
+(define-resource-from-script resource-key script :transform-fn transform-fn)))

@@ -75,7 +75,7 @@ Example: Transforming the user-list in a clojure structure
 ; use this when defining the resource in test-phase
 (require '[org.domaindrivenarchitecture.pallet.serverstate.resources :as res])
 
-(res/define-resource-from-script ::user-list "cut -d: -f1,6 /etc/passwd" transform-user-list) 
+(res/define-resource-from-script ::user-list "cut -d: -f1,6 /etc/passwd" :transform-fn transform-user-list) 
 ```
 
 ### Tests: Local in clojure
