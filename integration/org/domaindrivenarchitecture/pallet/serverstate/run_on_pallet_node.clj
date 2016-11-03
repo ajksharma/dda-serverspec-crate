@@ -47,10 +47,10 @@
   (println "Testing if user pallet exists.")
   (= 1 (count (filter #(= (first %) "pallet") user-list))))
 
-(defn test-palletport-listening
+(defn test-pallet-listening-on-port-80
   "Tests if ports are listened."
-  [port-list]
-  (= 1 (count (filter #(= (first %) "pallet") user-list))))
+  [netstat-output-from-resource]
+  (= 1 (count (filter #(= (first %) "80") user-list))))
 
 (defmethod dda-crate/dda-test facility [dda-crate config]
   
