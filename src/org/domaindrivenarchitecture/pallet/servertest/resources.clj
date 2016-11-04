@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.serverstate.resources  
+(ns org.domaindrivenarchitecture.pallet.servertest.resources  
   (:require
     [pallet.core.session :as session]
     [clojure.tools.logging :as logging]
@@ -23,7 +23,7 @@
     [pallet.stevedore :refer :all]
     [pallet.script :as script]
     [pallet.script.lib :as lib]
-    [org.domaindrivenarchitecture.pallet.serverstate.scripts.core :refer :all]))
+    [org.domaindrivenarchitecture.pallet.servertest.scripts.core :refer :all]))
 
 (defn- resource-data
   "Generates an internal representation of the resource and applies the 

@@ -15,19 +15,19 @@
 ; limitations under the License.
 (ns org.domaindrivenarchitecture.pallet.crate.run-on-pallet-node
   (:require
-    [org.domaindrivenarchitecture.pallet.serverstate :as serverstate]
-    [org.domaindrivenarchitecture.pallet.serverstate.resources :as res]
-    [org.domaindrivenarchitecture.pallet.serverstate.tests :as tests]
-    [org.domaindrivenarchitecture.pallet.serverstate.apt :as apt-tests]
+    [org.domaindrivenarchitecture.pallet.servertest :as servertest]
+    [org.domaindrivenarchitecture.pallet.servertest.resources :as res]
+    [org.domaindrivenarchitecture.pallet.servertest.tests :as tests]
+    [org.domaindrivenarchitecture.pallet.servertest.apt :as apt-tests]
     [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]
-    [org.domaindrivenarchitecture.pallet.serverstate.ports :as ports-test]
+    [org.domaindrivenarchitecture.pallet.servertest.ports :as ports-test]
     [pallet.stevedore :refer :all]
     [pallet.script.lib :as lib])
   (:gen-class :main true))
 
 (def facility :dda-serverstate-test)
 
-(def ServerstateTestCrate 
+(def ServertestTestCrate 
   (dda-crate/make-dda-crate
     :facility facility
     :version [0 1 0]))
@@ -50,7 +50,7 @@
 (defn test-pallet-listening-on-port-80
   "Tests if ports are listened."
   [netstat-output-from-resource]
-  (= 1 (count (filter #(= (first %) "80") user-list))))
+  (= 1 (count (filter #(= (first %) "80") netstat-output-from-resource))))
 
 (defmethod dda-crate/dda-test facility [dda-crate config]
   
@@ -79,7 +79,7 @@
   (ports-test/test-port-open-on-process 53 "dnsmasq")
   (ports-test/test-port-open 42))
 
-(def with-serverstate-test (dda-crate/create-server-spec ServerstateTestCrate))
+(def with-servertest-test (dda-crate/create-server-spec ServertestTestCrate))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,7 +93,7 @@
 
 (def mygroup
   (pallet.api/group-spec
-    "mygroup" :extends [serverstate/with-serverstate with-serverstate-test]))
+    "mygroup" :extends [servertest/with-servertest with-servertest-test]))
 (def localhost-node
   (pallet.compute.node-list/make-node 
     "localhost-node" "mygroup" "127.1.1.1" :ubuntu :id :localhost-node))

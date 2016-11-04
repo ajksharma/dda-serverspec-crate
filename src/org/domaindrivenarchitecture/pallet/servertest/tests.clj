@@ -14,13 +14,13 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.serverstate.tests
+(ns org.domaindrivenarchitecture.pallet.servertest.tests
   (:require
     [pallet.crate :as crate]
     [pallet.actions :as actions]
     [pallet.stevedore :refer :all]
-    [org.domaindrivenarchitecture.pallet.serverstate.resources :refer :all]
-    [org.domaindrivenarchitecture.pallet.serverstate.scripts.core :refer :all]))
+    [org.domaindrivenarchitecture.pallet.servertest.resources :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.scripts.core :refer :all]))
 
 (defn- test-result-data
   "Creates an internal representation used for test results."

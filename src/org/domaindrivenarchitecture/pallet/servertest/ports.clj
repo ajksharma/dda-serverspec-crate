@@ -1,7 +1,7 @@
-(ns org.domaindrivenarchitecture.pallet.serverstate.ports
+(ns org.domaindrivenarchitecture.pallet.servertest.ports
   (:require
-    [org.domaindrivenarchitecture.pallet.serverstate.resources :refer :all]
-    [org.domaindrivenarchitecture.pallet.serverstate.tests :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.resources :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.tests :refer :all]
     [pallet.stevedore :refer :all]
     [pallet.script :as script]
     [pallet.script.lib :refer :all]))

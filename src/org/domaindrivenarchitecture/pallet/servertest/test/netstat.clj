@@ -14,23 +14,25 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.serverstate
+(ns org.domaindrivenarchitecture.pallet.servertest.test.netstat
   (:require
-    [org.domaindrivenarchitecture.pallet.serverstate.apt :as apt-tests]
-    [org.domaindrivenarchitecture.pallet.serverstate.ports :as ports-test]
-    [org.domaindrivenarchitecture.pallet.serverstate.processes :as processes-test]
-    [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]))
+    [org.domaindrivenarchitecture.pallet.servertest.resources :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.scripts.core :refer :all]))
 
-(def facility :dda-serverstate)
+(defn parse-netstat
+  [netstat-resource]
+  (map #(zipmap [:proto :recv-q :send-q :local-adress :foreign-adress :state :user :inode :pid :program-name]
+              (clojure.string/split % #"\s+|/"))
+     (rest netstat-resource)))
 
-(def ServerstateCrate 
-  (dda-crate/make-dda-crate
-    :facility facility
-    :version [0 1 0]))
+(defn filter-listening-prog
+  "filter for program ist listening."
+  [netstat-line prog]
+  (and (= (:state netstat-line) "LISTEN")
+       (= (:program-name netstat-line) prog)))
 
-(defmethod dda-crate/dda-test facility [dda-crate config]
-  (apt-tests/define-resources-apt)
-  (ports-test/define-resources-netstat)
-  (processes-test/define-resources-ps))
-
-(def with-serverstate (dda-crate/create-server-spec ServerstateCrate))
+(defn prog-listen?
+  [netstat-resource prog]
+  (some? (filter 
+           #(filter-listening-prog % prog)
+           (parse-netstat netstat-resource))))

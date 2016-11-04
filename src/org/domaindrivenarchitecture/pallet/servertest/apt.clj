@@ -14,10 +14,10 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.serverstate.apt
+(ns org.domaindrivenarchitecture.pallet.servertest.apt
   (:require
-    [org.domaindrivenarchitecture.pallet.serverstate.resources :refer :all]
-    [org.domaindrivenarchitecture.pallet.serverstate.tests :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.resources :refer :all]
+    [org.domaindrivenarchitecture.pallet.servertest.tests :refer :all]
     [pallet.stevedore :refer :all]
     [pallet.script :as script]
     [pallet.script.lib :as lib]))
