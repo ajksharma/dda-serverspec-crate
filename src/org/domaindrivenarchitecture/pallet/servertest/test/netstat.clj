@@ -27,12 +27,16 @@
 
 (defn filter-listening-prog
   "filter for program ist listening."
-  [netstat-line prog]
-  (and (= (:state netstat-line) "LISTEN")
-       (= (:program-name netstat-line) prog)))
+  [prog port named-netastat-line]
+  (and (= (:state named-netastat-line) "LISTEN")
+       (= (:program-name named-netastat-line) prog)
+       (re-matches 
+         (re-pattern (str ".+:" port)) 
+         (:local-address named-netastat-line))
+       ))
 
 (defn prog-listen?
-  [netstat-resource prog]
+  [prog port netstat-resource]
   (some? (filter 
-           #(filter-listening-prog % prog)
+           #(filter-listening-prog prog port %)
            (parse-netstat netstat-resource))))
