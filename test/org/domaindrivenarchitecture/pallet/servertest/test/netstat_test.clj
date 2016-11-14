@@ -35,7 +35,7 @@
    :recv-q "0",
    :inode "44161",
    :state "LISTEN",
-   :program-name "apache2",
+   :process-name "apache2",
    :proto "tcp6",
    :pid "4135",
    :send-q "0",

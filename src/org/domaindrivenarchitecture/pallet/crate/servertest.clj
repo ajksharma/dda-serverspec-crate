@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest
+(ns org.domaindrivenarchitecture.pallet.crate.servertest
   (:require
     [org.domaindrivenarchitecture.pallet.servertest.apt :as apt-tests]
     [org.domaindrivenarchitecture.pallet.servertest.ports :as ports-test]

@@ -7,8 +7,8 @@
                  [prismatic/schema "1.1.3"]
                  [ch.qos.logback/logback-classic "1.1.7"]
                  [com.palletops/pallet "0.8.12"]
-                 [org.domaindrivenarchitecture/dda-pallet "0.2.0-SNAPSHOT"]
                  [org.domaindrivenarchitecture/dda-pallet-commons "0.2.0"]
+                 [org.domaindrivenarchitecture/dda-pallet "0.2.0-SNAPSHOT"]                 
                  ]
   :source-paths ["src" "test-utils"]
   :repositories [["snapshots" :clojars]
@@ -20,6 +20,11 @@
               [[org.clojure/test.check "0.9.0"]
                [com.palletops/stevedore "0.8.0-beta.7"]
                [com.palletops/pallet "0.8.12" :classifier "tests"]
+               [org.domaindrivenarchitecture/dda-user-crate "0.3.3"]
+               [org.domaindrivenarchitecture/dda-init-crate "0.2.0-SNAPSHOT"]
+               [org.domaindrivenarchitecture/pallet-aws "0.2.8-SNAPSHOT"]
+               [ch.qos.logback/logback-classic "1.1.7"]
+               [org.slf4j/jcl-over-slf4j "1.7.21"]
               ]}
              :plugins [[lein-sub "0.3.0"]]
              :leiningen/reply
