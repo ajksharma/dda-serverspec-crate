@@ -45,7 +45,7 @@
   (testing 
     "test parsing netstat-output" 
       (is (= "sshd"
-             (:program-name 
+             (:process-name 
                (first (sut/parse-netstat netstat-resource)))))
       ))
 
