@@ -19,6 +19,7 @@
       [pallet.compute :as compute]
       [pallet.compute.node-list :as node-list]
       [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as crypto]
+      [org.domaindrivenarchitecture.pallet.commons.session-tools :as session-tools]
       [org.domaindrivenarchitecture.pallet.crate.user.ssh-key :as ssh-key]
       [org.domaindrivenarchitecture.pallet.crate.user.os-user :as os-user]
       [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]
@@ -122,11 +123,14 @@
      init/with-init
      with-my-servertest]
     :node-spec (aws-node-spec)
-    :count 1))
+    :count 0)
+  )
  
-(defn do-sth [key-id key-passphrase] 
-      (api/converge
-        (init-group)
-        :compute (aws-provider key-id key-passphrase)
-        :phase '(:settings :init :test)
-        :user (api/make-user "ubuntu")))
+(defn do-sth [key-id key-passphrase]
+  (session-tools/inspect-plan
+    (api/converge
+      (init-group)
+      :compute (aws-provider key-id key-passphrase)
+      :phase '(:settings :init :test)
+      :user (api/make-user "ubuntu")))
+  )
