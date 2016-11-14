@@ -52,8 +52,9 @@
   [netstat-output-from-resource]
   (= 1 (count (filter #(= (first %) "80") netstat-output-from-resource))))
 
-(defmethod dda-crate/dda-test facility [dda-crate config]
-  
+(defmethod dda-crate/dda-test facility 
+  [dda-crate partial-effective-config]
+  (let [config (dda-crate/merge-config dda-crate partial-effective-config)]
   (res/define-resource-from-script 
     ::user-list 
     "cut -d: -f1,6 /etc/passwd" 

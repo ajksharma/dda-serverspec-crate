@@ -28,9 +28,10 @@
     :facility facility
     :version [0 1 0]))
 
-(defmethod dda-crate/dda-test facility [dda-crate config]
-  (apt-tests/define-resources-apt)
-  (ports-test/define-resources-netstat)
-  (processes-test/define-resources-ps))
+(defmethod dda-crate/dda-test facility [dda-crate partial-effective-config]
+  (let [config (dda-crate/merge-config dda-crate partial-effective-config)]
+    (apt-tests/define-resources-apt)
+    (ports-test/define-resources-netstat)
+    (processes-test/define-resources-ps)))
 
 (def with-servertest (dda-crate/create-server-spec ServertestCrate))
