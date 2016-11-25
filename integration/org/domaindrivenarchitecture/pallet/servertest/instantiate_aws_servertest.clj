@@ -26,7 +26,7 @@
       [org.domaindrivenarchitecture.pallet.crate.config :as config]
       [org.domaindrivenarchitecture.pallet.crate.init :as init]
       [org.domaindrivenarchitecture.pallet.crate.servertest :as servertest]
-      [org.domaindrivenarchitecture.pallet.servertest.resource.netstat :as netstat-res]
+      [org.domaindrivenarchitecture.pallet.servertest.facts.netstat :as netstat-res]
       [org.domaindrivenarchitecture.pallet.servertest.test.netstat :as netstat-test])
   (:gen-class :main true))
 

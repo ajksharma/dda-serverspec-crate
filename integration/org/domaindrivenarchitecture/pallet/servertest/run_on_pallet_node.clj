@@ -16,7 +16,7 @@
 (ns org.domaindrivenarchitecture.pallet.crate.run-on-pallet-node
   (:require
     [org.domaindrivenarchitecture.pallet.crate.servertest :as servertest]
-    [org.domaindrivenarchitecture.pallet.servertest.resources :as res]
+    [org.domaindrivenarchitecture.pallet.servertest.facts :as res]
     [org.domaindrivenarchitecture.pallet.servertest.tests :as tests]
     [org.domaindrivenarchitecture.pallet.servertest.apt :as apt-tests]
     [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]
