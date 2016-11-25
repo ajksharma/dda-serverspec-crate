@@ -43,7 +43,8 @@
     (netstat-test/test-process-listen? "sshd" 22)
     ))
 
-(def with-my-servertest (dda-crate/create-server-spec MyServertestTestCrate))
+(def with-my-servertest 
+  (dda-crate/create-server-spec MyServertestTestCrate))
  
 (def server-config
   {:host-name "test" 
