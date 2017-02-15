@@ -1,5 +1,8 @@
 # dda-servertest-crate
 
+## Deprecated
+Functionality moved to dda-pallet-commons module.
+
 ## Overview
 
 This crate realizes the execution of tests. The concept of the usage is to __define resources__ which are outputs of bash scripts. These __outputs can then be tested__ either on the machine running the test using clojure tools or on the target node using a bash script.
