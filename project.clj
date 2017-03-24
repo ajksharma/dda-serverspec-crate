@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-servertest-crate "0.1.0-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/dda-servertest-crate "0.2.0-SNAPSHOT"
   :description "common utils for dda pallet"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
