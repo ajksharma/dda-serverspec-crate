@@ -29,12 +29,19 @@
 (def version  [0 1 0])
 
 (def ServerTestConfig
-  {})
+  {:simple-facts (hash-set (s/enum :package :netstat))
+   (s/optional-key :file-facts) (hash-set s/Str)})
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
   "dda-servertest: setting"
-  (do-sth config))
+  (let [{:keys [simple-facts file-facts]} config]
+    (when (contains? simple-facts :package)
+      (package-fact/collect-packages-fact))
+    (when (contains? simple-facts :netstat)
+      (netstat-fact/collect-netstat-fact))
+    (when (contains? config :file-facts)
+      (file-fact/collect-file-fact file-facts))))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate partial-effective-config])
