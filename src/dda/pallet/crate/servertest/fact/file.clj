@@ -17,7 +17,7 @@
 
 (ns dda.pallet.crate.servertest.fact.file
   (:require
-   [dda.pallet.servertest.core.fact :refer :all]
+   [dda.pallet.crate.servertest.core.fact :refer :all]
    [schema.core :as s]))
 
 ; todo: create crate boundary & schema for configuration & result
