@@ -31,7 +31,7 @@
 
 (defn integrated-group-spec [count]
   (merge
-    (domain/dda-servertest-crate-stack-configuration domain-config)
+    (domain/dda-servertest-group (domain/dda-servertest-crate-stack-configuration domain-config))
     (cloud-target/node-spec)
     {:count count}))
 
@@ -43,7 +43,7 @@
 
 
 (defn server-test
-  ([]
+  ([count]
    (operation/do-server-test (cloud-target/provider) (integrated-group-spec count)))
-  ([key-id key-passphrase]
-   (operation/do-server-test (cloud-target/provider) (integrated-group-spec count))))
+  ([key-id key-passphrase count]
+   (operation/do-server-test (cloud-target/provider key-id key-passphrase) (integrated-group-spec count))))
