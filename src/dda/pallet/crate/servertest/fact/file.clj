@@ -24,7 +24,8 @@
 
 (def FileFactConfig {:file-paths [s/Str]})
 
-(def FileFactResult {s/Keyword {:size-in-bytes s/Num
+(def FileFactResult {s/Keyword {:exist s/Bool
+                                :size-in-bytes s/Num
                                 :user s/Str
                                 :group s/Str
                                 :mod s/Str
@@ -42,7 +43,7 @@
      (drop-while #(not (re-matches #"\s*(tcp|udp).*" %))
        (clojure.string/split netstat-resource #"\n"))))
 
-(s/defn collect-netstat-fact
+(s/defn collect-file-fact
   "Defines the netstat resource.
    This is automatically done serverstate crate is used.
    See also: https://unix.stackexchange.com/questions/128985/why-not-parse-ls, http://man7.org/linux/man-pages/man1/find.1.html"
