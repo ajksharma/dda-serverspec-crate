@@ -13,7 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-(ns org.domaindrivenarchitecture.pallet.servertest.test.packages
+(ns dda.pallet.servertest.test.packages
   (:require
     [schema.core :as s]
     [org.domaindrivenarchitecture.pallet.servertest.core.test :as server-test]
@@ -22,26 +22,25 @@
 (defn filter-installed-package
   "filter for installed packages."
   [package parsed-package-line]
-  (= (:package parsed-package-line) package)
-  )
+  (= (:package parsed-package-line) package))
+
 
 (s/defn installed? :- server-test/TestResult
-  [package :- s/Str 
+  [package :- s/Str
    input :- s/Any]
-  (let [filter-result (filter 
+  (let [filter-result (filter
                         #(filter-installed-package package %)
-                        input) 
+                        input)
         passed (not (empty? filter-result))
         summary (if passed "TEST PASSED" "TEST FAILED")]
     {:input input
      :test-passed passed
      :test-message (str "test for : " package " summary: " summary)
-     :summary summary}
-    ))
+     :summary summary}))
 
-(s/defn test-installed? :- server-test/TestActionResult 
+
+(s/defn test-installed? :- server-test/TestActionResult
   [package :- s/Str]
-  (server-test/test-it 
+  (server-test/test-it
     packages-fact/fact-id-packages
-    #(installed? package %))
-  )
+    #(installed? package %)))

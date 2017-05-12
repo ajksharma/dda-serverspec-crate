@@ -14,22 +14,36 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.servertest.fact.netstat
+(ns dda.pallet.servertest.fact.file
   (:require
-    [org.domaindrivenarchitecture.pallet.servertest.core.fact :refer :all]))
+    [dda.pallet.servertest.core.fact :refer :all]))
 
-(def fact-id-netstat ::netstat)
+(def fact-id-netstat ::file)
 
-(defn parse-netstat
-  [netstat-resource]
+(def FileFactConfig {:file-paths [s/Str]})
+
+(def FileFactResult {s/Keyword {:exist s/Bool
+                                :directory s/Bool
+                                :link s/Bool
+                                :owner s/Str
+                                :group s/Str
+                                :mod s/Str
+                                :size s/Num
+                                :}})
+
+
+
+(defn parse-find
+  [file-resource]
   (map #(zipmap
-          [:proto :recv-q :send-q :local-adress :foreign-adress :state :user :inode :pid :process-name]
+          [:name :size :user :group :mod :type :created :modified :accessed]
           (clojure.string/split (clojure.string/trim %) #"\s+|/"))
      (drop-while #(not (re-matches #"\s*(tcp|udp).*" %))
        (clojure.string/split netstat-resource #"\n"))))
 
-(defn collect-netstat-fact
+(s/defn collect-netstat-fact
   "Defines the netstat resource.
    This is automatically done serverstate crate is used."
-  []
-  (collect-fact fact-id-netstat '("netstat" "-tulpen") :transform-fn parse-netstat))
+  [files-to-inspect :- FileFactConfig]
+  ;find linked-entry -prune -printf "'%f' '%s' '%u' '%g' '%m' '%y' '%c' '%t' '%a'\n"
+  (collect-fact fact-id-netstat '("find" ~path "-prune" "-printf \"'%f' '%s' '%u' '%g' '%m' '%y' '%c' '%t' '%a'\n\"") :transform-fn parse-find))

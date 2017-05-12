@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.test.netstat
+(ns dda.pallet.servertest.test.netstat
   (:require
     [schema.core :as s]
     [org.domaindrivenarchitecture.pallet.servertest.fact.netstat :as netstat-fact]
@@ -25,16 +25,16 @@
   [prog port named-netastat-line]
   (and (= (:state named-netastat-line) "LISTEN")
        (= (:process-name named-netastat-line) prog)
-       (re-matches 
-         (re-pattern (str ".+:" port)) 
-         (:local-address named-netastat-line))
-       ))
+       (re-matches
+         (re-pattern (str ".+:" port))
+         (:local-address named-netastat-line))))
+
 
 (s/defn prog-listen? :- server-test/TestResult
-  [prog :- s/Str 
+  [prog :- s/Str
    port :- s/Num
    input :- s/Any]
-  (let [filter-result (filter 
+  (let [filter-result (filter
                         #(filter-listening-prog prog port %)
                         input)
         passed (some? filter-result)
@@ -42,13 +42,13 @@
     {:input input
      :test-passed passed
      :test-message (str "test for : " prog ", " port " summary: " summary)
-     :summary summary}
-   ))
+     :summary summary}))
 
 
-(s/defn test-prog-listen :- server-test/TestActionResult 
-  [prog :- s/Str 
+
+(s/defn test-prog-listen :- server-test/TestActionResult
+  [prog :- s/Str
    port :- s/Num]
-  (server-test/test-it 
+  (server-test/test-it
     netstat-fact/fact-id-netstat
     #(prog-listen? prog port %)))

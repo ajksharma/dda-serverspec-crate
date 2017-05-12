@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.core.test
+(ns dda.pallet.servertest.core.test
   (:require
     [clojure.tools.logging :as logging]
     [schema.core :as s]
@@ -32,7 +32,7 @@
    :action-symbol s/Any
    :input s/Any
    :out s/Str
-   :exit s/Num 
+   :exit s/Num
    :summary s/Str})
 
 (s/defn test-action-result :- TestActionResult
@@ -46,15 +46,15 @@
      :input (-> test-result :input)
      :out (-> test-result :test-message)
      :exit 0
-     :summary (-> test-result :summary)}
-    ))
+     :summary (-> test-result :summary)}))
+
 
 (s/defn test-it :- TestActionResult
   [fact-key :- s/Keyword
    test-fn]
   (let [all-facts (crate/get-settings :dda-servertest-fact {:instance-id (crate/target-node)})
         facts (-> all-facts fact-key)
-        fact-key-name (name fact-key)]  
+        fact-key-name (name fact-key)]
     (actions/as-action
       (logging/info (str "testing " fact-key-name))
       (let [input (:out @facts)
@@ -64,6 +64,4 @@
         (logging/debug (str "input: " input))
         (logging/debug (str "result: " test-result))
         (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
-        action-result
-      ))
-    ))
+        action-result))))

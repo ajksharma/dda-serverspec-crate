@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.fact.packages
+(ns dda.pallet.servertest.fact.packages
   (:require
     [org.domaindrivenarchitecture.pallet.servertest.core.fact :refer :all]))
 
@@ -24,12 +24,12 @@
   [packages-fact]
   (map #(zipmap [:state :package :version :arch :desc]
               (clojure.string/split % #"\s+|/"))
-       (drop-while #(re-matches #"\s*(Desired|\||\+).*" %) 
-                   (clojure.string/split packages-fact #"\n")))
-  )
+       (drop-while #(re-matches #"\s*(Desired|\||\+).*" %)
+                   (clojure.string/split packages-fact #"\n"))))
+
 
 (defn collect-packages-fact
-  "Defines the netstat resource. 
+  "Defines the netstat resource.
    This is automatically done serverstate crate is used."
   []
   (collect-fact fact-id-packages '("dpkg" "-l") :transform-fn parse-packages))

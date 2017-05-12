@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.servertest.core.fact
+(ns dda.pallet.servertest.core.fact
   (:require
     [clojure.tools.logging :as logging]
     [schema.core :as s]
@@ -53,14 +53,14 @@
             out-raw)
      :out-raw  out-raw
      :exit exit
-     :summary (if (= 0 exit) "SUCCESSFUL" "ERROR")}
-  ))
+     :summary (if (= 0 exit) "SUCCESSFUL" "ERROR")}))
+
 
 (defn collect-fact
   "Gets a fact from target node based on output of script.
    Exitcode <> 0 means fact is collected successfull.
    By convention the given script has no side effects on target system.
-   
+
    `fact-key`
    should be a keyword like :netstat
 
@@ -69,20 +69,19 @@
 
    `transform-fn`
    should be a fn transforming script output to a nested map."
-  
+
   {:pallet/plan-fn true}
-  [fact-key script 
+  [fact-key script
    & {:keys [transform-fn]
       :or {transform-fn nil}}]
   (let [script-result (actions/exec-script ~script)
         fact-action-result (actions/as-action
                              (logging/info "transforming fact script result")
                              (logging/debug "script result: " script-result)
-                             (let 
+                             (let
                                [fact-result (fact-result @script-result transform-fn)]
                                (logging/debug "fact result: " fact-result)
-                               fact-result
-                               ))]
-    (crate/assoc-settings 
-			   :dda-servertest-fact {fact-key fact-action-result} {:instance-id (crate/target-node)})
-  ))
+                               fact-result))]
+
+    (crate/assoc-settings
+         :dda-servertest-fact {fact-key fact-action-result} {:instance-id (crate/target-node)})))
