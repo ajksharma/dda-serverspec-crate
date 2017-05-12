@@ -22,40 +22,58 @@
 
 ; todo: create crate boundary & schema for configuration & result
 
-(def fact-id-netstat ::file)
+(def fact-id-file ::file)
 
 (def FileFactConfig {:file-paths [s/Str]})
 
-(def FileFactResult {s/Keyword {:exist s/Bool
-                                :size-in-bytes s/Num
-                                :user s/Str
-                                :group s/Str
-                                :mod s/Str
-                                :type s/Str ;use keywords instead here?
-                                :created s/Str
-                                :modified s/Str
-                                :accessed s/Str}})
+(def FileFactResult {s/Keyword {:exists s/Bool
+                                (s/optional-key :path) s/Str
+                                (s/optional-key :size-in-bytes) s/Num
+                                (s/optional-key :user) s/Str
+                                (s/optional-key :group) s/Str
+                                (s/optional-key :mod) s/Str
+                                (s/optional-key :type) s/Str ;use keywords instead here?
+                                (s/optional-key :created) s/Str
+                                (s/optional-key :modified) s/Str
+                                (s/optional-key :accessed) s/Str}})
 
-(defn build-find-string
+(defn parse-find
+  [paths file-resource]
+  (let [maps (#(zipmap (map (fn [m] (keyword (:path m))) %) %)
+               (map #(assoc % :exists true)
+                    (map #(update-in % [:size-in-bytes] read-string)
+                         (map #(zipmap [:path :size-in-bytes :user :group :mod :type :created :modified :accessed] %)
+                              (map #(clojure.string/split % #"'") (clojure.string/split file-resource #"\n"))))))
+        existing-path-keys (keys maps)
+        path-keys (map #(keyword %) paths)
+        non-existing-path-keys (seq (clojure.set/union
+                                      (clojure.set/difference (set existing-path-keys) (set path-keys))
+                                      (clojure.set/difference (set path-keys) (set existing-path-keys))))]
+    (merge
+      maps
+      (#(zipmap (map (fn [n] n) %) (repeat (count %) {:exists false}))
+        non-existing-path-keys))))
+
+(defn build-find-vec
   "Builds the string for executing the find commands."
   [path]
   (let [p (clojure.string/join "/" (drop-last (clojure.string/split path #"/"))) 
-        file (last (clojure.string/split path #"/"))]
+        n (last (clojure.string/split path #"/"))]
      ["find"
       p
       "-name"
-      file
+      n
       "-prune"
-      "-printf \"%f'%s'%u'%g'%m'%y'%c'%t'%a\n\""]))
+      "-printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\""]))
 
 (defn collect-file-fact
   "Collects the file facts."
   [files-to-inspect]
   (let [paths (:file-paths files-to-inspect)]
     (collect-fact
-     fact-id-netstat 
+     fact-id-file
      (flatten
       (interpose
        "&&"
-       (map #(build-find-string %) paths)))
-     :transform-fn "parse-find")))
+       (map #(build-find-vec %) paths)))
+     :transform-fn (partial parse-find paths))))

@@ -46,6 +46,19 @@
 (def not-existing
   "find: `not-existing': No such file or directory")
 
+; actualized defs
+(def pas ["/home/gec/test/t0"
+          "/home/gec/test/t1"
+          "/home/gec/test/t2"
+          "/home/gec/test/t3"
+          ])
+
+(def outputs
+  "/home/gec/test/t1'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
+/home/gec/test/t2'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
+/home/gec/test/t3'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
+")
+
 
 (deftest test-parse
   (testing
