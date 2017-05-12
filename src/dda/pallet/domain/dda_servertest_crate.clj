@@ -23,7 +23,16 @@
    [dda.pallet.crate.config :as config-crate]
    [dda.pallet.crate.dda-servertest-crate :as crate]))
 
-(def ServerTestDomainConfig s/Any)
+(def ServerTestDomainConfig
+ (s/optional-key :package) {s/Keyword {(s/optional-key :exist?) s/Bool}}
+ (s/optional-key :netstat) {s/Keyword {(s/optional-key :port) s/Num}}
+ (s/optional-key :file) {s/Keyword {(s/optional-key :exist?) s/Bool}})
+
+; domain: {:netstat {:sshd {:port 22}}}) ->
+;
+; crate:
+;   {:netstat-fact nil
+;    :netstat-test {sshd: {:port 22}}
 
 (def ServertestCrateStackConfig
   {:group-specific-config
@@ -36,7 +45,12 @@
     {:group-specific-config
       {:dda-servertest-group
         {:dda-servertest
-          {:simple-facts #{:netstat}}}}}))
+          {:netstat-fact nil
+           :package-fact nil
+           :file-fact {:/root {:exist? true}
+                       :/etc {:exist? true}
+                       :/absent {:exist? false}}
+           :package-test :firefox {:exist? false}}}}}))
 
 (s/defn ^:always-validate dda-servertest-group
   [stack-config :- ServertestCrateStackConfig]

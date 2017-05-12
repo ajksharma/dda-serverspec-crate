@@ -29,22 +29,30 @@
 (def version  [0 1 0])
 
 (def ServerTestConfig
-  {:simple-facts (hash-set (s/enum :package :netstat))
-   (s/optional-key :file-facts) (hash-set s/Str)})
+  {(s/optional-key :package-fact) nil
+   (s/optional-key :netstat-fact) nil
+   (s/optional-key :file-fact) (hash-set s/Str)
+   (s/optional-key :package-test) {s/Keyword {(s/optional-key :exist?) s/Bool}}
+   (s/optional-key :netstat-test) {s/Keyword {(s/optional-key :port) s/Num}}
+   (s/optional-key :file-test) {s/Keyword {(s/optional-key :exist?) s/Bool}}})
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
   "dda-servertest: setting"
-  (let [{:keys [simple-facts file-facts]} config]
-    (when (contains? simple-facts :package)
+  (let [{:keys [file-facts]} config]
+    (when (contains? config :package-fact)
       (package-fact/collect-packages-fact))
-    (when (contains? simple-facts :netstat)
+    (when (contains? config :netstat-fact)
       (netstat-fact/collect-netstat-fact))))
-    ;(when (contains? config :file-facts)
+    ;(when (contains? config :file-fact)
     ;  (file-fact/collect-file-fact file-facts))))
 
 (s/defmethod dda-crate/dda-test facility
-  [dda-crate partial-effective-config])
+  [dda-crate config]
+  (let [{:keys [file-facts]} config]
+    (when (contains? :package-test config)
+      ; todo: iterate over all packages to test
+      (package-test/test-installed? "atom"))))
 
 (def dda-servertest-crate
   (dda-crate/make-dda-crate
