@@ -14,9 +14,11 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
+
 (ns dda.pallet.servertest.fact.file
   (:require
-    [dda.pallet.servertest.core.fact :refer :all]))
+   [dda.pallet.servertest.core.fact :refer :all]
+   [schema.core :as s]))
 
 ; todo: create crate boundary & schema for configuration & result
 
@@ -34,20 +36,26 @@
                                 :modified s/Str
                                 :accessed s/Str}})
 
-(defn parse-find
-  [file-resource]
-  ;todo create parse function
-  (map #(zipmap
-          [:name :size-in-bytes :user :group :mod :type :created :modified :accessed]
-          (clojure.string/split (clojure.string/trim %) #"\s+|/"))
-     (drop-while #(not (re-matches #"\s*(tcp|udp).*" %))
-       (clojure.string/split netstat-resource #"\n"))))
+(defn build-find-string
+  "Builds the string for executing the find commands."
+  [path]
+  (let [p (clojure.string/join "/" (drop-last (clojure.string/split path #"/"))) 
+        file (last (clojure.string/split path #"/"))]
+     ["find"
+      p
+      "-name"
+      file
+      "-prune"
+      "-printf \"%f'%s'%u'%g'%m'%y'%c'%t'%a\n\""]))
 
-(s/defn collect-file-fact
-  "Defines the netstat resource.
-   This is automatically done serverstate crate is used.
-   See also: https://unix.stackexchange.com/questions/128985/why-not-parse-ls, http://man7.org/linux/man-pages/man1/find.1.html"
-  [files-to-inspect :- FileFactConfig]
-  ;find linked-entry -prune -printf "'%f' '%s' '%u' '%g' '%m' '%y' '%c' '%t' '%a'\n"
-  ;todo: iterate over files-to-inspect & create one script
-  (collect-fact fact-id-netstat '("find" ~path "-prune" "-printf \"'%f' '%s' '%u' '%g' '%m' '%y' '%c' '%t' '%a'\n\"") :transform-fn parse-find))
+(defn collect-file-fact
+  "Collects the file facts."
+  [files-to-inspect]
+  (let [paths (:file-paths files-to-inspect)]
+    (collect-fact
+     fact-id-netstat 
+     (flatten
+      (interpose
+       "&&"
+       (map #(build-find-string %) paths)))
+     :transform-fn "parse-find")))
