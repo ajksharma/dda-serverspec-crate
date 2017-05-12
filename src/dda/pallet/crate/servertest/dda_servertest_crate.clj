@@ -23,7 +23,8 @@
     [pallet.crate.git :as git]
     [dda.pallet.core.dda-crate :as dda-crate]
     [dda.pallet.crate.servertest.fact.packages :as package-fact]
-    [dda.pallet.crate.servertest.test.packages :as package-test]))
+    [dda.pallet.crate.servertest.fact.netstat :as netstat-fact]
+    [dda.pallet.crate.servertest.fact.file :as file-fact]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])
