@@ -23,13 +23,15 @@
    [dda.pallet.crate.config :as config-crate]
    [dda.pallet.crate.dda-servertest-crate :as crate]))
 
+(def ServerTestDomainConfig s/Any)
+
 (def ServertestCrateStackConfig
   {:group-specific-config
    {:dda-servertest-group
     {:dda-servertest crate/ServerTestConfig}}})
 
 (s/defn ^:always-validate dda-servertest-crate-stack-configuration :- ServertestCrateStackConfig
-  [domain-config :- crate/ServerTestConfig]
+  [domain-config :- ServerTestDomainConfig]
   (let [{:keys [os-user]} domain-config]
     {:group-specific-config
       {:dda-servertest-group
