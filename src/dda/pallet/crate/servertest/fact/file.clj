@@ -46,9 +46,7 @@
                               (map #(clojure.string/split % #"'") (clojure.string/split file-resource #"\n"))))))
         existing-path-keys (keys maps)
         path-keys (map #(keyword %) paths)
-        non-existing-path-keys (seq (clojure.set/union
-                                      (clojure.set/difference (set existing-path-keys) (set path-keys))
-                                      (clojure.set/difference (set path-keys) (set existing-path-keys))))]
+        non-existing-path-keys (seq (clojure.set/difference (set path-keys) (set existing-path-keys)))]
     (merge
       maps
       (#(zipmap (map (fn [n] n) %) (repeat (count %) {:exists false}))
