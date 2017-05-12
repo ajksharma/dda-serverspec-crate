@@ -14,9 +14,9 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.servertest.fact.packages
+(ns dda.pallet.crate.servertest.fact.packages
   (:require
-    [org.domaindrivenarchitecture.pallet.servertest.core.fact :refer :all]))
+    [dda.pallet.crate.servertest.core.fact :refer :all]))
 
 (def fact-id-packages ::packages)
 

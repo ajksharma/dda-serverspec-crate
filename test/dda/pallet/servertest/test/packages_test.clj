@@ -15,13 +15,13 @@
 ; limitations under the License.
 
 
-(ns org.domaindrivenarchitecture.pallet.servertest.test.packages-test
+(ns dda.pallet.servertest.test.packages-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [org.domaindrivenarchitecture.pallet.servertest.test.packages :as sut]
-    ))
+    [dda.pallet.crate.servertest.test.packages :as sut]))
+
 
 (def named-packages-line
   {:state "ii"
@@ -31,16 +31,15 @@
    :desc "query and manipulate user account information"})
 
 (deftest test-filter-installed
-  (testing 
-    "test for installed in one single line" 
+  (testing
+    "test for installed in one single line"
       (is (sut/filter-installed-package "accountsservice" named-packages-line))
-      (is (not (sut/filter-installed-package "adduser" named-packages-line)))
-      ))
+      (is (not (sut/filter-installed-package "adduser" named-packages-line)))))
+
 
 (deftest test-installed
-  (testing 
-    "test for installed packages" 
+  (testing
+    "test for installed packages"
       (is (= "TEST FAILED" (:summary (sut/installed? "query" [named-packages-line]))))
       (is (= "TEST FAILED" (:summary (sut/installed? "account" [named-packages-line]))))
-      (is (= "TEST PASSED" (:summary (sut/installed? "accountsservice" [named-packages-line]))))
-      ))
+      (is (= "TEST PASSED" (:summary (sut/installed? "accountsservice" [named-packages-line]))))))

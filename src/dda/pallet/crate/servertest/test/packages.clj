@@ -16,8 +16,8 @@
 (ns dda.pallet.crate.servertest.test.packages
   (:require
     [schema.core :as s]
-    [org.domaindrivenarchitecture.pallet.servertest.core.test :as server-test]
-    [org.domaindrivenarchitecture.pallet.servertest.fact.packages :as packages-fact]))
+    [dda.pallet.crate.servertest.core.test :as server-test]
+    [dda.pallet.crate.servertest.fact.packages :as packages-fact]))
 
 (defn filter-installed-package
   "filter for installed packages."

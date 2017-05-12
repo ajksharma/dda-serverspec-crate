@@ -20,11 +20,10 @@
     [pallet.api :as api]
     [pallet.actions :as actions]
     [pallet.crate :as crate]
-    [pallet.crate.git :as git]
     [dda.pallet.core.dda-crate :as dda-crate]
     [dda.pallet.crate.servertest.fact.packages :as package-fact]
-    [dda.pallet.crate.servertest.fact.netstat :as netstat-fact]
-    [dda.pallet.crate.servertest.fact.file :as file-fact]))
+    [dda.pallet.crate.servertest.fact.netstat :as netstat-fact]))
+    ;[dda.pallet.crate.servertest.fact.file :as file-fact]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])
@@ -40,9 +39,9 @@
     (when (contains? simple-facts :package)
       (package-fact/collect-packages-fact))
     (when (contains? simple-facts :netstat)
-      (netstat-fact/collect-netstat-fact))
-    (when (contains? config :file-facts)
-      (file-fact/collect-file-fact file-facts))))
+      (netstat-fact/collect-netstat-fact))))
+    ;(when (contains? config :file-facts)
+    ;  (file-fact/collect-file-fact file-facts))))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate partial-effective-config])

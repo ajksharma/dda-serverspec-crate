@@ -20,8 +20,8 @@
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [org.domaindrivenarchitecture.pallet.servertest.fact.packages :as sut]
-    ))
+    [dda.pallet.crate.servertest.fact.packages :as sut]))
+
 
 (def packages-resource "Desired=Unknown/Install/Remove/Purge/Hold
 | Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
@@ -36,9 +36,8 @@ ii  adduser                               3.113+nmu3ubuntu4                     
 
 
 (deftest test-parse
-  (testing 
-    "test parsing packages-output" 
+  (testing
+    "test parsing packages-output"
       (is (= "accountsservice"
              (:package
-               (first (sut/parse-packages packages-resource)))))
-      ))
+               (first (sut/parse-packages packages-resource)))))))

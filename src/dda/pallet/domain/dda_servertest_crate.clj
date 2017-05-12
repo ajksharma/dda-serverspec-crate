@@ -25,20 +25,21 @@
 
 (def ServertestCrateStackConfig
   {:group-specific-config
-   {:dda-servertest-group s/Map}})
+   {:dda-servertest-group
+    {:dda-servertest crate/ServerTestConfig}}})
 
 (s/defn ^:always-validate dda-servertest-crate-stack-configuration :- ServertestCrateStackConfig
-  [domain-config :- ServertestDomainConfig]
+  [domain-config :- crate/ServerTestConfig]
   (let [{:keys [os-user]} domain-config]
     {:group-specific-config
       {:dda-servertest-group
         {:dda-servertest
-          {}}}}))
+          {:simple-facts #{:netstat}}}}}))
 
 (s/defn ^:always-validate dda-servertest-group
-  [stack-config :- GitCrateStackConfig]
+  [stack-config :- ServertestCrateStackConfig]
   (let []
     (api/group-spec
       "dda-servertest-group"
       :extends [(config-crate/with-config stack-config)
-                servertest-crate/with-servertest])))
+                crate/with-servertest])))

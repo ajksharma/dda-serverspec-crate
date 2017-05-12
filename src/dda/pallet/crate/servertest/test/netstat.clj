@@ -17,8 +17,8 @@
 (ns dda.pallet.crate.servertest.test.netstat
   (:require
     [schema.core :as s]
-    [org.domaindrivenarchitecture.pallet.servertest.fact.netstat :as netstat-fact]
-    [org.domaindrivenarchitecture.pallet.servertest.core.test :as server-test]))
+    [dda.pallet.crate.servertest.fact.netstat :as netstat-fact]
+    [dda.pallet.crate.servertest.core.test :as server-test]))
 
 (defn filter-listening-prog
   "filter for program ist listening."

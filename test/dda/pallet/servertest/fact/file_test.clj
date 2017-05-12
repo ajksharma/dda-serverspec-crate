@@ -20,7 +20,7 @@
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [org.domaindrivenarchitecture.pallet.servertest.fact.netstat :as sut]))
+    [dda.pallet.crate.servertest.fact.netstat :as sut]))
 
 
 (def one-file

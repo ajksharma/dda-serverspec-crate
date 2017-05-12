@@ -15,13 +15,13 @@
 ; limitations under the License.
 
 
-(ns org.domaindrivenarchitecture.pallet.servertest.test.netstat-test
+(ns dda.pallet.servertest.test.netstat-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [org.domaindrivenarchitecture.pallet.servertest.test.netstat :as sut]
-    ))
+    [dda.pallet.crate.servertest.test.netstat :as sut]))
+
 
 (def named-netastat-line
   {:foreign-address ":::*",
@@ -36,25 +36,24 @@
    :user "0"})
 
 (deftest test-filter-for-listening-prog
-  (testing 
-    "test filtering for listening prog" 
-      (is (sut/filter-listening-prog 
+  (testing
+    "test filtering for listening prog"
+      (is (sut/filter-listening-prog
             "apache2"
             80
             named-netastat-line))
-      (is (not (sut/filter-listening-prog 
+      (is (not (sut/filter-listening-prog
                  "sshd"
                  80
                  named-netastat-line)))
-      (is (not (sut/filter-listening-prog 
+      (is (not (sut/filter-listening-prog
                  "apache2"
                  81
-                 named-netastat-line)))
-      ))
+                 named-netastat-line)))))
+
 
 
 (deftest test-port
-  (testing 
-    "test the listen port test" 
-      (is (sut/prog-listen? "apache2" 80 [named-netastat-line]))
-      ))
+  (testing
+    "test the listen port test"
+      (is (sut/prog-listen? "apache2" 80 [named-netastat-line]))))
