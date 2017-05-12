@@ -15,7 +15,7 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.servertest.fact.file
+(ns dda.pallet.crate.servertest.fact.file
   (:require
    [dda.pallet.servertest.core.fact :refer :all]
    [schema.core :as s]))
