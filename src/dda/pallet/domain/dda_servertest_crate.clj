@@ -47,10 +47,13 @@
         {:dda-servertest
           {:netstat-fact nil
            :package-fact nil
-           :file-fact {:root {:exist? true}
+           :file-fact ["/root" "/etc" "absent"]
+           :netstat-test {:sshd {:exist? true
+                                 :port 22}}
+           :package-test {:firefox {:exist? false}}
+           :file-test {:root/sth {:exist? true}
                        :etc {:exist? true}
-                       :absent {:exist? false}}
-           :package-test {:firefox {:exist? false}}}}}}))
+                       :absent {:exist? false}}}}}}))
 
 (s/defn ^:always-validate dda-servertest-group
   [stack-config :- ServertestCrateStackConfig]

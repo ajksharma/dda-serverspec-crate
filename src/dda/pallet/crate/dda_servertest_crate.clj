@@ -30,12 +30,13 @@
 (def version  [0 1 0])
 
 (def ServerTestConfig
-  {(s/optional-key :package-fact) nil
-   (s/optional-key :netstat-fact) nil
-   (s/optional-key :file-fact) (hash-set s/Str)
-   (s/optional-key :package-test) {s/Keyword {(s/optional-key :exist?) s/Bool}}
-   (s/optional-key :netstat-test) {s/Keyword {(s/optional-key :port) s/Num}}
-   (s/optional-key :file-test) {s/Keyword {(s/optional-key :exist?) s/Bool}}})
+  {(s/optional-key :package-fact) s/Any
+   (s/optional-key :netstat-fact) s/Any
+   (s/optional-key :file-fact) [s/Str]
+   (s/optional-key :package-test) {s/Keyword {:exist? s/Bool}}
+   (s/optional-key :netstat-test) {s/Keyword {:exist? s/Bool
+                                              :port s/Num}}
+   (s/optional-key :file-test) {s/Keyword {:exist? s/Bool}}})
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
