@@ -46,8 +46,8 @@
       (package-fact/collect-packages-fact))
     (when (contains? config :netstat-fact)
       (netstat-fact/collect-netstat-fact))
-    (when (contains? config :file-fact)
-      (file-fact/collect-file-fact file-facts))))
+    (when (contains? config :file-fact))))
+      ;(file-fact/collect-file-fact file-facts))))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
