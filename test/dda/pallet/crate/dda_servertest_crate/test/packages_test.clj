@@ -15,12 +15,12 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.servertest.test.packages-test
+(ns dda.pallet.crate.dda-servertest-crate.test.packages-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.servertest.test.packages :as sut]))
+    [dda.pallet.crate.dda-servertest-crate.test.packages :as sut]))
 
 
 (def named-packages-line

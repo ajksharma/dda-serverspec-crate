@@ -21,10 +21,10 @@
     [pallet.actions :as actions]
     [pallet.crate :as crate]
     [dda.pallet.core.dda-crate :as dda-crate]
-    [dda.pallet.crate.servertest.fact.packages :as package-fact]
-    [dda.pallet.crate.servertest.fact.netstat :as netstat-fact]
-    [dda.pallet.crate.servertest.fact.file :as file-fact]
-    [dda.pallet.crate.servertest.test.packages :as package-test]))
+    [dda.pallet.crate.dda-servertest-crate.fact.packages :as package-fact]
+    [dda.pallet.crate.dda-servertest-crate.fact.netstat :as netstat-fact]
+    [dda.pallet.crate.dda-servertest-crate.fact.file :as file-fact]
+    [dda.pallet.crate.dda-servertest-crate.test.packages :as package-test]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])

@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.servertest.core.fact
+(ns dda.pallet.crate.dda-servertest-crate.core.fact
   (:require
     [clojure.tools.logging :as logging]
     [schema.core :as s]

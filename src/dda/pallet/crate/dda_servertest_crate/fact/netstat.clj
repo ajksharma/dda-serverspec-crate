@@ -14,22 +14,22 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.servertest.fact.packages
+(ns dda.pallet.crate.dda-servertest-crate.fact.netstat
   (:require
-    [dda.pallet.crate.servertest.core.fact :refer :all]))
+    [dda.pallet.crate.dda-servertest-crate.core.fact :refer :all]))
 
-(def fact-id-packages ::packages)
+(def fact-id-netstat ::netstat)
 
-(defn parse-packages
-  [packages-fact]
-  (map #(zipmap [:state :package :version :arch :desc]
-              (clojure.string/split % #"\s+|/"))
-       (drop-while #(re-matches #"\s*(Desired|\||\+).*" %)
-                   (clojure.string/split packages-fact #"\n"))))
+(defn parse-netstat
+  [netstat-resource]
+  (map #(zipmap
+          [:proto :recv-q :send-q :local-adress :foreign-adress :state :user :inode :pid :process-name]
+          (clojure.string/split (clojure.string/trim %) #"\s+|/"))
+     (drop-while #(not (re-matches #"\s*(tcp|udp).*" %))
+       (clojure.string/split netstat-resource #"\n"))))
 
-
-(defn collect-packages-fact
+(defn collect-netstat-fact
   "Defines the netstat resource.
    This is automatically done serverstate crate is used."
   []
-  (collect-fact fact-id-packages '("dpkg" "-l") :transform-fn parse-packages))
+  (collect-fact fact-id-netstat '("netstat" "-tulpen") :transform-fn parse-netstat))

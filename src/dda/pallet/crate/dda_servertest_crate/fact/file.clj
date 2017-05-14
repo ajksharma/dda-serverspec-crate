@@ -15,9 +15,9 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.crate.servertest.fact.file
+(ns dda.pallet.crate.dda-servertest-crate.fact.file
   (:require
-   [dda.pallet.crate.servertest.core.fact :refer :all]
+   [dda.pallet.crate.dda-servertest-crate.core.fact :refer :all]
    [schema.core :as s]))
 
 ; todo: create crate boundary & schema for configuration & result
@@ -55,7 +55,7 @@
 (defn build-find-vec
   "Builds the string for executing the find commands."
   [path]
-  (let [p (clojure.string/join "/" (drop-last (clojure.string/split path #"/"))) 
+  (let [p (clojure.string/join "/" (drop-last (clojure.string/split path #"/")))
         n (last (clojure.string/split path #"/"))]
      ["find"
       p

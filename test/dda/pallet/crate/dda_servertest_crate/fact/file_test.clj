@@ -15,12 +15,12 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.servertest.fact.file-test
+(ns dda.pallet.crate.dda-servertest-crate.fact.file-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.servertest.fact.netstat :as sut]))
+    [dda.pallet.crate.dda-servertest-crate.fact.netstat :as sut]))
 
 
 (def one-file
@@ -50,8 +50,8 @@
 (def pas ["/home/gec/test/t0"
           "/home/gec/test/t1"
           "/home/gec/test/t2"
-          "/home/gec/test/t3"
-          ])
+          "/home/gec/test/t3"])
+
 
 (def outputs
   "/home/gec/test/t1'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017

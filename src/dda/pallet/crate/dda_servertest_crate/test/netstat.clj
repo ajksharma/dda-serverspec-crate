@@ -13,34 +13,42 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-(ns dda.pallet.crate.servertest.test.packages
+
+(ns dda.pallet.crate.dda-servertest-crate.test.netstat
   (:require
     [schema.core :as s]
-    [dda.pallet.crate.servertest.core.test :as server-test]
-    [dda.pallet.crate.servertest.fact.packages :as packages-fact]))
+    [dda.pallet.crate.dda-servertest-crate.fact.netstat :as netstat-fact]
+    [dda.pallet.crate.dda-servertest-crate.core.test :as server-test]))
 
-(defn filter-installed-package
-  "filter for installed packages."
-  [package parsed-package-line]
-  (= (:package parsed-package-line) package))
+(defn filter-listening-prog
+  "filter for program ist listening."
+  [prog port named-netastat-line]
+  (and (= (:state named-netastat-line) "LISTEN")
+       (= (:process-name named-netastat-line) prog)
+       (re-matches
+         (re-pattern (str ".+:" port))
+         (:local-address named-netastat-line))))
 
 
-(s/defn installed? :- server-test/TestResult
-  [package :- s/Str
+(s/defn prog-listen? :- server-test/TestResult
+  [prog :- s/Str
+   port :- s/Num
    input :- s/Any]
   (let [filter-result (filter
-                        #(filter-installed-package package %)
+                        #(filter-listening-prog prog port %)
                         input)
-        passed (not (empty? filter-result))
+        passed (some? filter-result)
         summary (if passed "TEST PASSED" "TEST FAILED")]
     {:input input
      :test-passed passed
-     :test-message (str "test for : " package " summary: " summary)
+     :test-message (str "test for : " prog ", " port " summary: " summary)
      :summary summary}))
 
 
-(s/defn test-installed? :- server-test/TestActionResult
-  [package :- s/Str]
+
+(s/defn test-prog-listen :- server-test/TestActionResult
+  [prog :- s/Str
+   port :- s/Num]
   (server-test/test-it
-    packages-fact/fact-id-packages
-    #(installed? package %)))
+    netstat-fact/fact-id-netstat
+    #(prog-listen? prog port %)))
