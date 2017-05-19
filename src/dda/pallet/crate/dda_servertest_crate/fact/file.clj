@@ -66,12 +66,11 @@
 
 (defn collect-file-fact
   "Collects the file facts."
-  [files-to-inspect]
-  (let [paths (:file-paths files-to-inspect)]
-    (collect-fact
-     fact-id-file
-     (flatten
+  [paths]
+  (collect-fact
+    fact-id-file
+    (flatten
       (interpose
        "&&"
-       (map #(build-find-vec %) paths)))
-     :transform-fn (partial parse-find paths))))
+       (map #(build-find-vec %) paths)
+       :transform-fn (partial parse-find paths)))))

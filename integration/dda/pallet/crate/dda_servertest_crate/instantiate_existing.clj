@@ -21,7 +21,7 @@
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
     [dda.cm.operation :as operation]
     [dda.cm.existing :as existing]
-    [meissa.pallet.domain.meissa-managed-vm :as domain]))
+    [dda.pallet.domain.dda-servertest-crate :as domain]))
 
 (def provisioning-ip
   "192.168.56.103")

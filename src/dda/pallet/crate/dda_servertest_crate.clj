@@ -41,13 +41,13 @@
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
   "dda-servertest: setting"
-  (let [{:keys [file-facts]} config]
+  (let [{:keys [file-fact]} config]
     (when (contains? config :package-fact)
       (package-fact/collect-packages-fact))
     (when (contains? config :netstat-fact)
       (netstat-fact/collect-netstat-fact))
-    (when (contains? config :file-fact))))
-      ;(file-fact/collect-file-fact file-facts))))
+    (when (contains? config :file-fact)
+      (file-fact/collect-file-fact file-fact))))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
