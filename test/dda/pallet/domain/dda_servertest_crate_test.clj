@@ -22,7 +22,31 @@
     [pallet.actions :as actions]
     [dda.pallet.domain.dda-servertest-crate :as sut]))
 
+(def domain-config
+  {:netstat {:sshd {:state :listening
+                    :port 22}}
+   :package {:firefox {:exist? false}}
+   :file {:root-sth {:path "/root"
+                     :exist? true}
+          :etc {:path "/etc"
+                :exist? true}
+          :absent {:path "/absent"
+                   :exist? false}}})
+
 (deftest test-dda-servertest-crate-stack-configuration
   (testing
     "test creation of stack configuration"
-      (is (sut/dda-servertest-crate-stack-configuration {}))))
+      (is (=
+            {:group-specific-config
+              {:dda-servertest-group
+                {:dda-servertest
+                  {:netstat-fact nil
+                   :package-fact nil
+                   :file-fact ["/root" "/etc" "/absent"]
+                   :netstat-test {:sshd {:exist? true
+                                         :port 22}}
+                   :package-test {:firefox {:exist? false}}
+                   :file-test {:-root-sth {:exist? true}
+                               :-etc {:exist? true}
+                               :-absent {:exist? false}}}}}}
+            (sut/dda-servertest-crate-stack-configuration domain-config)))))

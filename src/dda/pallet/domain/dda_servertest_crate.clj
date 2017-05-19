@@ -25,8 +25,10 @@
 
 (def ServerTestDomainConfig
  {(s/optional-key :package) {s/Keyword {(s/optional-key :exist?) s/Bool}}
-  (s/optional-key :netstat) {s/Keyword {(s/optional-key :port) s/Num}}
-  (s/optional-key :file) {s/Keyword {(s/optional-key :exist?) s/Bool}}})
+  (s/optional-key :netstat) {s/Keyword {:port s/Num
+                                        (s/optional-key :state) s/Keyword}}
+  (s/optional-key :file) {s/Keyword {:path s/Str
+                                     (s/optional-key :exist?) s/Bool}}})
 
 ; domain: {:netstat {:sshd {:port 22}}}) ->
 ;
@@ -47,13 +49,13 @@
         {:dda-servertest
           {:netstat-fact nil
            :package-fact nil
-           :file-fact ["/root" "/etc" "absent"]
+           :file-fact ["/root" "/etc" "/absent"]
            :netstat-test {:sshd {:exist? true
                                  :port 22}}
            :package-test {:firefox {:exist? false}}
-           :file-test {:root/sth {:exist? true}
-                       :etc {:exist? true}
-                       :absent {:exist? false}}}}}}))
+           :file-test {:-root-sth {:exist? true}
+                       :-etc {:exist? true}
+                       :-absent {:exist? false}}}}}}))
 
 (s/defn ^:always-validate dda-servertest-group
   [stack-config :- ServertestCrateStackConfig]

@@ -13,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+
 (ns dda.pallet.crate.dda-servertest-crate.instantiate-aws
   (:require
     [clojure.inspector :as inspector]
@@ -23,16 +24,24 @@
     [org.domaindrivenarchitecture.pallet.commons.session-tools :as session-tools]
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
     [dda.cm.operation :as operation]
-    [dda.pallet.crate.dda-servertest-crate.aws :as cloud-target]
+    [dda.cm.aws :as cloud-target]
     [dda.pallet.domain.dda-servertest-crate :as domain]))
 
 (def domain-config
-  {})
+  {:netstat {:sshd {:exist? true
+                    :port 22}}
+   :package {:firefox {:exist? false}}
+   :file {:root-sth {:path "/root"
+                     :exist? true}
+          :etc {:path "/etc"
+                :exist? true}
+          :absent {:path "/absent"
+                   :exist? false}}})
 
 (defn integrated-group-spec [count]
   (merge
     (domain/dda-servertest-group (domain/dda-servertest-crate-stack-configuration domain-config))
-    (cloud-target/node-spec)
+    (cloud-target/node-spec "jem")
     {:count count}))
 
 (defn converge-install
@@ -40,7 +49,6 @@
    (operation/do-converge-install (cloud-target/provider) (integrated-group-spec count)))
   ([key-id key-passphrase count]
    (operation/do-converge-install (cloud-target/provider key-id key-passphrase) (integrated-group-spec count))))
-
 
 (defn server-test
   ([count]
