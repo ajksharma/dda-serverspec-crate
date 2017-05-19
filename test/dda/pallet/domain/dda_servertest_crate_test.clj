@@ -49,4 +49,4 @@
                    :file-test {:-root-sth {:exist? true}
                                :-etc {:exist? true}
                                :-absent {:exist? false}}}}}}
-            (sut/dda-servertest-crate-stack-configuration domain-config)))))
+            (sut/crate-stack-configuration domain-config)))))

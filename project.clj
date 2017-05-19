@@ -7,6 +7,7 @@
                  [prismatic/schema "1.1.3"]
                  [ch.qos.logback/logback-classic "1.1.8"]
                  [com.palletops/pallet "0.8.12"]
+                 [com.palletops/stevedore "0.8.0-beta.7"]
                  [dda/dda-pallet "0.4.0-SNAPSHOT"]]
 
   :source-paths ["src" "test-utils"]
@@ -18,12 +19,10 @@
              {:source-paths ["integration"]
               :dependencies
               [[org.clojure/test.check "0.9.0"]
-               [com.palletops/stevedore "0.8.0-beta.7"]
                [com.palletops/pallet "0.8.12" :classifier "tests"]
                [org.domaindrivenarchitecture/pallet-aws "0.2.8-SNAPSHOT"]
                [ch.qos.logback/logback-classic "1.1.8"]
-               [org.slf4j/jcl-over-slf4j "1.7.22"]
-               [proto-repl "0.3.1"]]}
+               [org.slf4j/jcl-over-slf4j "1.7.22"]]}
 
              :plugins [[lein-sub "0.3.0"]]
              :leiningen/reply

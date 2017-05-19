@@ -52,7 +52,7 @@
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
   (let [{:keys [file-facts]} config]
-    (when (contains? :package-test config)
+    (when (contains? config :package-test)
       ; todo: iterate over all packages to test
       (package-test/test-installed? "atom"))))
 

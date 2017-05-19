@@ -41,21 +41,27 @@
    {:dda-servertest-group
     {:dda-servertest crate/ServerTestConfig}}})
 
-(s/defn ^:always-validate dda-servertest-crate-stack-configuration :- ServertestCrateStackConfig
+(s/defn ^:always-validate crate-stack-configuration :- ServertestCrateStackConfig
   [domain-config :- ServerTestDomainConfig]
   (let [{:keys [os-user]} domain-config]
     {:group-specific-config
       {:dda-servertest-group
         {:dda-servertest
-          {:netstat-fact nil
-           :package-fact nil
-           :file-fact ["/root" "/etc" "/absent"]
-           :netstat-test {:sshd {:exist? true
-                                 :port 22}}
-           :package-test {:firefox {:exist? false}}
-           :file-test {:-root-sth {:exist? true}
-                       :-etc {:exist? true}
-                       :-absent {:exist? false}}}}}}))
+         (merge
+          (if (contains? domain-config :package)
+            {:package-fact nil
+             :package-test {:firefox {:exist? false}}}
+            {})
+          (if (contains? domain-config :netstat)
+            {:netstat-fact nil
+             :netstat-test {:sshd {:exist? true
+                                   :port 22}}}
+            {})
+          (if (contains? domain-config :file)
+            {:file-fact ["/root" "/etc" "/absent"]
+             :file-test {:-root-sth {:exist? true}
+                         :-etc {:exist? true}
+                         :-absent {:exist? false}}}))}}}))
 
 (s/defn ^:always-validate dda-servertest-group
   [stack-config :- ServertestCrateStackConfig]

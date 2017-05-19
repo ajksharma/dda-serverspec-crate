@@ -20,7 +20,7 @@
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.dda-servertest-crate.test.netstat :as sut]))
+    [dda.pallet.crate.dda-servertest-crate.fact.netstat :as sut]))
 
 
 (def netstat-resource1

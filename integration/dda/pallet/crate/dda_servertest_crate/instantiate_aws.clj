@@ -40,7 +40,7 @@
 
 (defn integrated-group-spec [count]
   (merge
-    (domain/dda-servertest-group (domain/dda-servertest-crate-stack-configuration domain-config))
+    (domain/dda-servertest-group (domain/crate-stack-configuration domain-config))
     (cloud-target/node-spec "jem")
     {:count count}))
 

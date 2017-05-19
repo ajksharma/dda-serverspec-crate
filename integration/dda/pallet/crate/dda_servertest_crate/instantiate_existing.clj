@@ -31,14 +31,19 @@
    :password "test1234"})
 
 ;For ftp to work the machine needs to have installed lftp and a configured vsftpd
-(def domain-config {})
+(def domain-config {:file {:root-sth {:path "/root"
+                                      :exist? true}
+                           :etc {:path "/etc"
+                                 :exist? true}
+                           :absent {:path "/absent"
+                                    :exist? false}}})
 
 (defn provider []
-  (existing/provider provisioning-ip))
+  (existing/provider provisioning-ip "node-id" "dda-servertest-group"))
 
 (defn integrated-group-spec []
   (merge
-    (domain/meissa-managed-vm-group (domain/create-stack-configuration domain-config))
+    (domain/dda-servertest-group (domain/crate-stack-configuration domain-config))
     (existing/node-spec provisioning-user)))
 
 (defn apply-install []

@@ -17,8 +17,8 @@
 
 (ns dda.pallet.crate.dda-servertest-crate.fact.file
   (:require
-   [dda.pallet.crate.dda-servertest-crate.core.fact :refer :all]
-   [schema.core :as s]))
+    [schema.core :as s]
+    [dda.pallet.crate.dda-servertest-crate.core.fact :refer :all]))
 
 ; todo: create crate boundary & schema for configuration & result
 
@@ -26,51 +26,55 @@
 
 (def FileFactConfig {:file-paths [s/Str]})
 
-(def FileFactResult {s/Keyword {:exists s/Bool
-                                (s/optional-key :path) s/Str
-                                (s/optional-key :size-in-bytes) s/Num
-                                (s/optional-key :user) s/Str
-                                (s/optional-key :group) s/Str
-                                (s/optional-key :mod) s/Str
-                                (s/optional-key :type) s/Str ;use keywords instead here?
-                                (s/optional-key :created) s/Str
-                                (s/optional-key :modified) s/Str
-                                (s/optional-key :accessed) s/Str}})
+(def FileFactResult {:path s/Str
+                     :exist? s/Bool
+                     (s/optional-key :size-in-bytes) s/Num
+                     (s/optional-key :user) s/Str
+                     (s/optional-key :group) s/Str
+                     (s/optional-key :mod) s/Str
+                     (s/optional-key :type) s/Str ;use keywords instead here?
+                     (s/optional-key :created) s/Str
+                     (s/optional-key :modified) s/Str
+                     (s/optional-key :accessed) s/Str})
+
+(def FileFactResults {s/Keyword FileFactResult})
+
+(s/defn path-to-keyword :- s/Keyword
+  [path :- s/Str] (keyword (clojure.string/replace path #"/" "-")))
+
+(s/defn parse-find-line :- FileFactResult
+  [script-result-line :- s/Str]
+  (let [ne-match (re-find (re-matcher #"(find: `)(.*)(': No such file or directory)" script-result-line))]
+    (if ne-match
+      {:path (nth ne-match 2)
+       :exist? false}
+      (merge
+        (zipmap [:path :size-in-bytes :user :group :mod :type :created :modified :accessed]
+          (clojure.string/split script-result-line #"'"))
+        {:exist? true}))))
+
+(s/defn create-line-parse-result [script-result-line]
+  (let [file-fact-result (parse-find-line script-result-line)
+        result-key (path-to-keyword (:path file-fact-result))]
+    {result-key file-fact-result}))
 
 (defn parse-find
-  [paths file-resource]
-  (let [maps (#(zipmap (map (fn [m] (keyword (:path m))) %) %)
-               (map #(assoc % :exists true)
-                    (map #(update-in % [:size-in-bytes] read-string)
-                         (map #(zipmap [:path :size-in-bytes :user :group :mod :type :created :modified :accessed] %)
-                              (map #(clojure.string/split % #"'") (clojure.string/split file-resource #"\n"))))))
-        existing-path-keys (keys maps)
-        path-keys (map #(keyword %) paths)
-        non-existing-path-keys (seq (clojure.set/difference (set path-keys) (set existing-path-keys)))]
-    (merge
-      maps
-      (#(zipmap (map (fn [n] n) %) (repeat (count %) {:exists false}))
-        non-existing-path-keys))))
+  [script-result]
+  (apply merge
+    (map create-line-parse-result (clojure.string/split script-result #"\n"))))
 
-(defn build-find-vec
+(defn build-find-line
   "Builds the string for executing the find commands."
   [path]
-  (let [p (clojure.string/join "/" (drop-last (clojure.string/split path #"/")))
-        n (last (clojure.string/split path #"/"))]
-     ["find"
-      p
-      "-name"
-      n
-      "-prune"
-      "-printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\""]))
+  (str "find " path " -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\""))
 
 (defn collect-file-fact
   "Collects the file facts."
   [paths]
   (collect-fact
     fact-id-file
-    (flatten
-      (interpose
-       "&&"
-       (map #(build-find-vec %) paths)
-       :transform-fn (partial parse-find paths)))))
+    (str
+      (clojure.string/join
+       "; " (map #(build-find-line %) paths))
+      "; exit 0")
+    :transform-fn parse-find))
