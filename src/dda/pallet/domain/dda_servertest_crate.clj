@@ -50,7 +50,7 @@
          (merge
           (if (contains? domain-config :package)
             {:package-fact nil
-             :package-test {:firefox {:exist? false}}}
+             :package-test {:firefox {:installed? false}}}
             {})
           (if (contains? domain-config :netstat)
             {:netstat-fact nil

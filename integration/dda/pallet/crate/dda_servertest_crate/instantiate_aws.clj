@@ -27,13 +27,7 @@
     [dda.cm.aws :as cloud-target]
     [dda.pallet.domain.dda-servertest-crate :as domain]))
 
-(def domain-config {:file {:root-sth {:path "/root"
-                                      :exist? true}
-                           :etc {:path "/etc"
-                                 :exist? true}
-                           :absent {:path "/absent"
-                                    :exist? false}}})
-
+(def domain-config {:package {:firefox {:exist? false}}})
 
 (defn integrated-group-spec [count]
   (merge

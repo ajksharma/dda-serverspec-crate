@@ -21,10 +21,10 @@
     [pallet.actions :as actions]
     [pallet.crate :as crate]
     [dda.pallet.core.dda-crate :as dda-crate]
-    [dda.pallet.crate.dda-servertest-crate.fact.packages :as package-fact]
+    [dda.pallet.crate.dda-servertest-crate.fact.package :as package-fact]
     [dda.pallet.crate.dda-servertest-crate.fact.netstat :as netstat-fact]
     [dda.pallet.crate.dda-servertest-crate.fact.file :as file-fact]
-    [dda.pallet.crate.dda-servertest-crate.test.packages :as package-test]))
+    [dda.pallet.crate.dda-servertest-crate.test.package :as package-test]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])
@@ -33,7 +33,7 @@
   {(s/optional-key :package-fact) s/Any
    (s/optional-key :netstat-fact) s/Any
    (s/optional-key :file-fact) [s/Str]
-   (s/optional-key :package-test) {s/Keyword {:exist? s/Bool}}
+   (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) {s/Keyword {:exist? s/Bool
                                               :port s/Num}}
    (s/optional-key :file-test) {s/Keyword {:exist? s/Bool}}})
@@ -43,7 +43,7 @@
   "dda-servertest: setting"
   (let [{:keys [file-fact]} config]
     (when (contains? config :package-fact)
-      (package-fact/collect-packages-fact))
+      (package-fact/collect-package-fact))
     (when (contains? config :netstat-fact)
       (netstat-fact/collect-netstat-fact))
     (when (contains? config :file-fact)
@@ -53,8 +53,7 @@
   [dda-crate config]
   (let [{:keys [file-facts]} config]
     (when (contains? config :package-test)
-      ; todo: iterate over all packages to test
-      (package-test/test-installed? "atom"))))
+      (package-test/test-package (:package-test config)))))
 
 (def dda-servertest-crate
   (dda-crate/make-dda-crate

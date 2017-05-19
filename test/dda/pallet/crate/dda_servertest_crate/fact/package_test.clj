@@ -15,15 +15,15 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.crate.dda-servertest-crate.fact.packages-test
+(ns dda.pallet.crate.dda-servertest-crate.fact.package-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.dda-servertest-crate.fact.packages :as sut]))
+    [dda.pallet.crate.dda-servertest-crate.fact.package :as sut]))
 
 
-(def packages-resource "Desired=Unknown/Install/Remove/Purge/Hold
+(def package-resource "Desired=Unknown/Install/Remove/Purge/Hold
 | Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
 |/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
 ||/ Name                                  Version                                  Architecture Description
@@ -40,4 +40,4 @@ ii  adduser                               3.113+nmu3ubuntu4                     
     "test parsing packages-output"
       (is (= "accountsservice"
              (:package
-               (first (sut/parse-packages packages-resource)))))))
+               (first (sut/parse-package package-resource)))))))

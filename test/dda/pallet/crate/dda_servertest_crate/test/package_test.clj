@@ -14,32 +14,37 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-
-(ns dda.pallet.crate.dda-servertest-crate.test.packages-test
+(ns dda.pallet.crate.dda-servertest-crate.test.package-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.dda-servertest-crate.test.packages :as sut]))
+    [dda.pallet.crate.dda-servertest-crate.test.package :as sut]))
 
 
-(def named-packages-line
-  {:state "ii"
-   :package "accountsservice"
-   :version "0.6.40-2ubuntu11.3"
-   :arch "amd64"
-   :desc "query and manipulate user account information"})
+(def test-config {:missing {:installed? true}
+                  :atom {:installed? true}
+                  :firefox {:installed? false}})
+
+(def input
+  '({:state "rc"
+     :package "firefox"
+     :version "0.6.40-2ubuntu11.3"
+     :arch "amd64"
+     :desc "xxx"}
+    {:state "ii"
+     :package "atom"
+     :version "0.6.40-2ubuntu11.3"
+     :arch "amd64"
+     :desc "xxx"}
+    {:state "ii"
+     :package "accountsservice"
+     :version "0.6.40-2ubuntu11.3"
+     :arch "amd64"
+     :desc "query and manipulate user account information"}))
 
 (deftest test-filter-installed
   (testing
     "test for installed in one single line"
-      (is (sut/filter-installed-package "accountsservice" named-packages-line))
-      (is (not (sut/filter-installed-package "adduser" named-packages-line)))))
-
-
-(deftest test-installed
-  (testing
-    "test for installed packages"
-      (is (= "TEST FAILED" (:summary (sut/installed? "query" [named-packages-line]))))
-      (is (= "TEST FAILED" (:summary (sut/installed? "account" [named-packages-line]))))
-      (is (= "TEST PASSED" (:summary (sut/installed? "accountsservice" [named-packages-line]))))))
+    (is (= 2
+           (:no-failed (sut/test-package-internal test-config input))))))
