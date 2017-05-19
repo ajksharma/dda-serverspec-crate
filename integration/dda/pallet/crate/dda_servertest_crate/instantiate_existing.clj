@@ -30,7 +30,6 @@
   {:login "jem"
    :password "test1234"})
 
-;For ftp to work the machine needs to have installed lftp and a configured vsftpd
 (def domain-config {:file {:root-sth {:path "/root"
                                       :exist? true}
                            :etc {:path "/etc"
