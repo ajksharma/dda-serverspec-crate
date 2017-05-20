@@ -53,7 +53,9 @@
   [dda-crate config]
   (let [{:keys [file-facts]} config]
     (when (contains? config :package-test)
-      (package-test/test-package (:package-test config)))))
+      (package-test/test-package (:package-test config)))
+    (when (contains? config :netstat-test)
+        (netstat-test/test-netstat (:netstat-test config)))))
 
 (def dda-servertest-crate
   (dda-crate/make-dda-crate

@@ -20,7 +20,7 @@
     [dda.pallet.crate.dda-servertest-crate.fact.netstat :as netstat-fact]
     [dda.pallet.crate.dda-servertest-crate.core.test :as server-test]))
 
-(def NetstatTestConfig {s/Keyword {:port s/Num}})
+(def NetstatTestConfig {s/Keyword {:port s/Str}})
 
 (s/defn fact-check :- server-test/FactCheckResult
   [result :- server-test/FactCheckResult
@@ -32,16 +32,13 @@
           expected-on-port (:port (val elem))
           present-elem  (get-in considered-map [(key elem)])
           passed? (and (some? present-elem)
-                       (= (:state present-elem)) "LISTEN"
-                       (some? (re-matches
-                                (re-pattern (str ".+:" expected-on-port))
-                                (:local-address present-elem))))]
+                       (= expected-on-port (:local-port present-elem)))]
         (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test netstat: " (name (key elem))
                               ", expected port: " expected-on-port ", was running?: "
                               (some? present-elem) ", was listening on: "
-                              (:local-address present-elem) ", passed?: " passed? "\\n")
+                              (:local-port present-elem) ", passed?: " passed? "\\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)

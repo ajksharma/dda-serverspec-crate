@@ -14,7 +14,6 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-
 (ns dda.pallet.crate.dda-servertest-crate.test.netstat-test
   (:require
     [clojure.test :refer :all]
@@ -55,7 +54,26 @@
 (deftest test-netstat-internal
  (testing
    "test test-netstat-internal"
+   (is (= 0
+          (:no-failed (sut/test-netstat-internal {} input))))
    (is (= 1
           (:no-failed (sut/test-netstat-internal test-config-1 input))))
    (is (= 2
           (:no-failed (sut/test-netstat-internal test-config-2 input))))))
+
+(deftest retest-issues
+ (testing
+   "test issues"
+   (is (= 1
+          (:no-failed (sut/test-netstat-internal
+                       {:sshd {:port 22}}
+                       ({:foreign-adress "0.0.0.0:*", :local-adress "0.0.0.0:22",
+                         :recv-q "0", :inode "15261", :state "LISTEN",
+                         :proto "tcp", :pid "1200", :process-name "sshd",
+                         :send-q "0", :user "0"}
+                        {:foreign-adress ":::*", :local-adress ":::22", :recv-q "0",
+                         :inode "15263", :state "LISTEN", :proto "tcp6", :pid "1200",
+                         :process-name "sshd", :send-q "0", :user "0"}
+                        {:proto "udp", :recv-q "0", :send-q "0",
+                         :local-adress "0.0.0.0:68", :foreign-adress "0.0.0.0:*",
+                         :state "0", :user "13122", :inode "919", :pid "dhclient"})))))))

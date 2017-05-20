@@ -42,6 +42,30 @@
    tcp6       0      0 :::80                   :::*                    LISTEN      0          44161       4135/apache2
    tcp6       0      0 :::4369                 :::*                    LISTEN      108        33687       27416/epmd")
 
+(def netstat-resource4
+ " Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode       PID/Program name
+   tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      0          15304       1198/sshd
+   tcp6       0      0 :::22                   :::*                    LISTEN      0          15306       1198/sshd
+   udp        0      0 0.0.0.0:68              0.0.0.0:*                           0          13182       916/dhclient")
+
+
+(deftest test-split-line
+ (testing
+   "test splitting fixed size line"
+     (is (= 11
+            (count (sut/split-netstat-line (str "tcp        0      0 0.0.0.0:22              0.0.0.0:*"
+                                                "               LISTEN      0          9807        1001/sshd")))))
+     (is (= 11
+            (count (sut/split-netstat-line (str "udp        0      0 0.0.0.0:68              0.0.0.0:*"
+                                                "                           0          13182       916/dhclient")))))
+     (is (= 11
+            (count (sut/split-netstat-line (str "tcp6       0      0 :::22                   :::* "
+                                                "                   LISTEN      0          15306       1198/sshd")))))
+     (is (= 11
+            (count (sut/split-netstat-line (str "111111222222233333334444444444444444444:4444555555555555555555555555"
+                                                "666666666666777777777778888888888889999/00000000000")))))))
+
+
 
 (deftest test-parse
   (testing
@@ -54,4 +78,7 @@
                (first (sut/parse-netstat netstat-resource2)))))
       (is (= "sshd"
              (:process-name
-               (first (sut/parse-netstat netstat-resource3)))))))
+               (first (sut/parse-netstat netstat-resource3)))))
+      (is (= "dhclient"
+             (:process-name
+               (nth (sut/parse-netstat netstat-resource4) 2))))))

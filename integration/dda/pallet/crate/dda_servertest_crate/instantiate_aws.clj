@@ -27,7 +27,7 @@
     [dda.cm.aws :as cloud-target]
     [dda.pallet.domain.dda-servertest-crate :as domain]))
 
-(def domain-config {:netstat {:sshd {:port 22}}})
+(def domain-config {:netstat {:sshd {:port "22"}}})
 
 (defn integrated-group-spec [count]
   (merge
