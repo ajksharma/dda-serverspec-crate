@@ -21,8 +21,10 @@
 
 (def PackageTestConfig {s/Keyword {:installed? s/Bool}})
 
-(s/defn fact-check
-  [result spec considered-map]
+(s/defn fact-check :- server-test/FactCheckResult
+  [result :- server-test/FactCheckResult
+   spec :- PackageTestConfig
+   considered-map]
   (if (<= (count spec) 0)
     result
     (let [elem (first spec)
@@ -39,24 +41,23 @@
           (rest spec)
           considered-map))))
 
+(s/defn filter-input-to-consider :- package-fact/PackageResult
+  [test-config :- PackageTestConfig
+   input :- (seq package-fact/PackageResult)]
+  (let [installed-to-consider (filter #(= "ii" (:state %)) input)]
+    (filter #(contains? test-config (keyword (:package %))) installed-to-consider)))
+
+(s/defn result-to-map
+  [input :- (seq package-fact/PackageResult)]
+  (apply merge (map (fn [e] {(keyword (:package e)) e}) input)))
+
 (s/defn test-package-internal :- server-test/TestResult
   [test-config :- PackageTestConfig
-   input :- package-fact/PackageResult]
-  (let [installed-to-consider (filter #(= "ii" (:state %)) input)
-        input-to-consider (filter #(contains? test-config (keyword (:package %))) installed-to-consider)
-        considered-map (apply merge (map (fn [e] {(keyword (:package e)) e}) input-to-consider))
-        fact-result (fact-check {:test-passed true
-                                 :test-message ""
-                                 :no-passed 0
-                                 :no-failed 0}
-                                test-config
-                                considered-map)]
-    (merge
-      {:input input
-       :summary (str (if (:test-passed fact-result) "PASSED" "FAILED")
-                     ", tests failed: " (:no-failed fact-result)
-                     ", tests passed: " (:no-passed fact-result))}
-      fact-result)))
+   input :- (seq package-fact/PackageResult)]
+  (let [input-to-consider (filter-input-to-consider test-config input)
+        considered-map (result-to-map input-to-consider)
+        fact-result (fact-check server-test/fact-check-seed test-config considered-map)]
+    (server-test/fact-result-to-test-result input fact-result)))
 
 (s/defn test-package :- server-test/TestActionResult
   [test-config :- PackageTestConfig]

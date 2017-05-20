@@ -43,8 +43,8 @@
      :arch "amd64"
      :desc "query and manipulate user account information"}))
 
-(deftest test-filter-installed
+(deftest test-package-internal
   (testing
-    "test for installed in one single line"
-    (is (= 2
+    "test test-package-internal"
+    (is (= 1
            (:no-failed (sut/test-package-internal test-config input))))))

@@ -24,9 +24,8 @@
    [dda.pallet.crate.dda-servertest-crate :as crate]))
 
 (def ServerTestDomainConfig
- {(s/optional-key :package) {s/Keyword {(s/optional-key :exist?) s/Bool}}
-  (s/optional-key :netstat) {s/Keyword {:port s/Num
-                                        (s/optional-key :state) s/Keyword}}
+ {(s/optional-key :package) {s/Keyword {(s/optional-key :installed?) s/Bool}}
+  (s/optional-key :netstat) {s/Keyword {:port s/Num}}
   (s/optional-key :file) {s/Keyword {:path s/Str
                                      (s/optional-key :exist?) s/Bool}}})
 
@@ -54,8 +53,7 @@
             {})
           (if (contains? domain-config :netstat)
             {:netstat-fact nil
-             :netstat-test {:sshd {:exist? true
-                                   :port 22}}}
+             :netstat-test {:sshd {:port 22}}}
             {})
           (if (contains? domain-config :file)
             {:file-fact ["/root" "/etc" "/absent"]

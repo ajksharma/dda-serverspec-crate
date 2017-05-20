@@ -23,9 +23,8 @@
     [dda.pallet.domain.dda-servertest-crate :as sut]))
 
 (def domain-config
-  {:netstat {:sshd {:state :listening
-                    :port 22}}
-   :package {:firefox {:exist? false}}
+  {:netstat {:sshd {:port 22}}
+   :package {:firefox {:installed? false}}
    :file {:root-sth {:path "/root"
                      :exist? true}
           :etc {:path "/etc"
@@ -43,9 +42,8 @@
                   {:netstat-fact nil
                    :package-fact nil
                    :file-fact ["/root" "/etc" "/absent"]
-                   :netstat-test {:sshd {:exist? true
-                                         :port 22}}
-                   :package-test {:firefox {:exist? false}}
+                   :netstat-test {:sshd {:port 22}}
+                   :package-test {:firefox {:installed? false}}
                    :file-test {:-root-sth {:exist? true}
                                :-etc {:exist? true}
                                :-absent {:exist? false}}}}}}

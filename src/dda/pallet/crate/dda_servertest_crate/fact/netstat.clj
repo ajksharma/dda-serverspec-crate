@@ -16,9 +16,21 @@
 
 (ns dda.pallet.crate.dda-servertest-crate.fact.netstat
   (:require
+    [schema.core :as s]
     [dda.pallet.crate.dda-servertest-crate.core.fact :refer :all]))
 
 (def fact-id-netstat ::netstat)
+
+(def NetstatResult (seq {:proto s/Str
+                         :recv-q s/Str
+                         :send-q s/Str
+                         :local-adress s/Str
+                         :foreign-adress s/Str
+                         :state s/Str
+                         :user s/Str
+                         :inode s/Str
+                         :pid s/Str
+                         :process-name s/Str}))
 
 (defn parse-netstat
   [netstat-resource]

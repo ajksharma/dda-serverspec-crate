@@ -20,35 +20,46 @@
     [dda.pallet.crate.dda-servertest-crate.fact.netstat :as netstat-fact]
     [dda.pallet.crate.dda-servertest-crate.core.test :as server-test]))
 
-(defn filter-listening-prog
-  "filter for program ist listening."
-  [prog port named-netastat-line]
-  (and (= (:state named-netastat-line) "LISTEN")
-       (= (:process-name named-netastat-line) prog)
-       (re-matches
-         (re-pattern (str ".+:" port))
-         (:local-address named-netastat-line))))
+(def NetstatTestConfig {s/Keyword {:port s/Num}})
 
+(s/defn fact-check :- server-test/FactCheckResult
+  [result :- server-test/FactCheckResult
+   spec :- NetstatTestConfig
+   considered-map]
+  (if (<= (count spec) 0)
+    result
+    (let [elem (first spec)
+          expected-on-port (:port (val elem))
+          present-elem  (get-in considered-map [(key elem)])
+          passed? (and (some? present-elem)
+                       (= (:state present-elem)) "LISTEN"
+                       (some? (re-matches
+                                (re-pattern (str ".+:" expected-on-port))
+                                (:local-address present-elem))))]
+        (recur
+          {:test-passed (and (:test-passed result) passed?)
+           :test-message (str (:test-message result) "test netstat: " (name (key elem))
+                              ", expected port: " expected-on-port ", was running?: "
+                              (some? present-elem) ", was listening on: "
+                              (:local-address present-elem) ", passed?: " passed? "\\n")
+           :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
+           :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
+          (rest spec)
+          considered-map))))
 
-(s/defn prog-listen? :- server-test/TestResult
-  [prog :- s/Str
-   port :- s/Num
-   input :- s/Any]
-  (let [filter-result (filter
-                        #(filter-listening-prog prog port %)
-                        input)
-        passed (some? filter-result)
-        summary (if passed "TEST PASSED" "TEST FAILED")]
-    {:input input
-     :test-passed passed
-     :test-message (str "test for : " prog ", " port " summary: " summary)
-     :summary summary}))
+(s/defn result-to-map
+  [input :- (seq netstat-fact/NetstatResult)]
+  (apply merge (map (fn [e] {(keyword (:process-name e)) e}) input)))
 
+(s/defn test-netstat-internal :- server-test/TestResult
+  [test-config :- NetstatTestConfig
+   input :- (seq netstat-fact/NetstatResult)]
+  (let [considered-map (result-to-map input)
+        fact-result (fact-check server-test/fact-check-seed test-config considered-map)]
+    (server-test/fact-result-to-test-result input fact-result)))
 
-
-(s/defn test-prog-listen :- server-test/TestActionResult
-  [prog :- s/Str
-   port :- s/Num]
+(s/defn test-netstat :- server-test/TestActionResult
+  [test-config :- NetstatTestConfig]
   (server-test/test-it
     netstat-fact/fact-id-netstat
-    #(prog-listen? prog port %)))
+    #(test-netstat-internal test-config %)))

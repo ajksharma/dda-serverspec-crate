@@ -23,37 +23,39 @@
     [dda.pallet.crate.dda-servertest-crate.test.netstat :as sut]))
 
 
-(def named-netastat-line
-  {:foreign-address ":::*",
-   :local-address ":::80",
-   :recv-q "0",
-   :inode "44161",
-   :state "LISTEN",
-   :process-name "apache2",
-   :proto "tcp6",
-   :pid "4135",
-   :send-q "0",
-   :user "0"})
+(def test-config-1 {:not-running {:port 22}
+                    :apache2 {:port 80}
+                    :sshd {:port 22}})
+(def test-config-2 {:not-running {:port 22}
+                    :apache2 {:port 81}
+                    :sshd {:port 22}})
 
-(deftest test-filter-for-listening-prog
-  (testing
-    "test filtering for listening prog"
-      (is (sut/filter-listening-prog
-            "apache2"
-            80
-            named-netastat-line))
-      (is (not (sut/filter-listening-prog
-                 "sshd"
-                 80
-                 named-netastat-line)))
-      (is (not (sut/filter-listening-prog
-                 "apache2"
-                 81
-                 named-netastat-line)))))
+(def input
+  '({:foreign-address ":::*",
+     :local-address ":::80",
+     :recv-q "0",
+     :inode "44161",
+     :state "LISTEN",
+     :process-name "apache2",
+     :proto "tcp6",
+     :pid "4135",
+     :send-q "0",
+     :user "0"}
+    {:foreign-address "0.0.0.0:*",
+     :local-address "0 0.0.0.0:22",
+     :recv-q "0",
+     :inode "10289",
+     :state "LISTEN",
+     :process-name "sshd",
+     :proto "tcp",
+     :pid "974",
+     :send-q "0",
+     :user "0"}))
 
-
-
-(deftest test-port
-  (testing
-    "test the listen port test"
-      (is (sut/prog-listen? "apache2" 80 [named-netastat-line]))))
+(deftest test-netstat-internal
+ (testing
+   "test test-netstat-internal"
+   (is (= 1
+          (:no-failed (sut/test-netstat-internal test-config-1 input))))
+   (is (= 2
+          (:no-failed (sut/test-netstat-internal test-config-2 input))))))

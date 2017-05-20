@@ -21,11 +21,17 @@
     [pallet.crate :as crate]
     [pallet.actions :as actions]))
 
-(def TestResult
-  {:input s/Any
-   :test-passed s/Bool
+(def FactCheckResult
+  {:test-passed s/Bool
    :test-message s/Str
-   :summary s/Str})
+   :no-passed s/Num
+   :no-failed s/Num})
+
+(def TestResult
+  (merge
+    FactCheckResult
+    {:input s/Any
+     :summary s/Str}))
 
 (def TestActionResult
   {:context s/Str
@@ -34,6 +40,22 @@
    :out s/Str
    :exit s/Num
    :summary s/Str})
+
+(def fact-check-seed
+ {:test-passed true
+  :test-message ""
+  :no-passed 0
+  :no-failed 0})
+
+(s/defn fact-result-to-test-result :- TestResult
+  [input :- s/Any
+   fact-result :- FactCheckResult]
+  (merge
+    fact-result
+    {:input input
+     :summary (str (if (:test-passed fact-result) "PASSED" "FAILED")
+                   ", tests failed: " (:no-failed fact-result)
+                   ", tests passed: " (:no-passed fact-result))}))
 
 (s/defn test-action-result :- TestActionResult
   [context :- s/Str
