@@ -22,16 +22,17 @@
     [dda.pallet.crate.dda-servertest-crate.test.netstat :as sut]))
 
 
-(def test-config-1 {:not-running {:port 22}
-                    :apache2 {:port 80}
-                    :sshd {:port 22}})
-(def test-config-2 {:not-running {:port 22}
-                    :apache2 {:port 81}
-                    :sshd {:port 22}})
+(def test-config-1 {:not-running {:port "22"}
+                    :apache2 {:port "80"}
+                    :sshd {:port "22"}})
+(def test-config-2 {:not-running {:port "22"}
+                    :apache2 {:port "81"}
+                    :sshd {:port "22"}})
 
 (def input
   '({:foreign-address ":::*",
-     :local-address ":::80",
+     :local-ip "::",
+     :local-port "80",
      :recv-q "0",
      :inode "44161",
      :state "LISTEN",
@@ -41,7 +42,8 @@
      :send-q "0",
      :user "0"}
     {:foreign-address "0.0.0.0:*",
-     :local-address "0 0.0.0.0:22",
+     :local-ip "0 0.0.0.0",
+     :local-port "22",
      :recv-q "0",
      :inode "10289",
      :state "LISTEN",

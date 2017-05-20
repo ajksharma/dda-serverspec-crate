@@ -36,7 +36,8 @@
    (s/optional-key :file-fact) [s/Str]
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
-   (s/optional-key :file-test) {s/Keyword {:exist? s/Bool}}})
+   (s/optional-key :file-test) {s/Keyword {:path s/Str
+                                           :exist? s/Bool}}})
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
