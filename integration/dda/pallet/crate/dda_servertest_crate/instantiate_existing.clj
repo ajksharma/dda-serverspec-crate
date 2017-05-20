@@ -30,7 +30,8 @@
   {:login "jem"
    :password "test1234"})
 
-(def domain-config {:file {:root-sth {:path "/root"
+(def domain-config {:netstat {:sshd {:port "22"}}
+                    :file {:root-sth {:path "/root"
                                       :exist? true}
                            :etc {:path "/etc"
                                  :exist? true}
