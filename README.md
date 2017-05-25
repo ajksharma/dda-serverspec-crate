@@ -3,12 +3,12 @@
 This crate provides integration tests for servers. Tests are driven by the pallet-node and executed either remote (by ssh) or on localhost (direct).
 Tests are executed as follows:
 1. phase settings
-  1. execute a minimal bash on system under test
-  2. parse script output in clojure.
-  3. store parsed output as fact in session
+   1. execute a minimal bash on system under test
+   2. parse script output in clojure.
+   3. store parsed output as fact in session
 2. phase test
-  1. get fact from session
-  2. compare expectation against fact
+   1. get fact from session
+   2. compare expectation against fact
 
 ## compatability
 dda-pallet is compatible to the following versions
