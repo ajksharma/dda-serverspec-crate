@@ -35,10 +35,11 @@
     {:dda-servertest crate/ServerTestConfig}}})
 
 (s/defn ^:always-validate crate-stack-configuration :- ServertestCrateStackConfig
-  [domain-config :- ServerTestDomainConfig]
+  [domain-config :- ServerTestDomainConfig
+   & {:keys [group-key] :or {group-key :dda-servertest-group}}]
   (let [{:keys [os-user]} domain-config]
     {:group-specific-config
-      {:dda-servertest-group
+      {group-key
         {:dda-servertest
          (merge
           (if (contains? domain-config :package)
