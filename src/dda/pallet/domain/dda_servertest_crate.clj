@@ -31,7 +31,7 @@
 
 (def ServertestCrateStackConfig
   {:group-specific-config
-   {:dda-servertest-group
+   {s/Keyword
     {:dda-servertest crate/ServerTestConfig}}})
 
 (defn crate-stack-configuration
