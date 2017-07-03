@@ -34,25 +34,27 @@
    {:dda-servertest-group
     {:dda-servertest crate/ServerTestConfig}}})
 
-(s/defn ^:always-validate crate-stack-configuration :- ServertestCrateStackConfig
-  [domain-config :- ServerTestDomainConfig
-   & {:keys [group-key] :or {group-key :dda-servertest-group}}]
-  (let [{:keys [os-user]} domain-config]
-    {:group-specific-config
-      {group-key
-        {:dda-servertest
-         (merge
-          (if (contains? domain-config :package)
-            {:package-fact nil
-             :package-test (:package domain-config)}
-            {})
-          (if (contains? domain-config :netstat)
-            {:netstat-fact nil
-             :netstat-test (:netstat domain-config)}
-            {})
-          (if (contains? domain-config :file)
-            {:file-fact (map #(:path %) (vals (:file domain-config)))
-             :file-test (:file domain-config)}))}}}))
+(defn crate-stack-configuration
+  [domain-config & {:keys [group-key] :or {group-key :dda-servertest-group}}]
+  (s/validate s/Keyword group-key)
+  (s/validate ServerTestDomainConfig domain-config)
+  (s/validate ServertestCrateStackConfig
+    (let [{:keys [os-user]} domain-config]
+      {:group-specific-config
+        {group-key
+          {:dda-servertest
+           (merge
+            (if (contains? domain-config :package)
+              {:package-fact nil
+               :package-test (:package domain-config)}
+              {})
+            (if (contains? domain-config :netstat)
+              {:netstat-fact nil
+               :netstat-test (:netstat domain-config)}
+              {})
+            (if (contains? domain-config :file)
+              {:file-fact (map #(:path %) (vals (:file domain-config)))
+               :file-test (:file domain-config)}))}}})))
 
 (s/defn ^:always-validate dda-servertest-group
   [stack-config :- ServertestCrateStackConfig]
