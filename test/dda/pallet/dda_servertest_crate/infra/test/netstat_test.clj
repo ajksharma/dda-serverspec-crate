@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.dda-servertest-crate.test.netstat-test
+(ns dda.pallet.dda-servertest-crate.infra.test.netstat-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.dda-servertest-crate.test.netstat :as sut]))
+    [dda.pallet.dda-servertest-crate.infra.test.netstat :as sut]))
 
 
 (def test-config-1 {:not-running {:port "22"}

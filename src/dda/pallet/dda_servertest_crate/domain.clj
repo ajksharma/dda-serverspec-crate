@@ -14,14 +14,14 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.domain.dda-servertest-crate
+(ns dda.pallet.dda-servertest-crate.domain
   (:require
    [pallet.api :as api]
    [schema.core :as s]
    [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
    [dda.pallet.core.dda-crate :as dda-crate]
    [dda.pallet.dda-config-crate.infra :as config-crate]
-   [dda.pallet.crate.dda-servertest-crate :as crate]))
+   [dda.pallet.dda-servertest-crate.infra :as crate]))
 
 (def ServerTestDomainConfig
  {(s/optional-key :package) {s/Keyword {:installed? s/Bool}}

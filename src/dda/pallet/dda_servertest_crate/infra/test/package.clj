@@ -13,11 +13,11 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-(ns dda.pallet.crate.dda-servertest-crate.test.package
+(ns dda.pallet.dda-servertest-crate.infra.test.package
   (:require
     [schema.core :as s]
-    [dda.pallet.crate.dda-servertest-crate.core.test :as server-test]
-    [dda.pallet.crate.dda-servertest-crate.fact.package :as package-fact]))
+    [dda.pallet.dda-servertest-crate.infra.core.test :as server-test]
+    [dda.pallet.dda-servertest-crate.infra.fact.package :as package-fact]))
 
 (def PackageTestConfig {s/Keyword {:installed? s/Bool}})
 

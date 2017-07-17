@@ -8,7 +8,7 @@
                  [com.palletops/pallet "0.8.12"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
                  [org.domaindrivenarchitecture/dda-pallet-commons "0.3.1"]
-                 [dda/dda-pallet "0.5.0-SNAPSHOT"]]
+                 [dda/dda-pallet "0.5.1-SNAPSHOT"]]
   :source-paths ["src" "test-utils"]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
@@ -17,7 +17,6 @@
   :profiles {:dev {:source-paths ["integration"]
                    :dependencies
                    [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2"]
-                    [org.clojure/test.check "0.9.0"]
                     [com.palletops/pallet "0.8.12" :classifier "tests"]
                     [ch.qos.logback/logback-classic "1.1.8"]
                     [org.slf4j/jcl-over-slf4j "1.7.22"]]

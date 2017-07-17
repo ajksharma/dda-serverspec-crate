@@ -13,7 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-(ns dda.pallet.crate.dda-servertest-crate
+(ns dda.pallet.dda-servertest-crate.infra
   (:require
     [clojure.tools.logging :as logging]
     [schema.core :as s]
@@ -21,11 +21,11 @@
     [pallet.actions :as actions]
     [pallet.crate :as crate]
     [dda.pallet.core.dda-crate :as dda-crate]
-    [dda.pallet.crate.dda-servertest-crate.fact.package :as package-fact]
-    [dda.pallet.crate.dda-servertest-crate.fact.netstat :as netstat-fact]
-    [dda.pallet.crate.dda-servertest-crate.fact.file :as file-fact]
-    [dda.pallet.crate.dda-servertest-crate.test.package :as package-test]
-    [dda.pallet.crate.dda-servertest-crate.test.netstat :as netstat-test]))
+    [dda.pallet.dda-servertest-crate.infra.fact.package :as package-fact]
+    [dda.pallet.dda-servertest-crate.infra.fact.netstat :as netstat-fact]
+    [dda.pallet.dda-servertest-crate.infra.fact.file :as file-fact]
+    [dda.pallet.dda-servertest-crate.infra.test.package :as package-test]
+    [dda.pallet.dda-servertest-crate.infra.test.netstat :as netstat-test]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])

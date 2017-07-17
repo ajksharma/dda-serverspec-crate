@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.dda-servertest-crate.test.package-test
+(ns dda.pallet.dda-servertest-crate.infra.test.package-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.dda-servertest-crate.test.package :as sut]))
+    [dda.pallet.dda-servertest-crate.infra.test.package :as sut]))
 
 
 (def test-config {:missing {:installed? true}

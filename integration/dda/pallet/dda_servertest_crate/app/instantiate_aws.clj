@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.dda-servertest-crate.instantiate-aws
+(ns dda.pallet.dda-servertest-crate.app.instantiate-aws
   (:require
     [clojure.inspector :as inspector]
     [schema.core :as s]
@@ -25,7 +25,7 @@
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
     [dda.cm.operation :as operation]
     [dda.cm.aws :as cloud-target]
-    [dda.pallet.domain.dda-servertest-crate :as domain]))
+    [dda.pallet.dda-servertest-crate.domain :as domain]))
 
 (def domain-config {:netstat {:sshd {:port "22"}}})
 

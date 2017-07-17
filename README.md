@@ -37,7 +37,7 @@ You might also use the whole file as a resource which means we just create a cop
   (:require
     [dda.cm.operation :as operation]
     [dda.cm.existing :as existing]
-    [dda.pallet.domain.dda-servertest-crate :as domain]))
+    [dda.pallet.dda-servertest-crate.domain :as domain]))
 
 (def provisioning-ip
   "[your ip]]")

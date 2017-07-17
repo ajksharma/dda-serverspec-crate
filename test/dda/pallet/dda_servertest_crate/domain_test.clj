@@ -15,12 +15,12 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.domain.dda-servertest-crate-test
+(ns dda.pallet.dda-servertest-crate.domain-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.domain.dda-servertest-crate :as sut]))
+    [dda.pallet.dda-servertest-crate.domain :as sut]))
 
 (def domain-config
   {:netstat {:sshd {:port "22"}}

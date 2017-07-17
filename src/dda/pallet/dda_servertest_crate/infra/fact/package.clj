@@ -14,10 +14,10 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.dda-servertest-crate.fact.package
+(ns dda.pallet.dda-servertest-crate.infra.fact.package
   (:require
    [schema.core :as s]
-   [dda.pallet.crate.dda-servertest-crate.core.fact :refer :all]))
+   [dda.pallet.dda-servertest-crate.infra.core.fact :refer :all]))
 
 (def fact-id-package ::package)
 

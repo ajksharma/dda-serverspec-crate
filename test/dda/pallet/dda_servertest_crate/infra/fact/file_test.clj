@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.dda-servertest-crate.fact.file-test
+(ns dda.pallet.dda-servertest-crate.infra.fact.file-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.dda-servertest-crate.fact.file :as sut]))
+    [dda.pallet.dda-servertest-crate.infra.fact.file :as sut]))
 
 (def one-file
   "/file'17418'mje'mje'600'f'Sun Mar 12 13:16:42.0709127452 2017'Sun Mar 12 13:16:42.0709127452 2017'Sun Mar 12 13:16:51.0409287069 2017'")

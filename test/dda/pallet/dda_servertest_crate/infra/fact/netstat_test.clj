@@ -15,12 +15,12 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.crate.dda-servertest-crate.fact.netstat-test
+(ns dda.pallet.dda-servertest-crate.infra.fact.netstat-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.crate.dda-servertest-crate.fact.netstat :as sut]))
+    [dda.pallet.dda-servertest-crate.infra.fact.netstat :as sut]))
 
 
 (def netstat-resource1

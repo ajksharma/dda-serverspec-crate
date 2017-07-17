@@ -14,11 +14,11 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.dda-servertest-crate.fact.netstat
+(ns dda.pallet.dda-servertest-crate.infra.fact.netstat
   (:require
     [schema.core :as s]
     [clojure.string :as cs]
-    [dda.pallet.crate.dda-servertest-crate.core.fact :refer :all]))
+    [dda.pallet.dda-servertest-crate.infra.core.fact :refer :all]))
 
 (def fact-id-netstat ::netstat)
 
