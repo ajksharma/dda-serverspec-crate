@@ -18,20 +18,18 @@
   (:require
     [clojure.inspector :as inspector]
     [schema.core :as s]
-    [pallet.api :as api]
-    [pallet.compute :as compute]
     [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as crypto]
     [org.domaindrivenarchitecture.pallet.commons.session-tools :as session-tools]
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
     [dda.cm.operation :as operation]
     [dda.cm.aws :as cloud-target]
-    [dda.pallet.dda-servertest-crate.domain :as domain]))
+    [dda.pallet.dda-servertest-crate.app :as app]))
 
 (def domain-config {:netstat {:sshd {:port "22"}}})
 
 (defn integrated-group-spec [count]
   (merge
-    (domain/dda-servertest-group (domain/crate-stack-configuration domain-config))
+    (app/servertest-group-spec (app/app-configuration domain-config))
     (cloud-target/node-spec "jem")
     {:count count}))
 

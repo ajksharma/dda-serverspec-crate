@@ -16,12 +16,9 @@
 
 (ns dda.pallet.dda-servertest-crate.domain
   (:require
-   [pallet.api :as api]
    [schema.core :as s]
    [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
-   [dda.pallet.core.dda-crate :as dda-crate]
-   [dda.pallet.dda-config-crate.infra :as config-crate]
-   [dda.pallet.dda-servertest-crate.infra :as crate]))
+   [dda.pallet.dda-servertest-crate.infra :as infra]))
 
 (def ServerTestDomainConfig
  {(s/optional-key :package) {s/Keyword {:installed? s/Bool}}
@@ -29,37 +26,19 @@
   (s/optional-key :file) {s/Keyword {:path s/Str
                                      (s/optional-key :exist?) s/Bool}}})
 
-(def ServertestCrateStackConfig
-  {:group-specific-config
-   {s/Keyword
-    {:dda-servertest crate/ServerTestConfig}}})
-
-(defn crate-stack-configuration
-  [domain-config & {:keys [group-key] :or {group-key :dda-servertest-group}}]
-  (s/validate s/Keyword group-key)
-  (s/validate ServerTestDomainConfig domain-config)
-  (s/validate ServertestCrateStackConfig
-    (let [{:keys [os-user]} domain-config]
-      {:group-specific-config
-        {group-key
-          {:dda-servertest
-           (merge
-            (if (contains? domain-config :package)
-              {:package-fact nil
-               :package-test (:package domain-config)}
-              {})
-            (if (contains? domain-config :netstat)
-              {:netstat-fact nil
-               :netstat-test (:netstat domain-config)}
-              {})
-            (if (contains? domain-config :file)
-              {:file-fact (map #(:path %) (vals (:file domain-config)))
-               :file-test (:file domain-config)}))}}})))
-
-(s/defn ^:always-validate dda-servertest-group
-  [stack-config :- ServertestCrateStackConfig]
-  (let []
-    (api/group-spec
-      "dda-servertest-group"
-      :extends [(config-crate/with-config stack-config)
-                crate/with-servertest])))
+(s/defn ^:always-validate infra-configuration
+ [domain-config :- ServerTestDomainConfig]
+ (let [{:keys [os-user]} domain-config]
+  {infra/facility
+   (merge
+    (if (contains? domain-config :package)
+      {:package-fact nil
+       :package-test (:package domain-config)}
+      {})
+    (if (contains? domain-config :netstat)
+      {:netstat-fact nil
+       :netstat-test (:netstat domain-config)}
+      {})
+    (if (contains? domain-config :file)
+      {:file-fact (map #(:path %) (vals (:file domain-config)))
+       :file-test (:file domain-config)}))}))

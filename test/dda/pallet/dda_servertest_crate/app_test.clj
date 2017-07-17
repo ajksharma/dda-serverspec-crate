@@ -15,12 +15,12 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.dda-servertest-crate.domain-test
+(ns dda.pallet.dda-servertest-crate.app-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.dda-servertest-crate.domain :as sut]))
+    [dda.pallet.dda-servertest-crate.app :as sut]))
 
 (def domain-config
   {:netstat {:sshd {:port "22"}}
@@ -32,7 +32,7 @@
           :absent {:path "/absent"
                    :exist? false}}})
 
-(deftest test-dda-servertest-crate-stack-configuration
+(deftest test-app-configuration
   (testing
     "test creation of stack configuration"
       (is (=
@@ -47,4 +47,4 @@
                    :file-test {:absent {:path "/absent", :exist? false},
                                :etc {:path "/etc", :exist? true},
                                :root-sth {:path "/root", :exist? true}}}}}}
-            (sut/crate-stack-configuration domain-config)))))
+            (sut/app-configuration domain-config)))))

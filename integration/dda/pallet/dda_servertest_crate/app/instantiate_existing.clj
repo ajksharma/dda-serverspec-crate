@@ -21,7 +21,7 @@
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
     [dda.cm.operation :as operation]
     [dda.cm.existing :as existing]
-    [dda.pallet.dda-servertest-crate.domain :as domain]))
+    [dda.pallet.dda-servertest-crate.app :as app]))
 
 (def provisioning-ip
   "192.168.56.103")
@@ -43,7 +43,7 @@
 
 (defn integrated-group-spec []
   (merge
-    (domain/dda-servertest-group (domain/crate-stack-configuration domain-config))
+    (app/servertest-group-spec (app/app-configuration domain-config))
     (existing/node-spec provisioning-user)))
 
 (defn apply-install []
