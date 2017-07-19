@@ -17,7 +17,7 @@
 (ns dda.pallet.dda-servertest-crate.app.instantiate-aws
   (:require
     [clojure.inspector :as inspector]
-    [schema.core :as s]
+    [pallet.repl :as pr]
     [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as crypto]
     [org.domaindrivenarchitecture.pallet.commons.session-tools :as session-tools]
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
@@ -25,7 +25,9 @@
     [dda.cm.aws :as cloud-target]
     [dda.pallet.dda-servertest-crate.app :as app]))
 
-(def domain-config {:netstat {:sshd {:port "22"}}})
+(def domain-config {:netstat {:sshd {:port "22"}}
+                    :file '({:path "/root"}
+                            {:path "/etc"})})
 
 (defn integrated-group-spec [count]
   (merge
@@ -35,12 +37,16 @@
 
 (defn converge-install
   ([count]
-   (operation/do-converge-install (cloud-target/provider) (integrated-group-spec count)))
+   (pr/session-summary
+    (operation/do-converge-install (cloud-target/provider) (integrated-group-spec count))))
   ([key-id key-passphrase count]
-   (operation/do-converge-install (cloud-target/provider key-id key-passphrase) (integrated-group-spec count))))
+   (pr/session-summary
+    (operation/do-converge-install (cloud-target/provider key-id key-passphrase) (integrated-group-spec count)))))
 
 (defn server-test
   ([count]
-   (operation/do-server-test (cloud-target/provider) (integrated-group-spec count)))
+   (pr/session-summary
+    (operation/do-server-test (cloud-target/provider) (integrated-group-spec count))))
   ([key-id key-passphrase count]
+   ;(pr/session-summary
    (operation/do-server-test (cloud-target/provider key-id key-passphrase) (integrated-group-spec count))))

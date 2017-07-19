@@ -26,23 +26,22 @@
   (s/optional-key :file) [{:path s/Str
                            (s/optional-key :exist?) s/Bool}]})
 
-(defn- path-2-key [path]
-  (keyword (clojure.string/replace path "/" "_")))
+(def InfraResult {infra/facility infra/ServerTestConfig})
 
 (defn- domain-2-filefacts [file-domain-config]
   (apply merge
     (map
-     #(let [path (:path %)] {(path-2-key path) {:path path}})
+     #(let [path (:path %)] {(infra/path-to-keyword path) {:path path}})
      file-domain-config)))
 
 (defn- domain-2-filetests [file-domain-config]
  (apply merge
    (map
-    #(let [{:keys [path exists?] :or {exists? true}} %]
-          {(path-2-key path) {:exists? exists?}})
+    #(let [{:keys [path exist?] :or {exist? true}} %]
+          {(infra/path-to-keyword path) {:exist? exist?}})
     file-domain-config)))
 
-(s/defn ^:always-validate infra-configuration
+(s/defn ^:allways-validate infra-configuration :- InfraResult
  [domain-config :- ServerTestDomainConfig]
  (let [{:keys [file package netstat]} domain-config]
   {infra/facility

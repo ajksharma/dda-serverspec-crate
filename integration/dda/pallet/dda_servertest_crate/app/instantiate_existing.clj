@@ -17,6 +17,7 @@
 (ns dda.pallet.dda-servertest-crate.app.instantiate-existing
   (:require
     [clojure.inspector :as inspector]
+    [pallet.repl :as pr]
     [org.domaindrivenarchitecture.pallet.commons.session-tools :as session-tools]
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
     [dda.cm.operation :as operation]
@@ -31,12 +32,9 @@
    :password "test1234"})
 
 (def domain-config {:netstat {:sshd {:port "22"}}
-                    :file {:root-sth {:path "/root"
-                                      :exist? true}
-                           :etc {:path "/etc"
-                                 :exist? true}
-                           :absent {:path "/absent"
-                                    :exist? false}}})
+                    :file '({:path "/root"}
+                            {:path "/etc"}
+                            {:path "/absent" :exist? false})})
 
 (defn provider []
   (existing/provider provisioning-ip "node-id" "dda-servertest-group"))
@@ -47,10 +45,13 @@
     (existing/node-spec provisioning-user)))
 
 (defn apply-install []
-  (operation/do-apply-install (provider) (integrated-group-spec)))
+  (pr/session-summary
+    (operation/do-apply-install (provider) (integrated-group-spec))))
 
 (defn apply-config []
-  (operation/do-apply-configure (provider) (integrated-group-spec)))
+  (pr/session-summary
+    (operation/do-apply-configure (provider) (integrated-group-spec))))
 
 (defn server-test []
-  (operation/do-server-test (provider) (integrated-group-spec)))
+  (pr/session-summary
+    (operation/do-server-test (provider) (integrated-group-spec))))

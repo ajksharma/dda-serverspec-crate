@@ -33,7 +33,7 @@
           expected-exist? (:exist? (val elem))
           fact-elem  (get-in fact-map [(key elem)])
           fact-exist? (:exist? fact-elem)
-          passed? (= expected-exist?)]
+          passed? (= expected-exist? fact-exist?)]
         (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test file: " (name (key elem))
@@ -44,22 +44,11 @@
           (rest spec)
           fact-map))))
 
-
-
-(s/defn result-to-map
-  "Convert results to result map."
-  [input :- (seq file-fact/FileFactResults)]
-  ;TODO - find the adaequate mapping here !
-  (apply merge (map (fn [e] {(keyword (:process-name e)) e}) input)))
-
-
-
 (s/defn test-file-internal :- server-test/TestResult
   "Exposing fact input to signature for tests."
   [test-config :- FileTestConfig
-   input :- (seq file-fact/FileFactResults)]
-  (let [considered-map (result-to-map input)
-        fact-result (fact-check server-test/fact-check-seed test-config considered-map)]
+   input :- {s/Keyword file-fact/FileFactResults}]
+  (let [fact-result (fact-check server-test/fact-check-seed test-config input)]
     (server-test/fact-result-to-test-result input fact-result)))
 
 (s/defn test-file :- server-test/TestActionResult

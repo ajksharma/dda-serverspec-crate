@@ -34,10 +34,14 @@
 (def ServerTestConfig
   {(s/optional-key :package-fact) s/Any
    (s/optional-key :netstat-fact) s/Any
-   (s/optional-key :file-fact) [s/Str]
+   (s/optional-key :file-fact) file-fact/FileFactConfig
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
    (s/optional-key :file-test) file-test/FileTestConfig})
+
+(s/defn ^:always-validate path-to-keyword :- s/Keyword
+  [path :- s/Str]
+  (file-fact/path-to-keyword path))
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]

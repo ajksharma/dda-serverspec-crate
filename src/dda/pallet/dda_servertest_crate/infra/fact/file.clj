@@ -24,7 +24,7 @@
 
 (def fact-id-file ::file)
 
-(def FileFactConfig {:file-paths [s/Str]})
+(def FileFactConfig {s/Keyword {:path s/Str}})
 
 (def FileFactResult {:path s/Str
                      :exist? s/Bool
@@ -40,7 +40,7 @@
 (def FileFactResults {s/Keyword FileFactResult})
 
 (s/defn path-to-keyword :- s/Keyword
-  [path :- s/Str] (keyword (clojure.string/replace path #"/" "-")))
+  [path :- s/Str] (keyword (clojure.string/replace path #"/" "_")))
 
 (s/defn parse-find-line :- FileFactResult
   [script-result-line :- s/Str]
@@ -63,18 +63,18 @@
   (apply merge
     (map create-line-parse-result (clojure.string/split script-result #"\n"))))
 
-(defn build-find-line
+(s/defn build-find-line
   "Builds the string for executing the find commands."
-  [path]
-  (str "find " path " -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\""))
+  [fact-config]
+  (str "find " (:path (val fact-config)) " -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\""))
 
-(defn collect-file-fact
+(s/defn collect-file-fact
   "Collects the file facts."
-  [paths]
+  [fact-configs :- FileFactConfig]
   (collect-fact
     fact-id-file
     (str
       (clojure.string/join
-       "; " (map #(build-find-line %) paths))
+       "; " (map #(build-find-line %) fact-configs))
       "; exit 0")
     :transform-fn parse-find))

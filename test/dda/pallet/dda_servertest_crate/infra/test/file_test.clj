@@ -22,41 +22,28 @@
     [dda.pallet.dda-servertest-crate.infra.test.file :as sut]))
 
 
-(def test-config-1 {:k1 {:path "/etc/hosts"
-                         :exist? true}
-                    :k2 {:path "/root/.ssh/authorized_keys"
-                         :exist? false}})
+(def test-config-1 {:_etc_hosts {:exist? true}
+                    :_root_.ssh_authorized_keys {:exist? false}})
+
+(def test-config-2 {:_etc_hosts {:exist? false}
+                    :_root_.ssh_authorized_keys {:exist? false}})
+
+(def test-config-3 {:_etc_hosts {:exist? false}
+                    :_root_.ssh_authorized_keys {:exist? true}})
+
 
 (def input
-  '({:path "/etc/hosts"
-     :exist? true}
-    {:path "/root/.ssh/authorized_keys"
-     :exist? false}))
-;
-;(deftest test-netstat-internal
-; (testing
-;   "test test-netstat-internal"
-;   (is (= 0
-;          (:no-failed (sut/test-netstat-internal {} input))))
-;   (is (= 1
-;          (:no-failed (sut/test-netstat-internal test-config-1 input))))
-;   (is (= 2
-;          (:no-failed (sut/test-netstat-internal test-config-2 input))))))
-;
-;(deftest retest-issues
-; (testing
-;   "test issues"
-;   (is (= 1
-;          (:no-failed (sut/test-netstat-internal
-;                       {:sshd {:port 22}}
-;                       ({:foreign-adress "0.0.0.0:*", :local-adress "0.0.0.0:22",
-;                         :recv-q "0", :inode "15261", :state "LISTEN",
-;                         :proto "tcp", :pid "1200", :process-name "sshd",
-;                         :send-q "0", :user "0"}
-;                        {:foreign-adress ":::*", :local-adress ":::22", :recv-q "0",
-;                         :inode "15263", :state "LISTEN", :proto "tcp6", :pid "1200",
-;                         :process-name "sshd", :send-q "0", :user "0"}
-;                        {:proto "udp", :recv-q "0", :send-q "0",
-;                         :local-adress "0.0.0.0:68", :foreign-adress "0.0.0.0:*",
-;                         :state "0", :user "13122", :inode "919", :pid "dhclient"})))))))
-;
+  {:_etc_hosts {:path "/etc/hosts" :exist? true}
+   :_root_.ssh_authorized_keys {:path "/root/.ssh/authorized_keys" :exist? false}})
+
+(deftest test-file-internal
+ (testing
+   "test test-file-internal"
+    (is (= 0
+          (:no-failed (sut/test-file-internal {} input))))
+    (is (= 0
+          (:no-failed (sut/test-file-internal test-config-1 input))))
+    (is (= 1
+          (:no-failed (sut/test-file-internal test-config-2 input))))
+    (is (= 2
+          (:no-failed (sut/test-file-internal test-config-3 input))))))

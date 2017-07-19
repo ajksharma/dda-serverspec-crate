@@ -34,19 +34,21 @@
 (deftest test-infra-configuration
   (testing
     "test creation of infra configuration"
-      (is (=  {:netstat-fact nil
-               :package-fact nil
-               :file-fact {:root {:path "/root"}
-                           :etc {:path "/etc"}
-                           :absent {:path "/absent"}}
-               :netstat-test {:sshd {:port "22"}}
-               :package-test {:firefox {:installed? false}}
-               :file-test {:_root {:path "/root", :exist? true}
-                           :_etc {:path "/etc", :exist? true}
-                           :_absent {:path "/absent", :exist? false}}}
+      (is (=  {:dda-servertest
+                {:netstat-fact nil
+                 :package-fact nil
+                 :file-fact {:_root {:path "/root"}
+                             :_etc {:path "/etc"}
+                             :_absent {:path "/absent"}}
+                 :netstat-test {:sshd {:port "22"}}
+                 :package-test {:firefox {:installed? false}}
+                 :file-test {:_root {:exist? true}
+                             :_etc {:exist? true},
+                             :_absent {:exist? false}}}}
             (sut/infra-configuration domain-config-1)))
-      (is (=  {:file-fact {:_etc {:path "/etc"}
-                           :_nonexist_sth {:path "/nonexist/sth"}}
-               :file-test {:_etc {:path "/etc", :exist? true}
-                           :_nonexist_sth  {:path "/:nonexist/sth ", :exist? false}}}
+      (is (=  {:dda-servertest
+                {:file-fact {:_etc {:path "/etc"}
+                             :_nonexist_sth {:path "/nonexist/sth"}}
+                 :file-test {:_etc {:exist? true},
+                             :_nonexist_sth  {:exist? false}}}}
             (sut/infra-configuration domain-config-2)))))
