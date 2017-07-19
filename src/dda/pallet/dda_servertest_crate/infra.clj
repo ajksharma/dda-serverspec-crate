@@ -25,7 +25,8 @@
     [dda.pallet.dda-servertest-crate.infra.fact.netstat :as netstat-fact]
     [dda.pallet.dda-servertest-crate.infra.fact.file :as file-fact]
     [dda.pallet.dda-servertest-crate.infra.test.package :as package-test]
-    [dda.pallet.dda-servertest-crate.infra.test.netstat :as netstat-test]))
+    [dda.pallet.dda-servertest-crate.infra.test.netstat :as netstat-test]
+    [dda.pallet.dda-servertest-crate.infra.test.file :as file-test]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])
@@ -36,8 +37,7 @@
    (s/optional-key :file-fact) [s/Str]
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
-   (s/optional-key :file-test) {s/Keyword {:path s/Str
-                                           :exist? s/Bool}}})
+   (s/optional-key :file-test) file-test/FileTestConfig})
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
@@ -56,7 +56,9 @@
     (when (contains? config :package-test)
       (package-test/test-package (:package-test config)))
     (when (contains? config :netstat-test)
-        (netstat-test/test-netstat (:netstat-test config)))))
+        (netstat-test/test-netstat (:netstat-test config)))
+    (when (contains? config :file-test)
+        (file-test/test-file (:file-test config)))))
 
 (def dda-servertest-crate
   (dda-crate/make-dda-crate

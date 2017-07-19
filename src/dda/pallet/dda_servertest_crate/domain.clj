@@ -23,22 +23,39 @@
 (def ServerTestDomainConfig
  {(s/optional-key :package) {s/Keyword {:installed? s/Bool}}
   (s/optional-key :netstat) {s/Keyword {:port s/Str}}
-  (s/optional-key :file) {s/Keyword {:path s/Str
-                                     (s/optional-key :exist?) s/Bool}}})
+  (s/optional-key :file) [{:path s/Str
+                           (s/optional-key :exist?) s/Bool}]})
+
+(defn- path-2-key [path]
+  (keyword (clojure.string/replace path "/" "_")))
+
+(defn- domain-2-filefacts [file-domain-config]
+  (apply merge
+    (map
+     #(let [path (:path %)] {(path-2-key path) {:path path}})
+     file-domain-config)))
+
+(defn- domain-2-filetests [file-domain-config]
+ (apply merge
+   (map
+    #(let [{:keys [path exists?] :or {exists? true}} %]
+          {(path-2-key path) {:exists? exists?}})
+    file-domain-config)))
 
 (s/defn ^:always-validate infra-configuration
  [domain-config :- ServerTestDomainConfig]
- (let [{:keys [os-user]} domain-config]
+ (let [{:keys [file package netstat]} domain-config]
   {infra/facility
    (merge
     (if (contains? domain-config :package)
-      {:package-fact nil
-       :package-test (:package domain-config)}
-      {})
+        {:package-fact nil
+         :package-test package}
+        {})
     (if (contains? domain-config :netstat)
-      {:netstat-fact nil
-       :netstat-test (:netstat domain-config)}
-      {})
+        {:netstat-fact nil
+         :netstat-test netstat}
+        {})
     (if (contains? domain-config :file)
-      {:file-fact (map #(:path %) (vals (:file domain-config)))
-       :file-test (:file domain-config)}))}))
+        {:file-fact (domain-2-filefacts file)
+         :file-test (domain-2-filetests file)}
+        {}))}))
