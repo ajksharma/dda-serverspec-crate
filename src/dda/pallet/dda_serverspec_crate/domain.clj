@@ -17,7 +17,7 @@
 (ns dda.pallet.dda-serverspec-crate.domain
   (:require
    [schema.core :as s]
-   [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
+   [dda.config.commons.map-utils :as map-utils]
    [dda.pallet.dda-serverspec-crate.infra :as infra]))
 
 (def ServerTestDomainConfig

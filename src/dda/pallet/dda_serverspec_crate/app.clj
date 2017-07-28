@@ -19,7 +19,7 @@
    [schema.core :as s]
    [dda.cm.group :as group]
    [dda.config.commons.map-utils :as mu]
-   [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
+   [dda.config.commons.map-utils :as map-utils]
    [dda.pallet.core.dda-crate :as dda-crate]
    [dda.pallet.dda-config-crate.infra :as config-crate]
    [dda.pallet.dda-serverspec-crate.infra :as infra]
