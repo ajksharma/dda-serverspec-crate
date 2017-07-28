@@ -15,12 +15,12 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.dda-servertest-crate.infra.fact.package-test
+(ns dda.pallet.dda-serverspec-crate.infra.fact.package-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.dda-servertest-crate.infra.fact.package :as sut]))
+    [dda.pallet.dda-serverspec-crate.infra.fact.package :as sut]))
 
 
 (def package-resource "Desired=Unknown/Install/Remove/Purge/Hold

@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-servertest-crate.app
+(ns dda.pallet.dda-serverspec-crate.app
   (:require
    [schema.core :as s]
    [dda.cm.group :as group]
@@ -22,8 +22,8 @@
    [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
    [dda.pallet.core.dda-crate :as dda-crate]
    [dda.pallet.dda-config-crate.infra :as config-crate]
-   [dda.pallet.dda-servertest-crate.infra :as infra]
-   [dda.pallet.dda-servertest-crate.domain :as domain]))
+   [dda.pallet.dda-serverspec-crate.infra :as infra]
+   [dda.pallet.dda-serverspec-crate.domain :as domain]))
 
 (def ServertestAppConfig
   {:group-specific-config

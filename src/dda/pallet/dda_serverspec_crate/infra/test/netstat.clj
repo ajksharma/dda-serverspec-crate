@@ -14,11 +14,11 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-servertest-crate.infra.test.netstat
+(ns dda.pallet.dda-serverspec-crate.infra.test.netstat
   (:require
     [schema.core :as s]
-    [dda.pallet.dda-servertest-crate.infra.fact.netstat :as netstat-fact]
-    [dda.pallet.dda-servertest-crate.infra.core.test :as server-test]))
+    [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
+    [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
 (def NetstatTestConfig {s/Keyword {:port s/Str}})
 

@@ -14,44 +14,39 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-servertest-crate.app.instantiate-existing
+(ns dda.pallet.dda-serverspec-crate.app.instantiate-aws
   (:require
     [clojure.inspector :as inspector]
     [pallet.repl :as pr]
+    [org.domaindrivenarchitecture.pallet.commons.encrypted-credentials :as crypto]
     [org.domaindrivenarchitecture.pallet.commons.session-tools :as session-tools]
     [org.domaindrivenarchitecture.pallet.commons.pallet-schema :as ps]
     [dda.cm.operation :as operation]
-    [dda.cm.existing :as existing]
-    [dda.pallet.dda-servertest-crate.app :as app]))
-
-(def provisioning-ip
-  "192.168.56.103")
-
-(def provisioning-user
-  {:login "jem"
-   :password "test1234"})
+    [dda.cm.aws :as cloud-target]
+    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def domain-config {:netstat {:sshd {:port "22"}}
                     :file '({:path "/root"}
-                            {:path "/etc"}
-                            {:path "/absent" :exist? false})})
+                            {:path "/etc"})})
 
-(defn provider []
-  (existing/provider provisioning-ip "node-id" "dda-servertest-group"))
-
-(defn integrated-group-spec []
+(defn integrated-group-spec [count]
   (merge
     (app/servertest-group-spec (app/app-configuration domain-config))
-    (existing/node-spec provisioning-user)))
+    (cloud-target/node-spec "jem")
+    {:count count}))
 
-(defn apply-install []
-  (pr/session-summary
-    (operation/do-apply-install (provider) (integrated-group-spec))))
+(defn converge-install
+  ([count]
+   (pr/session-summary
+    (operation/do-converge-install (cloud-target/provider) (integrated-group-spec count))))
+  ([key-id key-passphrase count]
+   (pr/session-summary
+    (operation/do-converge-install (cloud-target/provider key-id key-passphrase) (integrated-group-spec count)))))
 
-(defn apply-config []
-  (pr/session-summary
-    (operation/do-apply-configure (provider) (integrated-group-spec))))
-
-(defn server-test []
-  (pr/session-summary
-    (operation/do-server-test (provider) (integrated-group-spec))))
+(defn server-test
+  ([count]
+   (pr/session-summary
+    (operation/do-server-test (cloud-target/provider) (integrated-group-spec count))))
+  ([key-id key-passphrase count]
+   ;(pr/session-summary
+   (operation/do-server-test (cloud-target/provider key-id key-passphrase) (integrated-group-spec count))))

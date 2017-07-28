@@ -13,7 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-(ns dda.pallet.dda-servertest-crate.infra
+(ns dda.pallet.dda-serverspec-crate.infra
   (:require
     [clojure.tools.logging :as logging]
     [schema.core :as s]
@@ -21,12 +21,12 @@
     [pallet.actions :as actions]
     [pallet.crate :as crate]
     [dda.pallet.core.dda-crate :as dda-crate]
-    [dda.pallet.dda-servertest-crate.infra.fact.package :as package-fact]
-    [dda.pallet.dda-servertest-crate.infra.fact.netstat :as netstat-fact]
-    [dda.pallet.dda-servertest-crate.infra.fact.file :as file-fact]
-    [dda.pallet.dda-servertest-crate.infra.test.package :as package-test]
-    [dda.pallet.dda-servertest-crate.infra.test.netstat :as netstat-test]
-    [dda.pallet.dda-servertest-crate.infra.test.file :as file-test]))
+    [dda.pallet.dda-serverspec-crate.infra.fact.package :as package-fact]
+    [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
+    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
+    [dda.pallet.dda-serverspec-crate.infra.test.package :as package-test]
+    [dda.pallet.dda-serverspec-crate.infra.test.netstat :as netstat-test]
+    [dda.pallet.dda-serverspec-crate.infra.test.file :as file-test]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])
@@ -64,10 +64,10 @@
     (when (contains? config :file-test)
         (file-test/test-file (:file-test config)))))
 
-(def dda-servertest-crate
+(def dda-serverspec-crate
   (dda-crate/make-dda-crate
    :facility facility
    :version version))
 
 (def with-servertest
-  (dda-crate/create-server-spec dda-servertest-crate))
+  (dda-crate/create-server-spec dda-serverspec-crate))

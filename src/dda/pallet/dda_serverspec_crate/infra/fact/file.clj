@@ -15,10 +15,10 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.dda-servertest-crate.infra.fact.file
+(ns dda.pallet.dda-serverspec-crate.infra.fact.file
   (:require
     [schema.core :as s]
-    [dda.pallet.dda-servertest-crate.infra.core.fact :refer :all]))
+    [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
 
 ; todo: create crate boundary & schema for configuration & result
 

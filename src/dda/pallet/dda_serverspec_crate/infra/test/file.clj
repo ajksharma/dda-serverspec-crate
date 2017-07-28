@@ -14,11 +14,11 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-servertest-crate.infra.test.file
+(ns dda.pallet.dda-serverspec-crate.infra.test.file
   (:require
     [schema.core :as s]
-    [dda.pallet.dda-servertest-crate.infra.fact.file :as file-fact]
-    [dda.pallet.dda-servertest-crate.infra.core.test :as server-test]))
+    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
+    [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
 (def FileTestConfig {s/Keyword {:exist? s/Bool}})
 

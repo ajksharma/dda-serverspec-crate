@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-servertest-crate.infra.test.file-test
+(ns dda.pallet.dda-serverspec-crate.infra.test.file-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.dda-servertest-crate.infra.test.file :as sut]))
+    [dda.pallet.dda-serverspec-crate.infra.test.file :as sut]))
 
 
 (def test-config-1 {:_etc_hosts {:exist? true}

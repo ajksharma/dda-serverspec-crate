@@ -1,4 +1,4 @@
-# dda-servertest-crate
+# dda-serverspec-crate
 
 This crate provides integration tests for servers. Tests are driven by the pallet-node and executed either remote (by ssh) or on localhost (direct).
 Tests are executed as follows:
@@ -37,7 +37,7 @@ You might also use the whole file as a resource which means we just create a cop
   (:require
     [dda.cm.operation :as operation]
     [dda.cm.existing :as existing]
-    [dda.pallet.dda-servertest-crate.domain :as domain]))
+    [dda.pallet.dda-serverspec-crate.domain :as domain]))
 
 (def provisioning-ip
   "[your ip]]")
