@@ -1,5 +1,14 @@
 # dda-serverspec-crate
 
+[![Clojars Project](https://img.shields.io/clojars/v/dda/dda-serverspec-crate.svg)](https://clojars.org/dda/dda-serverspec-crate)
+
+## compatability
+dda-pallet is compatible to the following versions
+ * pallet 0.8
+ * clojure 1.7
+ * (x)ubunutu 16.04
+
+## Usage documentation
 This crate provides integration tests for servers. Tests are driven by the pallet-node and executed either remote (by ssh) or on localhost (direct).
 Tests are executed as follows:
 1. phase settings
@@ -10,13 +19,6 @@ Tests are executed as follows:
    1. get fact from session
    2. compare expectation against fact
 
-## compatability
-dda-pallet is compatible to the following versions
- * pallet 0.8
- * clojure 1.7
- * (x)ubunutu 16.04
-
-## Usage documentation
 ### Define Resources to test
 You might also use the whole file as a resource which means we just create a copy of the file:
 
