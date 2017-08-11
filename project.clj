@@ -7,7 +7,7 @@
                  [prismatic/schema "1.1.6"]
                  [com.palletops/pallet "0.8.12"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
-                 [dda/dda-pallet "0.5.3-SNAPSHOT"]]
+                 [dda/dda-pallet "0.5.3"]]
   :source-paths ["src" "test-utils"]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
