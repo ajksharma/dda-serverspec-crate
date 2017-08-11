@@ -69,5 +69,5 @@
    :facility facility
    :version version))
 
-(def with-servertest
+(def with-serverspec
   (dda-crate/create-server-spec dda-serverspec-crate))

@@ -18,24 +18,24 @@
   (:require
    [schema.core :as s]
    [dda.cm.group :as group]
-   [dda.config.commons.map-utils :as mu]
-   [dda.config.commons.map-utils :as map-utils]
    [dda.pallet.core.dda-crate :as dda-crate]
    [dda.pallet.dda-config-crate.infra :as config-crate]
    [dda.pallet.dda-serverspec-crate.infra :as infra]
    [dda.pallet.dda-serverspec-crate.domain :as domain]))
 
+(def with-serverspec infra/with-serverspec)
+
+(def InfraResult domain/InfraResult)
+
 (def ServertestAppConfig
   {:group-specific-config
-   {s/Keyword {infra/facility infra/ServerTestConfig}}})
+   {s/Keyword InfraResult}})
 
 (s/defn ^:allways-validate create-app-configuration :- ServertestAppConfig
   [config :- infra/ServerTestConfig
    group-key :- s/Keyword]
   {:group-specific-config
      {group-key config}})
-
-(def with-servertest infra/with-servertest)
 
 (defn app-configuration
   [domain-config & {:keys [group-key] :or {group-key :dda-servertest-group}}]
@@ -46,4 +46,4 @@
   [app-config :- ServertestAppConfig]
   (group/group-spec
     app-config [(config-crate/with-config app-config)
-                with-servertest]))
+                with-serverspec]))
