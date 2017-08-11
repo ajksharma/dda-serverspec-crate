@@ -48,5 +48,5 @@
    (pr/session-summary
     (operation/do-server-test (cloud-target/provider) (integrated-group-spec count))))
   ([key-id key-passphrase count]
-   ;(pr/session-summary
-   (operation/do-server-test (cloud-target/provider key-id key-passphrase) (integrated-group-spec count))))
+   (pr/session-summary
+    (operation/do-server-test (cloud-target/provider key-id key-passphrase) (integrated-group-spec count)))))
