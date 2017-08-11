@@ -23,8 +23,6 @@
    [dda.pallet.dda-serverspec-crate.infra :as infra]
    [dda.pallet.dda-serverspec-crate.domain :as domain]))
 
-(def with-servertest infra/with-serverspec)
-
 (def with-serverspec infra/with-serverspec)
 
 (def InfraResult domain/InfraResult)
@@ -39,8 +37,6 @@
   {:group-specific-config
      {group-key config}})
 
-(def with-servertest infra/with-servertest)
-
 (defn app-configuration
   [domain-config & {:keys [group-key] :or {group-key :dda-servertest-group}}]
   (s/validate domain/ServerTestDomainConfig domain-config)
@@ -50,4 +46,4 @@
   [app-config :- ServertestAppConfig]
   (group/group-spec
     app-config [(config-crate/with-config app-config)
-                with-servertest]))
+                with-serverspec]))
