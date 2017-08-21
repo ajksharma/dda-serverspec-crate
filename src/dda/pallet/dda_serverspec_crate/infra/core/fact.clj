@@ -19,4 +19,4 @@
     [dda.pallet.commons.fact :as fact]))
 
 
-(def collect-fact (partial fact/collect-fact :dda-servertest-fact))
+(def collect-fact (partial fact/collect-fact :dda-serverspec-fact))

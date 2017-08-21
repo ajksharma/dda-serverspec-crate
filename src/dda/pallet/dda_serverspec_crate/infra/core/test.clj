@@ -74,13 +74,13 @@
 (s/defn test-it :- TestActionResult
   [fact-key :- s/Keyword
    test-fn]
-  (let [all-facts (crate/get-settings :dda-servertest-fact {:instance-id (crate/target-node)})
+  (let [all-facts (crate/get-settings :dda-serverspec-fact {:instance-id (crate/target-node)})
         facts (-> all-facts fact-key)
         fact-key-name (name fact-key)]
     (actions/as-action
       (logging/info (str "testing " fact-key-name))
       (let [input (:out @facts)
-            context (:context @facts)
+            context (str "test: dda-serverspec-test/" fact-key-name)
             test-result (apply test-fn (list input))
             action-result (test-action-result context fact-key fact-key-name test-result)]
         (logging/debug (str "input: " input))
