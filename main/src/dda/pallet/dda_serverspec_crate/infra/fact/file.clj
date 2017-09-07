@@ -42,16 +42,26 @@
 (s/defn path-to-keyword :- s/Keyword
   [path :- s/Str] (keyword (clojure.string/replace path #"/" "_")))
 
+(s/defn clean-up-negative-find :- s/Str
+  "extracts path from error message"
+  [negative-find :- s/Str]
+  (let [split-result (clojure.string/split negative-find #" ")
+        unclean-path (nth split-result 1)]
+    (subs unclean-path 1 (- (count unclean-path) 2))))
+
 (s/defn parse-find-line :- FileFactResult
   [script-result-line :- s/Str]
-  (let [ne-match (re-find (re-matcher #"(find: `)(.*)(': No such file or directory)" script-result-line))]
-    (if ne-match
-      {:path (nth ne-match 2)
+  (let [match (not= (.indexOf script-result-line "find:") -1)
+        split-string (clojure.string/split script-result-line #"'")]
+    (if match
+      {:path (clean-up-negative-find (nth split-string 0))
        :exist? false}
-      (merge
-        (zipmap [:path :size-in-bytes :user :group :mod :type :created :modified :accessed]
-          (clojure.string/split script-result-line #"'"))
-        {:exist? true}))))
+      (let [result-map (zipmap [:path :size-in-bytes :user :group :mod :type :created :modified :accessed]
+                               split-string)
+            cleaned-path (clean-up-sudo-string (:path result-map))]
+        (merge
+         (assoc result-map :path cleaned-path)
+         {:exist? true})))))
 
 (s/defn create-line-parse-result [script-result-line]
   (let [file-fact-result (parse-find-line script-result-line)

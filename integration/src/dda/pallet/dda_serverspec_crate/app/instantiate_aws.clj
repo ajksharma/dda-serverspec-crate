@@ -16,31 +16,33 @@
 
 (ns dda.pallet.dda-serverspec-crate.app.instantiate-aws
   (:require
-    [clojure.inspector :as inspector]
-    [pallet.repl :as pr]
-    [dda.pallet.commons.encrypted-credentials :as crypto]
-    [dda.pallet.commons.session-tools :as session-tools]
-    [dda.pallet.commons.pallet-schema :as ps]
-    [dda.pallet.commons.operation :as operation]
-    [dda.cm.aws :as cloud-target]
-    [dda.pallet.dda-serverspec-crate.app :as app]))
+   [clojure.inspector :as inspector]
+   [pallet.repl :as pr]
+   [dda.pallet.commons.encrypted-credentials :as crypto]
+   [dda.pallet.commons.session-tools :as session-tools]
+   [dda.pallet.commons.pallet-schema :as ps]
+   [dda.pallet.commons.operation :as operation]
+   [dda.cm.aws :as cloud-target]
+   [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def domain-config {:netstat {:sshd {:port "22"}}
                     :file '({:path "/root"}
-                            {:path "/etc"})})
+                            {:path "/etc"})
+                    :netcat '({:host "www.google.com" :port 80}
+                              {:host "www.google.c" :port 80 :reachable? false})})
 
 (defn integrated-group-spec [count]
   (merge
-    (app/servertest-group-spec (app/app-configuration domain-config))
-    (cloud-target/node-spec "jem")
-    {:count count}))
+   (app/servertest-group-spec (app/app-configuration domain-config))
+   (cloud-target/node-spec "jem")
+   {:count count}))
 
 (defn converge-install
   [count & options]
   (let [{:keys [gpg-key-id gpg-passphrase
                 summarize-session]
          :or {summarize-session true}} options]
-   (operation/do-converge-install
+    (operation/do-converge-install
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))
@@ -52,7 +54,7 @@
   (let [{:keys [gpg-key-id gpg-passphrase
                 summarize-session]
          :or {summarize-session true}} options]
-   (operation/do-server-test
+    (operation/do-server-test
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))

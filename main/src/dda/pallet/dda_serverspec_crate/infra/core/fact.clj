@@ -16,7 +16,13 @@
 
 (ns dda.pallet.dda-serverspec-crate.infra.core.fact
   (:require
+    [schema.core :as s]
     [dda.pallet.commons.fact :as fact]))
 
+(s/defn clean-up-sudo-string :- s/Str
+  "Removes the sudo-prompt of a string without empty space"
+  [sudo-string :- s/Str]
+  (let [split-string (clojure.string/split sudo-string  #" ")]
+    (if (>= (count split-string) 4) (nth split-string 4) sudo-string)))
 
 (def collect-fact (partial fact/collect-fact :dda-serverspec-fact))

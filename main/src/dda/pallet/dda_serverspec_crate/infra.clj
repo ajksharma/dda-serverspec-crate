@@ -15,18 +15,20 @@
 ; limitations under the License.
 (ns dda.pallet.dda-serverspec-crate.infra
   (:require
-    [clojure.tools.logging :as logging]
-    [schema.core :as s]
-    [pallet.api :as api]
-    [pallet.actions :as actions]
-    [pallet.crate :as crate]
-    [dda.pallet.core.dda-crate :as dda-crate]
-    [dda.pallet.dda-serverspec-crate.infra.fact.package :as package-fact]
-    [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
-    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
-    [dda.pallet.dda-serverspec-crate.infra.test.package :as package-test]
-    [dda.pallet.dda-serverspec-crate.infra.test.netstat :as netstat-test]
-    [dda.pallet.dda-serverspec-crate.infra.test.file :as file-test]))
+   [clojure.tools.logging :as logging]
+   [schema.core :as s]
+   [pallet.api :as api]
+   [pallet.actions :as actions]
+   [pallet.crate :as crate]
+   [dda.pallet.core.dda-crate :as dda-crate]
+   [dda.pallet.dda-serverspec-crate.infra.fact.package :as package-fact]
+   [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
+   [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
+   [dda.pallet.dda-serverspec-crate.infra.fact.netcat :as netcat-fact]
+   [dda.pallet.dda-serverspec-crate.infra.test.package :as package-test]
+   [dda.pallet.dda-serverspec-crate.infra.test.netstat :as netstat-test]
+   [dda.pallet.dda-serverspec-crate.infra.test.file :as file-test]
+   [dda.pallet.dda-serverspec-crate.infra.test.netcat :as netcat-test]))
 
 (def facility :dda-servertest)
 (def version  [0 1 0])
@@ -35,24 +37,32 @@
   {(s/optional-key :package-fact) s/Any
    (s/optional-key :netstat-fact) s/Any
    (s/optional-key :file-fact) file-fact/FileFactConfig
+   (s/optional-key :netcat-fact) netcat-fact/NetcatFactConfig
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
-   (s/optional-key :file-test) file-test/FileTestConfig})
+   (s/optional-key :file-test) file-test/FileTestConfig
+   (s/optional-key :netcat-test) netcat-test/NetcatTestConfig})
 
 (s/defn ^:always-validate path-to-keyword :- s/Keyword
   [path :- s/Str]
   (file-fact/path-to-keyword path))
 
+(s/defn ^:always-validate config-to-string :- s/Str
+  [host :- s/Str port :- s/Num timeout :- s/Num]
+  (netcat-fact/config-to-string host port timeout))
+
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
   "dda-servertest: setting"
-  (let [{:keys [file-fact]} config]
+  (let [{:keys [file-fact netcat-fact]} config]
     (when (contains? config :package-fact)
       (package-fact/collect-package-fact))
     (when (contains? config :netstat-fact)
       (netstat-fact/collect-netstat-fact))
     (when (contains? config :file-fact)
-      (file-fact/collect-file-fact file-fact))))
+      (file-fact/collect-file-fact file-fact))
+    (when (contains? config :netcat-fact)
+      (netcat-fact/collect-netcat-fact netcat-fact))))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
@@ -60,9 +70,11 @@
     (when (contains? config :package-test)
       (package-test/test-package (:package-test config)))
     (when (contains? config :netstat-test)
-        (netstat-test/test-netstat (:netstat-test config)))
+      (netstat-test/test-netstat (:netstat-test config)))
     (when (contains? config :file-test)
-        (file-test/test-file (:file-test config)))))
+      (file-test/test-file (:file-test config)))
+    (when (contains? config :netcat-test)
+      (netcat-test/test-netcat (:netcat-test config)))))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate

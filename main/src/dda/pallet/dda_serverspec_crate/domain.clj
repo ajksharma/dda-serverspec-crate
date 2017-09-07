@@ -21,40 +21,62 @@
    [dda.pallet.dda-serverspec-crate.infra :as infra]))
 
 (def ServerTestDomainConfig
- {(s/optional-key :package) {s/Keyword {:installed? s/Bool}}
-  (s/optional-key :netstat) {s/Keyword {:port s/Str}}
-  (s/optional-key :file) [{:path s/Str
-                           (s/optional-key :exist?) s/Bool}]})
+  {(s/optional-key :package) {s/Keyword {:installed? s/Bool}}
+   (s/optional-key :netstat) {s/Keyword {:port s/Str}}
+   (s/optional-key :file) [{:path s/Str
+                            (s/optional-key :exist?) s/Bool}]
+   (s/optional-key :netcat) [{:host s/Str
+                              :port s/Num
+                              (s/optional-key :reachable?) s/Bool}]})
 
 (def InfraResult {infra/facility infra/ServerTestConfig})
 
 (defn- domain-2-filefacts [file-domain-config]
   (apply merge
-    (map
-     #(let [path (:path %)] {(infra/path-to-keyword path) {:path path}})
-     file-domain-config)))
+         (map
+          #(let [path (:path %)] {(infra/path-to-keyword path) {:path path}})
+          file-domain-config)))
 
 (defn- domain-2-filetests [file-domain-config]
- (apply merge
-   (map
-    #(let [{:keys [path exist?] :or {exist? true}} %]
-          {(infra/path-to-keyword path) {:exist? exist?}})
-    file-domain-config)))
+  (apply merge
+         (map
+          #(let [{:keys [path exist?] :or {exist? true}} %]
+             {(infra/path-to-keyword path) {:exist? exist?}})
+          file-domain-config)))
+
+(defn- domain-2-netcatfacts [netcat-domain-config]
+  (apply merge
+         (map
+          #(let [{:keys [host port]} %]
+             {(keyword (infra/config-to-string host port 8))
+              {:host host :port port :timeout 8}})
+          netcat-domain-config)))
+
+(defn- domain-2-netcattests [netcat-domain-config]
+  (apply merge
+         (map
+          #(let [{:keys [host port reachable?] :or {reachable? true}} %]
+             {(keyword (infra/config-to-string host port 8)) {:reachable? reachable?}})
+          netcat-domain-config)))
 
 (s/defn ^:allways-validate infra-configuration :- InfraResult
- [domain-config :- ServerTestDomainConfig]
- (let [{:keys [file package netstat]} domain-config]
-  {infra/facility
-   (merge
-    (if (contains? domain-config :package)
+  [domain-config :- ServerTestDomainConfig]
+  (let [{:keys [file package netstat netcat]} domain-config]
+    {infra/facility
+     (merge
+      (if (contains? domain-config :package)
         {:package-fact nil
          :package-test package}
         {})
-    (if (contains? domain-config :netstat)
+      (if (contains? domain-config :netstat)
         {:netstat-fact nil
          :netstat-test netstat}
         {})
-    (if (contains? domain-config :file)
+      (if (contains? domain-config :file)
         {:file-fact (domain-2-filefacts file)
          :file-test (domain-2-filetests file)}
+        {})
+      (if (contains? domain-config :netcat)
+        {:netcat-fact (domain-2-netcatfacts netcat)
+         :netcat-test (domain-2-netcattests netcat)}
         {}))}))

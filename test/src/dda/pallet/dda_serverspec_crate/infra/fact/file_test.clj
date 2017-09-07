@@ -34,13 +34,13 @@
   "/linked-dir'12'mje'mje'777'l'Fri May 12 10:25:06.0903306720 2017'Fri May 12 10:25:06.0903306720 2017'Fri May 12 10:25:09.0595293205 2017'")
 
 (def not-existing
-  "find: `/not-existing': No such file or directory")
+  "find: `/not-existing`: No such file or directory")
 
 (def some-result
   "/home/gec/test/t1'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
 /home/gec/test/t2'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
 /home/gec/test/t3'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
-find: `/not-existing': No such file or directory
+find: `/not-existing`: No such file or directory
 ")
 
 (def empty-result
