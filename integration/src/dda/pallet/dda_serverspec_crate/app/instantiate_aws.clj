@@ -31,7 +31,7 @@
                     :netcat '({:host "www.google.com" :port 80}
                               {:host "www.google.c" :port 80 :reachable? false})})
 
-(defn integrated-group-spec [count]
+(defn provisioning-spec [count]
   (merge
    (app/servertest-group-spec (app/app-configuration domain-config))
    (cloud-target/node-spec "jem")
@@ -46,7 +46,7 @@
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))
-     (integrated-group-spec count)
+     (provisioning-spec count)
      :summarize-session summarize-session)))
 
 (defn server-test
@@ -58,5 +58,5 @@
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))
-     (integrated-group-spec count)
+     (provisioning-spec count)
      :summarize-session summarize-session)))

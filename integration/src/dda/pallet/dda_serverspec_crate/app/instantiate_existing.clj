@@ -20,7 +20,7 @@
    [pallet.repl :as pr]
    [dda.pallet.commons.session-tools :as session-tools]
    [dda.pallet.commons.pallet-schema :as ps]
-   [dda.cm.operation :as operation]
+   [dda.pallet.commons.operation :as operation]
    [dda.cm.existing :as existing]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
@@ -41,19 +41,34 @@
 (defn provider []
   (existing/provider provisioning-ip "node-id" "dda-servertest-group"))
 
-(defn integrated-group-spec []
+(defn provisioning-spec []
   (merge
    (app/servertest-group-spec (app/app-configuration domain-config))
    (existing/node-spec provisioning-user)))
 
-(defn apply-install []
-  (pr/session-summary
-   (operation/do-apply-install (provider) (integrated-group-spec))))
+(defn apply-install
+ [& options]
+ (let [{:keys [summarize-session]
+        :or {summarize-session true}} options]
+   (operation/do-apply-install
+    (provider)
+    (provisioning-spec)
+    :summarize-session summarize-session)))
 
-(defn apply-config []
-  (pr/session-summary
-   (operation/do-apply-configure (provider) (integrated-group-spec))))
+(defn apply-configure
+  [& options]
+  (let [{:keys [summarize-session]
+         :or {summarize-session true} options}]
+   (operation/do-apply-configure
+    (provider)
+    (provisioning-spec)
+    :summarize-session summarize-session)))
 
-(defn server-test []
-  (pr/session-summary
-   (operation/do-server-test (provider) (integrated-group-spec))))
+(defn test
+  [& options]
+  (let [{:keys [summarize-session]
+         :or {summarize-session true} options}]
+   (operation/do-server-test
+    (provider)
+    (provisioning-spec)
+    :summarize-session summarize-session)))
