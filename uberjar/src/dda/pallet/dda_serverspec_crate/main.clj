@@ -21,7 +21,9 @@
     [keypin.core :refer [defkey letval] :as k]
     [clojure.string :as str]
     [dda.cm.operation :as operation]
-    [pallet.repl :as pr]))
+    [pallet.repl :as pr]
+    [dda.cm.existing :as existing]
+    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (defn dispath-file-type
       "Dispatches a string to a keyword which represents the file type."
@@ -41,14 +43,16 @@
 (defn create-provider
   "Creates a provider from the provisioning ip and a node-id"
   [provisioning-ip node-id]
+  (existing/provider provisioning-ip node-id "dda-servertest-group")
   )
 
 (defn create-integrated-group-spec
   "Creates an integrated group spec from a domain config and a provisioning user."
   [domain-config provisioning-user]
+  (merge
+   (app/servertest-group-spec (app/app-configuration domain-config))
+   (existing/node-spec provisioning-user))
   )
-
-
 
 (defmulti execute-target dispatch-target-type)
 
