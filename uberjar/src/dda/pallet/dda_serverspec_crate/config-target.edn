@@ -1,0 +1,12 @@
+{:existing [{:provisioning-ip "test-vm-ip"
+             :login "loging-test-vm"
+             :password "test-vm-password"
+             :node-id "Test-vm"
+             :phases :all
+             }]
+ :aws [{:provisioning-ip "test-vm-ip"
+        :login "loging-test-vm"
+        :password "test-vm-password"
+        :node-id "Test-vm"
+        :phases :all
+        }]}

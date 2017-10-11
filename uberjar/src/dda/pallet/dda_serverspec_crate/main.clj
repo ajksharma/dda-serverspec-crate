@@ -25,20 +25,21 @@
     [dda.cm.existing :as existing]
     [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(defn dispath-file-type
+(defn dispatch-file-type
       "Dispatches a string to a keyword which represents the file type."
       [file-name]
       (keyword (last (str/split file-name #"\."))))
 
-(defmulti parse-config dispath-file-type)
+(defmulti parse-config dispatch-file-type)
 (defmethod parse-config :edn
-           [file-path]
-           (println (:test (k/read-config [file-path]))))
+  [file-path]
+  (k/read-config [file-path]))
 
 (defn dispatch-target-type
   "Dispatches the first keyword of the target-config."
   [domain-config target-config]
-  (first target-config))
+  (first (first target-config))
+  )
 
 (defn create-provider
   "Creates a provider from the provisioning ip and a node-id"
@@ -62,8 +63,9 @@
 
 (defmethod execute-target :existing
   [domain-config target-configs]
-  ((doseq [i target-configs]
-    (if (:phases i)
+  (doseq [i (:existing target-configs)]
+     (prn i)
+     (if (:phases i)
       (println "custom phases")
       (do
         (let [provider (create-provider (:provisioning-ip i) (:node-id i))
@@ -74,24 +76,25 @@
             (operation/do-apply-configure provider integrated-group-spec))
           (pr/session-summary
             (operation/do-server-test provider integrated-group-spec))
-          ))))))
+          )))))
 
 
 (defn domain-and-target-config
   "docstring"
   [domain-config target-config]
-  (doseq [i (seq target-config)] (execute-target domain-config i)))
+  (doseq [[k v] target-config]
+    (execute-target domain-config {k v})
+    ))
 
-; {:aws [{config-aws}]
-;  :existing [{:ip "1111"
-;              :login "krj"
-;              :password "test12134"
-;              :node-id "your node id"}]
-;
-;
-;
-;
-;
+
+(def target-config
+  "dda/pallet/dda_serverspec_crate/config-target.edn")
+
+(def domain-config
+  "dda/pallet/dda_serverspec_crate/config-test.edn")
+
+(def test
+  (k/read-config [target-config]))
 
 (defn -main [& args]
       (case (count args)
@@ -100,3 +103,4 @@
         2 (domain-and-target-config (parse-config (first args)) (parse-config (second args)))
         3 "do something with credentials"
         "error"))
+

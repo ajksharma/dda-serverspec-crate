@@ -1,0 +1,7 @@
+{:netstat {:sshd {:port "22"}}
+ :file {:root-sth {:path "/root"
+                   :exist? true}
+        :etc {:path "/etc"
+              :exist? true}
+        :absent {:path "/absent"
+                 :exist? false}}}

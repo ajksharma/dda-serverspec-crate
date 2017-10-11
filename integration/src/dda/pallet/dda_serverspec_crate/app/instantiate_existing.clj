@@ -38,9 +38,6 @@
                     :netcat '({:host "www.google.com" :port 80}
                               {:host "www.google.c" :port 80 :reachable? false})})
 
-
-
-
 (defn provider []
   (existing/provider provisioning-ip "node-id" "dda-servertest-group"))
 
