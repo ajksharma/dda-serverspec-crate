@@ -1,11 +1,11 @@
-{:existing [{:provisioning-ip "192.168.75.94"
-             :login "krj"
+{:existing [{:provisioning-ip "192.168.56.103"
+             :login "initial"
              :password "test1234"
              :node-id "test-vm"
-             }]
+             :phases [:test]}]
+
  :aws [{:provisioning-ip "test-vm-ip"
         :login "loging-test-vm"
         :password "test-vm-password"
         :node-id "Test-vm"
-        :phases [:install :configure :test]
-        }]}
+        :phases [:install :configure :test]}]}
