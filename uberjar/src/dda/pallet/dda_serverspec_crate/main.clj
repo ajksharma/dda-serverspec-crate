@@ -23,7 +23,10 @@
     [dda.cm.operation :as operation]
     [pallet.repl :as pr]
     [dda.cm.existing :as existing]
-    [dda.pallet.dda-serverspec-crate.app :as app]))
+    [dda.pallet.dda-serverspec-crate.app :as app]
+    [manifold.stream :as s]
+    [clojure.java.io :as io]
+    [clojure.edn :as edn]))
 
 (defn dispatch-file-type
       "Dispatches a string to a keyword which represents the file type."
@@ -33,7 +36,7 @@
 (defmulti parse-config dispatch-file-type)
 (defmethod parse-config :edn
   [file-path]
-  (k/read-config [file-path]))
+  (edn/read (java.io.PushbackReader. (io/reader file-path))))
 
 (defn dispatch-target-type
   "Dispatches the first keyword of the target-config."
@@ -55,28 +58,41 @@
    (existing/node-spec provisioning-user))
   )
 
-(defmulti execute-target dispatch-target-type)
+(defn execute-phase
+  [phase-keyword provider integrated-group-spec]
+  (cond
+    (= :install phase-keyword) (pr/session-summary
+                                 (pr/session-summary
+                                   (operation/do-apply-install provider integrated-group-spec)))
+    (= :configure phase-keyword) (pr/session-summary
+                                   (pr/session-summary
+                                     (operation/do-apply-configure provider integrated-group-spec)))
+    (= :test phase-keyword) (pr/session-summary
+                              (pr/session-summary
+                                (operation/do-server-test provider integrated-group-spec)))
 
+    )
+  )
+
+(defmulti execute-target dispatch-target-type)
 (defmethod execute-target :aws
   [domain-config target-configs]
   (println "target aws config was given"))
-
 (defmethod execute-target :existing
   [domain-config target-configs]
   (doseq [i (:existing target-configs)]
-     (prn i)
-     (if (:phases i)
-      (println "custom phases")
-      (do
-        (let [provider (create-provider (:provisioning-ip i) (:node-id i))
-              integrated-group-spec (create-integrated-group-spec domain-config {(:login i) (:password i)})]
-          (pr/session-summary
-            (operation/do-apply-install provider integrated-group-spec))
-          (pr/session-summary
-            (operation/do-apply-configure provider integrated-group-spec))
-          (pr/session-summary
-            (operation/do-server-test provider integrated-group-spec))
-          )))))
+    (let [provider (create-provider (:provisioning-ip i) (:node-id i))
+          integrated-group-spec (create-integrated-group-spec domain-config {:login (:login i) :password (:password i)})]
+      (prn i)
+      (if-let [phases (:phases i)]
+        (doseq [i phases]
+          (execute-phase i provider integrated-group-spec)
+          )
+        (do
+          (execute-phase :install provider integrated-group-spec)
+          (execute-phase :configure provider integrated-group-spec)
+          (execute-phase :test provider integrated-group-spec))
+        ))))
 
 
 (defn domain-and-target-config
@@ -85,16 +101,6 @@
   (doseq [[k v] target-config]
     (execute-target domain-config {k v})
     ))
-
-
-(def target-config
-  "dda/pallet/dda_serverspec_crate/config-target.edn")
-
-(def domain-config
-  "dda/pallet/dda_serverspec_crate/config-test.edn")
-
-(def test
-  (k/read-config [target-config]))
 
 (defn -main [& args]
       (case (count args)

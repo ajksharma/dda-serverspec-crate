@@ -39,7 +39,7 @@
 
 (defn app-configuration
   [domain-config & {:keys [group-key] :or {group-key :dda-servertest-group}}]
-  (s/validate domain/ServerTestDomainConfig domain-config)
+  (s/validate domain/ServerTestDomainConfig (into {} domain-config))
   (create-app-configuration (domain/infra-configuration domain-config) group-key))
 
 (s/defn ^:always-validate servertest-group-spec
