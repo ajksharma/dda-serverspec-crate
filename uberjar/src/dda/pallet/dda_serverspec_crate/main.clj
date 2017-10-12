@@ -34,9 +34,17 @@
       (keyword (last (str/split file-name #"\."))))
 
 (defmulti parse-config dispatch-file-type)
-(defmethod parse-config :edn
+(defmethod parse-config "works"
   [file-path]
   (edn/read (java.io.PushbackReader. (io/reader file-path))))
+(defmethod parse-config :edn
+  [file-path]
+  (k/read-config [file-path]))
+
+(defn java->clj
+  "Converts the java data structures to equivalent clojure data structures."
+  [jdata]
+  )
 
 (defn dispatch-target-type
   "Dispatches the first keyword of the target-config."
@@ -101,6 +109,15 @@
   (doseq [[k v] target-config]
     (execute-target domain-config {k v})
     ))
+
+(def target-config
+  "/home/jan/Code/Meissa/dda/dda-serverspec-crate/uberjar/src/dda/pallet/dda_serverspec_crate/config-target.edn")
+
+(def domain-config
+  "/home/jan/Code/Meissa/dda/dda-serverspec-crate/uberjar/src/dda/pallet/dda_serverspec_crate/config-test.edn")
+
+(def testus
+  (k/read-config [domain-config]))
 
 (defn -main [& args]
       (case (count args)
