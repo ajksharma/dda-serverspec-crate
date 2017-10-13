@@ -34,7 +34,7 @@
 (deftest test-infra-configuration
   (testing
     "test creation of infra configuration"
-      (is (=  {:dda-servertest<
+      (is (=  {:dda-servertest
                 {:netstat-fact nil
                  :package-fact nil
                  :file-fact {:_root {:path "/root"}
