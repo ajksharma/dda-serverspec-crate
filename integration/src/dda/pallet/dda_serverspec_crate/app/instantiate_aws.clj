@@ -22,7 +22,7 @@
    [dda.pallet.commons.session-tools :as session-tools]
    [dda.pallet.commons.pallet-schema :as ps]
    [dda.pallet.commons.operation :as operation]
-   [dda.cm.aws :as cloud-target]
+   [dda.pallet.commons.aws :as cloud-target]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def domain-config {:netstat {:sshd {:port "22"}}

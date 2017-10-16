@@ -21,7 +21,7 @@
    [dda.pallet.commons.session-tools :as session-tools]
    [dda.pallet.commons.pallet-schema :as ps]
    [dda.pallet.commons.operation :as operation]
-   [dda.cm.existing :as existing]
+   [dda.pallet.commons.existing :as existing]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def provisioning-ip
