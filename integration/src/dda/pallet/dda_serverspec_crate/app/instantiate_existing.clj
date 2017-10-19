@@ -25,10 +25,10 @@
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def provisioning-ip
-  "192.168.56.103")
+  "192.168.56.105")
 
 (def provisioning-user
-  {:login "jem"
+  {:login "initial"
    :password "test1234"})
 
 (def domain-config {:netstat {:sshd {:port "22"}}
