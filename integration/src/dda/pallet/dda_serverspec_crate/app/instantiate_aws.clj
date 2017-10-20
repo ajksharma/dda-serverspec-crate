@@ -22,18 +22,16 @@
    [dda.pallet.commons.session-tools :as session-tools]
    [dda.pallet.commons.pallet-schema :as ps]
    [dda.pallet.commons.operation :as operation]
-   [dda.cm.aws :as cloud-target]
+   [dda.pallet.commons.aws :as cloud-target]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def domain-config {:netstat {:sshd {:port "22"}}
                     :file '({:path "/root"}
                             {:path "/etc"})
                     :netcat '({:host "www.google.com" :port 80}
-                              {:host "www.google.c" :port 80 :reachable? false})
-                    :package {:test {:installed? false}
-                              :nano {:installed? true}}})
+                              {:host "www.google.c" :port 80 :reachable? false})})
 
-(defn integrated-group-spec [count]
+(defn provisioning-spec [count]
   (merge
    (app/servertest-group-spec (app/app-configuration domain-config))
    (cloud-target/node-spec "jem")
@@ -48,7 +46,7 @@
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))
-     (integrated-group-spec count)
+     (provisioning-spec count)
      :summarize-session summarize-session)))
 
 (defn server-test
@@ -60,5 +58,5 @@
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))
-     (integrated-group-spec count)
-     :summarize-session summarize-session)))
+     (provisioning-spec count))))
+:summarize-session summarize-session
