@@ -40,8 +40,8 @@
 (deftest test-parse-line
   (testing
    (is (:reachable? (val (first (sut/parse-result netcat-google)))))
-    (is (not (:reachable? (val (first (sut/parse-result netcat-yahoo ))))))
-    (is (= "www.bing.org_80_1" (name (key (first (sut/parse-result netcat-bing))))))))
+   (is (not (:reachable? (val (first (sut/parse-result netcat-yahoo))))))
+   (is (= "www.bing.org_80_1" (name (key (first (sut/parse-result netcat-bing))))))))
 
 (deftest test-parse
   (testing
