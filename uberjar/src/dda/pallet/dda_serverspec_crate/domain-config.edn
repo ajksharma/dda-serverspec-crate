@@ -1,6 +1,9 @@
 {:netstat {:sshd {:port "22"}}
- :file '({:path "/root"}
-         {:path "/etc"}
-         {:path "/absent" :exist? false})
- :netcat '({:host "www.google.com" :port 80}
-           {:host "www.google.c" :port 80 :reachable? false})}
+ :file [{:path "/root"}
+        {:path "/etc"}
+        {:path "/absent"
+         :exist? false}]
+ :package {:test {:installed? false}
+           :nano {:installed? true}}
+ :netcat [{:host "www.google.com" :port 80}
+          {:host "www.google.c" :port 80 :reachable? false}]}

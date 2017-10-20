@@ -36,7 +36,9 @@
                             {:path "/etc"}
                             {:path "/absent" :exist? false})
                     :netcat '({:host "www.google.com" :port 80}
-                              {:host "www.google.c" :port 80 :reachable? false})})
+                              {:host "www.google.c" :port 80 :reachable? false})
+                    :package {:test {:installed? false}
+                              :nano {:installed? true}}})
 
 (defn provider []
   (existing/provider provisioning-ip "node-id" "dda-servertest-group"))
