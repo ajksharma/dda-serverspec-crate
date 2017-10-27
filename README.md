@@ -26,13 +26,13 @@ Tests are executed as follows:
 You might also use the whole file as a resource which means we just create a copy of the file:
 
 ```clojure
-{:package {:[package-name] {:installed? [true|false]}
-           ... }
- :netstat {:[service-name] {:port "22"}
-           ... }
- :file {:[file-name] {:path "[an absolut path]]"
-                      :exist? [true|false]}
-         ... }}
+{(s/optional-key :package) {s/Keyword {:installed? s/Bool}}
+ (s/optional-key :netstat) {s/Keyword {:port s/Str}}
+ (s/optional-key :file) [{:path s/Str
+                          (s/optional-key :exist?) s/Bool}]
+ (s/optional-key :netcat) [{:host s/Str
+                            :port s/Num
+                            (s/optional-key :reachable?) s/Bool}]}
 ```
 
 ### Use server-test standalone
