@@ -12,8 +12,10 @@
                  ["releases" :clojars]]
   :deploy-repositories [["snapshots" :clojars]
                         ["releases" :clojars]]
-  :profiles {:dev {:source-paths ["integration/src"]
-                   :resource-paths ["integration/resources"]
+  :profiles {:dev {:source-paths ["integration/src"
+                                  "test/src"]
+                   :resource-paths ["integration/resources"
+                                    "integration/resources"]
                    :dependencies
                    [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2"]
                     [com.palletops/pallet "0.8.12" :classifier "tests"]
