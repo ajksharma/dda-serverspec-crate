@@ -91,5 +91,5 @@
       (not= (count arguments) 2) (exit 1 (usage summary))
       errors (exit 1 (error-msg errors)))
     (case (count args)
-      2 (domain-and-target-config (parse-config (first args)) (parse-config (second args)))
+      2 (execute-target (parse-config (first args)) (parse-config (second args)))
       "error")))
