@@ -19,6 +19,7 @@
   (:gen-class)
   (:require
    [keypin.core :refer [defkey letval] :as k]
+   [clojure.tools.cli :as cli]
    [clojure.string :as str]
    [dda.cm.operation :as operation]
    [pallet.repl :as pr]
@@ -75,10 +76,33 @@
   (doseq [[k v] target-config]
     (execute-target domain-config {k v})))
 
+(def cli-options
+  [["-h" "--help"]])
+
+(defn usage [options-summary]
+  (str/join
+   \newline
+   ["dda-serverspec-crate is testing a configuration on a server"
+    ""
+    "Usage: java -jar dda-serverspec-crate-0.2.2-standalone.jar [test.edn] [targets.edn]"
+    ""
+    "Options:"
+    options-summary]))
+
+(defn error-msg [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (str/join \newline errors)))
+
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
 (defn -main [& args]
-  (case (count args)
-    0 "error"
-    1 "error"
-    2 (domain-and-target-config (parse-config (first args)) (parse-config (second args)))
-    3 "do something with credentials"
-    "error"))
+  (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)]
+    (cond
+      (:help options) (exit 0 (usage summary))
+      (not= (count arguments) 2) (exit 1 (usage summary))
+      errors (exit 1 (error-msg errors)))
+    (case (count args)
+      2 (domain-and-target-config (parse-config (first args)) (parse-config (second args)))
+      "error")))
