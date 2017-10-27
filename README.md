@@ -3,6 +3,8 @@
 [![Clojars Project](https://img.shields.io/clojars/v/dda/dda-serverspec-crate.svg)](https://clojars.org/dda/dda-serverspec-crate)
 [![Build Status](https://travis-ci.org/DomainDrivenArchitecture/dda-serverspec-crate.svg?branch=master)](https://travis-ci.org/DomainDrivenArchitecture/dda-serverspec-crate)
 
+[Meet us on Slack](http://clojurians.herokuapp.com/) | [Meet us on Meetup](https://www.meetup.com/de-DE/preview/dda-pallet-DevOps-Hacking-with-Clojure) | [Website & Blog](https://domaindrivenarchitecture.org)
+
 ## compatability
 dda-pallet is compatible to the following versions
  * pallet 0.8
@@ -70,13 +72,6 @@ You might also use the whole file as a resource which means we just create a cop
 
 (server-test)
 ```
-
-##More information
-* dda-pallet is a clojure based config management system build upon the great config management framework [pallet](https://github.com/pallet/pallet) build by to Hugo Duncan.
-* Website & Blog: [DomanDrivenArchitecture.org](https://domaindrivenarchitecture.org)
-* Commercial: [meissa-gmbh.de](https://meissa-gmbh.de)
-* Slack-Channel: [dda-pallet@clojurians.slack.com](https://clojurians.slack.com/messages/C5GDWDF28/)
-* [Requirements & Architecture](https://dda.gitbooks.io/domaindrivenarchitecture/content/en/80_config_management/index.html)
 
 ## License
 Published under [apache2.0 license](LICENSE.md)
