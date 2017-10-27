@@ -58,7 +58,7 @@
 (defn apply-configure
   [& options]
   (let [{:keys [summarize-session]
-         :or {summarize-session true} options}]
+         :or {summarize-session true}} options]
    (operation/do-apply-configure
     (provider)
     (provisioning-spec)
@@ -67,7 +67,7 @@
 (defn test
   [& options]
   (let [{:keys [summarize-session]
-         :or {summarize-session true} options}]
+         :or {summarize-session true}} options]
    (operation/do-server-test
     (provider)
     (provisioning-spec)
