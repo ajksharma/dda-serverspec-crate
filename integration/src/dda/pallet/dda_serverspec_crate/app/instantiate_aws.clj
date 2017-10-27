@@ -25,11 +25,14 @@
    [dda.pallet.commons.aws :as cloud-target]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(def domain-config {:netstat {:sshd {:port "22"}}
+(def domain-config {:netstat '({:process-name "sshd" :port "22"}
+                               {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"})
                     :file '({:path "/root"}
                             {:path "/etc"})
                     :netcat '({:host "www.google.com" :port 80}
-                              {:host "www.google.c" :port 80 :reachable? false})})
+                              {:host "www.google.c" :port 80 :reachable? false})
+                    :package {:test {:installed? false}
+                              :nano {:installed? true}}})
 
 (defn provisioning-spec [count]
   (merge
