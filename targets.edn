@@ -1,9 +1,9 @@
-{:existing [{:provisioning-ip "35.157.19.218"
-             :login "ubuntu"
-             :node-id "test-vm1"}
-            {:provisioning-ip "18.194.113.138"
-             :login "ubuntu"
-             :node-id "test-vm2"}]}
+{:serverspec [{:node-name "test-vm1"
+               :node-ip "35.157.19.218"}
+               ;:login "ubuntu"}}
+              {:node-name "test-vm2"
+               :node-ip "18.194.113.138"}]
+ :provisioning-user {:login "ubuntu"}}
 
  ; :aws [{:provisioning-ip "test-vm-ip"
  ;        :login "loging-test-vm"

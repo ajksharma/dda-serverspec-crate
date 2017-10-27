@@ -18,13 +18,13 @@
 (ns dda.pallet.dda-serverspec-crate.main
   (:gen-class)
   (:require
-   [keypin.core :refer [defkey letval] :as k]
-   [clojure.string :as str]
-   [dda.cm.operation :as operation]
-   [pallet.repl :as pr]
-   [dda.cm.existing :as existing]
-   [dda.pallet.dda-serverspec-crate.app :as app]
-   [schema.core :as schema]))
+    [clojure.string :as str]
+    [keypin.core :refer [defkey letval] :as k]
+    [schema.core :as s]
+    [pallet.repl :as pr]
+    [dda.pallet.commons.operation :as operation]
+    [dda.pallet.commons.existing :as existing]
+    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (defn dispatch-file-type
   "Dispatches a string to a keyword which represents the file type."
@@ -36,11 +36,6 @@
 (defmethod parse-config :edn
   [file-path]
   (keypin.util/clojurize-data (k/read-config [file-path])))
-
-(defn node-spec
-  "Creates a provider from the provisioning ip and a node-id"
-  [provisioning-ip node-id]
-  (existing/provider provisioning-ip node-id "dda-servertest-group"))
 
 (defn provisioning-spec
   "Creates an integrated group spec from a domain config and a provisioning user."
@@ -54,31 +49,23 @@
   (let [{:keys [summarize-session]
          :or {summarize-session true}} options]
     (operation/do-server-test
-     (cloud-target/provider)
-     (provisioning-spec count)
+     provider
+     provisioning-spec
      :summarize-session summarize-session)))
 
 (defn execute-target
-  [domain-config target-configs]
-  (doseq [i (:existing target-configs)]
-    (let [provider (create-provider (:provisioning-ip i) (:node-id i))
-          provisioning-spec (provisioning-spec
+  [domain-config targets]
+  (let [{:keys [serverspec provisioning-user]} targets]
+    (server-test (existing/provider {:dda-servertest-group serverspec})
+                 (provisioning-spec
                              domain-config
-                             {:login (:login i)
-                              :password (:password i)})]
-      (prn i)
-      (server-test provider provisioning-spec))))
-
-(defn domain-and-target-config
-  "docstring"
-  [domain-config target-config]
-  (doseq [[k v] target-config]
-    (execute-target domain-config {k v})))
+                             provisioning-user)
+                 :summarize-session true)))
 
 (defn -main [& args]
   (case (count args)
     0 "error"
     1 "error"
-    2 (domain-and-target-config (parse-config (first args)) (parse-config (second args)))
+    2 (execute-target (parse-config (first args)) (parse-config (second args)))
     3 "do something with credentials"
     "error"))
