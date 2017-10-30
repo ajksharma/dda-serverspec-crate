@@ -32,7 +32,7 @@
 (def ProvisioningUser {:login s/Str
                        (s/optional-key :password) s/Str})
 
-(def Targets {:existing existing/ExistingNodes
+(def Targets {:existing [existing/ExistingNode]
               :provisioning-user ProvisioningUser})
 
 (def InfraResult domain/InfraResult)

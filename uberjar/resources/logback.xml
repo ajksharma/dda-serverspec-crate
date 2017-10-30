@@ -4,7 +4,7 @@
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>INFO</level>
+      <level>ERROR</level>
     </filter>
   </appender>
 
@@ -49,8 +49,6 @@
 
   <logger name="pallet" level="ERROR"/>
   <logger name="pallet.ssh.execute" level="INFO"/>
-  <logger name="dda" level="ERROR"/>
-  <logger name="dda.pallet.core" level="ERROR"/>
-  <logger name="dda.pallet.dda-serverspec-crate" level="INFO"/>
+  <logger name="dda" level="INFO"/>
 
 </configuration>

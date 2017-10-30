@@ -56,7 +56,7 @@
                               expected-settings
                               ", was running?: " (some? present-elem)
                               actual-settings
-                              ", passed?: " passed? "\\n")
+                              ", passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)

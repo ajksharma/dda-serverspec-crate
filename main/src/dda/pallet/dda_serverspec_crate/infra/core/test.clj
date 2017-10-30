@@ -87,4 +87,6 @@
         (logging/debug (str "result: " test-result))
         (logging/info (str "result for " fact-key-name " : " (-> action-result :out)))
         (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
+        (.write *out* (str "result for " fact-key-name " :\n" (-> action-result :out)))
+        (.write *out* (str (-> action-result :summary) "\n\n"))
         action-result))))

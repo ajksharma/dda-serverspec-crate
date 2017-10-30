@@ -35,7 +35,7 @@
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test package: " (name (key elem))
                               ", expected installed?: " expected-installed? ", was installed?: "
-                              is-installed? ", passed?: " passed? "\\n")
+                              is-installed? ", passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)

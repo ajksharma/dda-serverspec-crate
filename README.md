@@ -28,12 +28,10 @@ TODO: test with jar-file
 (def ExistingNode {:node-name s/Str
                    :node-ip s/Str})
 
-(def ExistingNodes {:s/Keyword [ExistingNode]})
-
 (def ProvisioningUser {:login s/Str
                        (s/optional-key :password) s/Str})
 
-(def Targets {:existing existing/ExistingNodes
+(def Targets {:existing [existing/ExistingNode]
               :provisioning-user ProvisioningUser})
 ```
 
