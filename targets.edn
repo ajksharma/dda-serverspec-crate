@@ -1,12 +1,5 @@
 {:existing [{:node-name "test-vm1"
              :node-ip "35.157.19.218"}
-               ;:login "ubuntu"}}
             {:node-name "test-vm2"
              :node-ip "18.194.113.138"}]
  :provisioning-user {:login "ubuntu"}}
-
- ; :aws [{:provisioning-ip "test-vm-ip"
- ;        :login "loging-test-vm"
- ;        :password "test-vm-password"
- ;        :node-id "Test-vm"
- ;        :phases [:install :configure :test]}]}

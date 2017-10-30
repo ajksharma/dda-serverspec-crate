@@ -12,65 +12,59 @@ dda-pallet is compatible to the following versions
  * (x)ubunutu 16.04
 
 ## Usage documentation
-This crate provides integration tests for servers. Tests are driven by the pallet-node and executed either remote (by ssh) or on localhost (direct).
-Tests are executed as follows:
-1. phase settings
-   1. execute a minimal bash on system under test
-   2. parse script output in clojure.
-   3. store parsed output as fact in session
-2. phase test
-   1. get fact from session
-   2. compare expectation against fact
+This crate provides integration tests for servers.
 
-### Define Resources to test
-You might also use the whole file as a resource which means we just create a copy of the file:
+TODO: remote-whitebox / local-whitebox
+
+TODO: Configuration
+
+TODO: test with jar-file
+
+
+## Reference
+### Schema for Targets
 
 ```clojure
-{(s/optional-key :package) {s/Keyword {:installed? s/Bool}}
- (s/optional-key :netstat) {s/Keyword {:port s/Str}}
- (s/optional-key :file) [{:path s/Str
-                          (s/optional-key :exist?) s/Bool}]
- (s/optional-key :netcat) [{:host s/Str
-                            :port s/Num
-                            (s/optional-key :reachable?) s/Bool}]}
+(def ExistingNode {:node-name s/Str
+                   :node-ip s/Str})
+
+(def ExistingNodes {:s/Keyword [ExistingNode]})
+
+(def ProvisioningUser {:login s/Str
+                       (s/optional-key :password) s/Str})
+
+(def Targets {:existing existing/ExistingNodes
+              :provisioning-user ProvisioningUser})
 ```
 
-### Use server-test standalone
+### Domain-Schema for Tests
 
 ```clojure
-(ns [your-ns-goes-here]
-  (:require
-    [dda.cm.operation :as operation]
-    [dda.cm.existing :as existing]
-    [dda.pallet.dda-serverspec-crate.domain :as domain]))
+(def ServerTestDomainConfig {(s/optional-key :package) [{:name s/Str
+                                                         (s/optional-key :installed?) s/Bool}]
+                             (s/optional-key :netstat) [{:process-name s/Str
+                                                         :port s/Str
+                                                         (s/optional-key :running?) s/Bool
+                                                         (s/optional-key :ip) s/Str
+                                                         (s/optional-key :exp-proto) s/Str}]
+                             (s/optional-key :file) [{:path s/Str
+                                                      (s/optional-key :exist?) s/Bool}]
+                             (s/optional-key :netcat) [{:host s/Str
+                                                        :port s/Num
+                                                        (s/optional-key :reachable?) s/Bool}]})
 
-(def provisioning-ip
-  "[your ip]]")
+```
 
-(def provisioning-user
-  {:login "[your username]"
-   :password "[your password, if your ssh key is not allready authorized]"})
-
-(def domain-config {:netstat {:sshd {:port "22"}}
-                    :file {:root-sth {:path "/root"
-                                      :exist? true}
-                           :etc {:path "/etc"
-                                 :exist? true}
-                           :absent {:path "/absent"
-                                    :exist? false}}})
-
-(defn provider []
-  (existing/provider provisioning-ip "[choose a node-id]" "dda-servertest-group"))
-
-(defn integrated-group-spec []
-  (merge
-    (domain/dda-servertest-group (domain/crate-stack-configuration domain-config))
-    (existing/node-spec provisioning-user)))
-
-(defn server-test []
-  (operation/do-server-test (provider) (integrated-group-spec)))
-
-(server-test)
+### Infra-Schema for Facts & Tests
+```clojure
+(def ServerTestConfig {(s/optional-key :package-fact) s/Any
+                       (s/optional-key :netstat-fact) s/Any
+                       (s/optional-key :file-fact) file-fact/FileFactConfig
+                       (s/optional-key :netcat-fact) netcat-fact/NetcatFactConfig
+                       (s/optional-key :package-test) package-test/PackageTestConfig
+                       (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
+                       (s/optional-key :file-test) file-test/FileTestConfig
+                       (s/optional-key :netcat-test) netcat-test/NetcatTestConfig})
 ```
 
 ## License
