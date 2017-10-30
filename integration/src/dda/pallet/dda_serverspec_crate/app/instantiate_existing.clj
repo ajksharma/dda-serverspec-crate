@@ -24,8 +24,9 @@
    [dda.pallet.commons.existing :as existing]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(def provisioning-ip
-  "192.168.56.105")
+(def targets
+  [{:node-name "node-id"
+    :node-ip "192.168.56.105"}])
 
 (def provisioning-user
   {:login "initial"
@@ -41,21 +42,14 @@
                               {:host "www.google.c" :port 80 :reachable? false})
                     :package '({:name "test" :installed? false}
                                {:name "nano"})})
-(defn provider []
-  (existing/provider provisioning-ip "node-id" "dda-servertest-group"))
-
-(defn provisioning-spec []
-  (merge
-   (app/servertest-group-spec (app/app-configuration domain-config))
-   (existing/node-spec provisioning-user)))
 
 (defn apply-install
  [& options]
  (let [{:keys [summarize-session]
         :or {summarize-session true}} options]
    (operation/do-apply-install
-    (provider)
-    (provisioning-spec)
+    (existing/provider {:dda-servertest-group targets})
+    (app/existing-provisioning-spec domain-config provisioning-user)
     :summarize-session summarize-session)))
 
 (defn apply-configure
@@ -63,8 +57,8 @@
   (let [{:keys [summarize-session]
          :or {summarize-session true}} options]
    (operation/do-apply-configure
-    (provider)
-    (provisioning-spec)
+    (existing/provider {:dda-servertest-group targets})
+    (app/existing-provisioning-spec domain-config provisioning-user)
     :summarize-session summarize-session)))
 
 (defn test
@@ -72,6 +66,6 @@
   (let [{:keys [summarize-session]
          :or {summarize-session true}} options]
    (operation/do-server-test
-    (provider)
-    (provisioning-spec)
+    (existing/provider {:dda-servertest-group targets})
+    (app/existing-provisioning-spec domain-config provisioning-user)
     :summarize-session summarize-session)))

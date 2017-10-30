@@ -18,12 +18,22 @@
   (:require
    [schema.core :as s]
    [dda.cm.group :as group]
+   [dda.pallet.commons.existing :as existing]
    [dda.pallet.core.dda-crate :as dda-crate]
    [dda.pallet.dda-config-crate.infra :as config-crate]
    [dda.pallet.dda-serverspec-crate.infra :as infra]
-   [dda.pallet.dda-serverspec-crate.domain :as domain]))
+   [dda.pallet.dda-serverspec-crate.domain :as domain]
+   [dda.pallet.dda-serverspec-crate.app.external-config :as ext-config]))
 
 (def with-serverspec infra/with-serverspec)
+
+(def ServerSpecDomainConfig domain/ServerTestDomainConfig)
+
+(def ProvisioningUser {:login s/Str
+                       (s/optional-key :password) s/Str})
+
+(def Targets {:existing existing/ExistingNodes
+              :provisioning-user ProvisioningUser})
 
 (def InfraResult domain/InfraResult)
 
@@ -31,19 +41,38 @@
   {:group-specific-config
    {s/Keyword InfraResult}})
 
+(s/defn ^:allways-validate load-targets :- Targets
+  [file-name :- s/Str]
+  (ext-config/parse-config file-name))
+
+(s/defn ^:allways-validate load-tests :- ServerSpecDomainConfig
+  [file-name :- s/Str]
+  (ext-config/parse-config file-name))
+
 (s/defn ^:allways-validate create-app-configuration :- ServertestAppConfig
   [config :- infra/ServerTestConfig
    group-key :- s/Keyword]
   {:group-specific-config
      {group-key config}})
 
-(defn app-configuration
-  [domain-config & {:keys [group-key] :or {group-key :dda-servertest-group}}]
-  (s/validate domain/ServerTestDomainConfig (into {} domain-config))
-  (create-app-configuration (domain/infra-configuration domain-config) group-key))
+(s/defn ^:allways-validate app-configuration :- ServertestAppConfig
+  [domain-config :- ServerSpecDomainConfig
+   & options]
+  (let [{:keys [group-key]
+         :or  {group-key :dda-servertest-group}} options]
+    {:group-specific-config
+       {group-key (domain/infra-configuration domain-config)}}))
 
 (s/defn ^:always-validate servertest-group-spec
   [app-config :- ServertestAppConfig]
   (group/group-spec
     app-config [(config-crate/with-config app-config)
                 with-serverspec]))
+
+(s/defn ^:always-validate existing-provisioning-spec
+  "Creates an integrated group spec from a domain config and a provisioning user."
+  [domain-config :- ServerSpecDomainConfig
+   provisioning-user :- ProvisioningUser]
+  (merge
+   (servertest-group-spec (app-configuration domain-config))
+   (existing/node-spec provisioning-user)))
