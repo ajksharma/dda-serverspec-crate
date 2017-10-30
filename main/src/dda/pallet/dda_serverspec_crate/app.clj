@@ -41,21 +41,21 @@
   {:group-specific-config
    {s/Keyword InfraResult}})
 
-(s/defn ^:allways-validate load-targets :- Targets
+(s/defn ^:always-validate load-targets :- Targets
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
-(s/defn ^:allways-validate load-tests :- ServerSpecDomainConfig
+(s/defn ^:always-validate load-tests :- ServerSpecDomainConfig
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
-(s/defn ^:allways-validate create-app-configuration :- ServertestAppConfig
+(s/defn ^:always-validate create-app-configuration :- ServertestAppConfig
   [config :- infra/ServerTestConfig
    group-key :- s/Keyword]
   {:group-specific-config
      {group-key config}})
 
-(s/defn ^:allways-validate app-configuration :- ServertestAppConfig
+(s/defn ^:always-validate app-configuration :- ServertestAppConfig
   [domain-config :- ServerSpecDomainConfig
    & options]
   (let [{:keys [group-key]
