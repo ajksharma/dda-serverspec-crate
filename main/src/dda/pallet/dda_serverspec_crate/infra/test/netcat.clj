@@ -39,7 +39,7 @@
        {:test-passed (and (:test-passed result) passed?)
         :test-message (str (:test-message result) "test host: " (name (key elem))
                            ", expected reachable?: " expected-reachable? ", was reachable?: "
-                           fact-reachable? ", passed?: " passed? "\n ")
+                           fact-reachable? ", passed?: " passed? "\n")
         :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
         :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
        (rest spec)
