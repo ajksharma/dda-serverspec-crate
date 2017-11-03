@@ -23,17 +23,15 @@
    [dda.pallet.dda-config-crate.infra :as config-crate]
    [dda.pallet.dda-serverspec-crate.infra :as infra]
    [dda.pallet.dda-serverspec-crate.domain :as domain]
-   [dda.pallet.dda-serverspec-crate.app.external-config :as ext-config]))
+   [dda.pallet.commons.external-config :as ext-config]))
 
 (def with-serverspec infra/with-serverspec)
 
 (def ServerSpecDomainConfig domain/ServerTestDomainConfig)
 
-(def ProvisioningUser {:login s/Str
-                       (s/optional-key :password) s/Str})
+(def ProvisioningUser existing/ProvisioningUser)
 
-(def Targets {:existing [existing/ExistingNode]
-              :provisioning-user ProvisioningUser})
+(def Targets existing/Targets)
 
 (def InfraResult domain/InfraResult)
 
