@@ -16,7 +16,7 @@
                                   "test/src"
                                   "uberjar/src"]
                    :resource-paths ["integration/resources"
-                                    "integration/resources"]
+                                    "test/resources"]
                    :dependencies
                    [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2"]
                     [com.palletops/pallet "0.8.12" :classifier "tests"]
