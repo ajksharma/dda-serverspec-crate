@@ -110,7 +110,7 @@ The schema is:
 The "tests.edn" has the schema of the ServerTestDomainConfig-variable.
 The default-value is that the test expects a positive boolean (e.g. :reachable? true) and this value can be omitted.
 
-### Infra-Schema for Facts & Tests
+### Infra API
 The Infra configuration is a configuration on the infrastructure level of a crate. It contains the complete configuration options that are possible with the crate functions.
 On infra level we distinguishe between collecting facts (done in the settings phase without side effects) and test (done in test phase intentionally without sideeffects).
 Settings can also be used without tests in order to provide informations for conditional installations / configurations.
