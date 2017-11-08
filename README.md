@@ -83,11 +83,11 @@ In contrast to the Domain-Schema, the Infra-Schema references the configuration 
 
 ### Schema for Targets
 ```clojure
-(def ExistingNode {:node-name s/Str
-                   :node-ip s/Str})
+(def ExistingNode {:node-name Str
+                   :node-ip Str})
 
-(def ProvisioningUser {:login s/Str
-                       (s/optional-key :password) s/Str})
+(def ProvisioningUser {:login Str
+                       (optional-key :password) Str})
 
 (def Targets {:existing [ExistingNode]
               :provisioning-user ProvisioningUser})
@@ -96,18 +96,18 @@ The "targets.edn" has the schema of the Targets
 
 ### Domain-Schema for Tests
 ```clojure
-(def ServerTestDomainConfig {(s/optional-key :package) [{:name s/Str
-                                                         (s/optional-key :installed?) s/Bool}]
-                             (s/optional-key :netstat) [{:process-name s/Str
-                                                         :port s/Str
-                                                         (s/optional-key :running?) s/Bool
-                                                         (s/optional-key :ip) s/Str
-                                                         (s/optional-key :exp-proto) s/Str}]
-                             (s/optional-key :file) [{:path s/Str
-                                                      (s/optional-key :exist?) s/Bool}]
-                             (s/optional-key :netcat) [{:host s/Str
-                                                        :port s/Num
-                                                        (s/optional-key :reachable?) s/Bool}]})
+(def ServerTestDomainConfig {(optional-key :package) [{:name Str
+                                                       (optional-key :installed?) Bool}]
+                             (optional-key :netstat) [{:process-name Str
+                                                       :port Str
+                                                       (optional-key :running?) Bool
+                                                       (optional-key :ip) Str
+                                                       (optional-key :exp-proto) Str}]
+                             (optional-key :file) [{:path Str
+                                                    (optional-key :exist?) Bool}]
+                             (optional-key :netcat) [{:host Str
+                                                      :port Num
+                                                      (optional-key :reachable?) Bool}]})
 
 ```
 The "tests.edn" has the schema of the ServerTestDomainConfig-variable.
@@ -115,14 +115,20 @@ The default-value is that the test expects a positive boolean (e.g. :reachable? 
 
 ### Infra-Schema for Facts & Tests
 ```clojure
-(def ServerTestConfig {(s/optional-key :package-fact) s/Any
-                       (s/optional-key :netstat-fact) s/Any
-                       (s/optional-key :file-fact) file-fact/FileFactConfig
-                       (s/optional-key :netcat-fact) netcat-fact/NetcatFactConfig
-                       (s/optional-key :package-test) package-test/PackageTestConfig
-                       (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
-                       (s/optional-key :file-test) file-test/FileTestConfig
-                       (s/optional-key :netcat-test) netcat-test/NetcatTestConfig})
+(def ServerTestConfig {
+ (optional-key :netcat-test) {Keyword {:reachable? Bool}},
+ (optional-key :netcat-fact) {Keyword {:port Num,
+                                       :host Str,
+                                       :timeout Num}},
+ (optional-key :netstat-test) {Keyword {:ip Str,
+                                        :running? Bool,
+                                        :port Str,
+                                        :exp-proto Str}},
+ (optional-key :netstat-fact) Any,
+ (optional-key :file-test) {Keyword {:exist? Bool}},
+ (optional-key :file-fact) {Keyword {:path Str}},
+ (optional-key :package-test) {Keyword {:installed? Bool}},
+ (optional-key :package-fact) Any})
 ```
 On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
 This results in a map that follows the schema depicted above.
