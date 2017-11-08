@@ -79,33 +79,39 @@ We provide two levels of API - domain is a high level API with many build in con
 #### Targets
 The schema is:
 ```clojure
-(def ExistingNode {:node-name Str
-                   :node-ip Str})
+(def ExistingNode {:node-name Str                   ; your name for the node
+                   :node-ip Str                     ; nodes ip4 address       
+                   })
 
-(def ProvisioningUser {:login Str
-                       (optional-key :password) Str})
+(def ProvisioningUser {:login Str                   ; user account used for provisioning / executing tests
+                       (optional-key :password) Str ; password, is no authorized ssh key is avail.
+                       })
 
-(def Targets {:existing [ExistingNode]
-              :provisioning-user ProvisioningUser})
+(def Targets {:existing [ExistingNode]              ; nodes to test or install
+              :provisioning-user ProvisioningUser   ; common user account on all nodes given above
+              })
 ```
 The "targets.edn" has the schema of the Targets
 
 #### Tests
 The schema is:
 ```clojure
-(def ServerTestDomainConfig {(optional-key :package) [{:name Str
-                                                       (optional-key :installed?) Bool}]
-                             (optional-key :netstat) [{:process-name Str
-                                                       :port Str
-                                                       (optional-key :running?) Bool
-                                                       (optional-key :ip) Str
-                                                       (optional-key :exp-proto) Str}]
-                             (optional-key :file) [{:path Str
-                                                    (optional-key :exist?) Bool}]
-                             (optional-key :netcat) [{:host Str
-                                                      :port Num
-                                                      (optional-key :reachable?) Bool}]})
-
+(def ServerTestDomainConfig {(optional-key :package)
+                              [{:name Str            
+                                (optional-key :installed?) Bool}]
+                             (optional-key :netstat)
+                             [{:process-name Str
+                               :port Str
+                               (optional-key :running?) Bool
+                               (optional-key :ip) Str
+                               (optional-key :exp-proto) Str}]
+                             (optional-key :file)
+                             [{:path Str
+                              (optional-key :exist?) Bool}]
+                             (optional-key :netcat)
+                             [{:host Str
+                              :port Num
+                              (optional-key :reachable?) Bool}]})
 ```
 The "tests.edn" has the schema of the ServerTestDomainConfig-variable.
 The default-value is that the test expects a positive boolean (e.g. :reachable? true) and this value can be omitted.
@@ -118,19 +124,25 @@ Settings can also be used without tests in order to provide informations for con
 The schema is:
 ```clojure
 (def ServerTestConfig {
- (optional-key :netcat-test) {Keyword {:reachable? Bool}},
- (optional-key :netcat-fact) {Keyword {:port Num,
-                                       :host Str,
-                                       :timeout Num}},
- (optional-key :netstat-test) {Keyword {:ip Str,
-                                        :running? Bool,
-                                        :port Str,
-                                        :exp-proto Str}},
- (optional-key :netstat-fact) Any,
- (optional-key :file-test) {Keyword {:exist? Bool}},
- (optional-key :file-fact) {Keyword {:path Str}},
- (optional-key :package-test) {Keyword {:installed? Bool}},
- (optional-key :package-fact) Any})
+ (optional-key :netcat-test)
+ {Keyword {:reachable? Bool}},          ; keyword is used to match test against fact
+ (optional-key :netcat-fact)            ; parsed result of "nc [host] -w [timeout] && echo $?"
+ {Keyword {:port Num,
+           :host Str,                   ; may be ip or fqdn
+           :timeout Num}},              ; timeout given in seconds
+ (optional-key :netstat-test)
+ {Keyword {:ip Str,
+           :running? Bool,
+           :port Str,
+           :exp-proto Str}},
+ (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored.
+ (optional-key :file-test)
+ {Keyword {:exist? Bool}},
+ (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\"
+ {Keyword {:path Str}},
+ (optional-key :package-test)
+ {Keyword {:installed? Bool}},
+ (optional-key :package-fact) Any})      ; parsed result of "dpkg -l". Any is ignored.
 ```
 On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
 This results in a map that follows the schema depicted above.
