@@ -18,9 +18,13 @@ This crate provides integration tests for servers.
 1. Download the jar from the releases page of this repository
 2. Deploy jar on the source machine
 3. Create test.edn (Domain-Schema for Tests) and target.edn (Schema for Targets) according to the reference and our example configs
-4. Run the jar with the following options and inspect the output.
+4. If you want to enshure, that needed test tools (like netcat or netstat) are present on target, you should execute a onetime install:
 ```bash
-java -jar dda-serverspec-crate-standalone.jar test.edn targets.edn
+java -jar dda-serverspec-crate-standalone.jar --install-dependencies --targets targets.edn test.edn
+```
+5. Run the jar with the following options and inspect the output.
+```bash
+java -jar dda-serverspec-crate-standalone.jar --targets targets.edn test.edn
 ```
 
 ### Remote-whitebox

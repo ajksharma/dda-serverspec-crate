@@ -24,7 +24,7 @@
     [dda.pallet.commons.operation :as operation]
     [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(defn execute-target
+(defn execute-server-test
   [domain-config targets]
   (let [{:keys [existing provisioning-user]} targets]
     (operation/do-server-test
@@ -34,18 +34,36 @@
        provisioning-user)
      :summarize-session true)))
 
+(defn execute-install
+  [domain-config targets]
+  (let [{:keys [existing provisioning-user]} targets]
+    (operation/do-apply-install
+     (existing/provider {:dda-servertest-group existing})
+     (app/existing-provisioning-spec
+       domain-config
+       provisioning-user)
+     :summarize-session true)))
+
 (def cli-options
-  [["-h" "--help"]])
+  [["-h" "--help"]
+   ["-i" "--install-dependencies"]
+   ["-t" "--targets TARGETS.edn" "edn file containing the targets to test."
+    :default "targets.edn"]])
 
 (defn usage [options-summary]
   (str/join
    \newline
    ["dda-serverspec-crate is testing a configuration on a server"
     ""
-    "Usage: java -jar dda-serverspec-crate-0.2.2-standalone.jar [test.edn] [targets.edn]"
+    "Usage: java -jar dda-serverspec-crate-[version]-standalone.jar [options] test-spec-file"
     ""
     "Options:"
-    options-summary]))
+    options-summary
+    ""
+    "test-spec-file"
+    "  - follows the edn format."
+    "  - has to be a valid ServerTestDomainConfig (see: https://github.com/DomainDrivenArchitecture/dda-serverspec-crate)"
+    ""]))
 
 (defn error-msg [errors]
   (str "The following errors occurred while parsing your command:\n\n"
@@ -56,11 +74,14 @@
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)]
+  (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)]
     (cond
-      (:help options) (exit 0 (usage summary))
-      (not= (count arguments) 2) (exit 1 (usage summary))
-      errors (exit 1 (error-msg errors)))
-    (case (count args)
-      2 (execute-target (app/load-tests (first args)) (app/load-targets (second args)))
-      "error")))
+      help (exit 0 (usage summary))
+      errors (exit 1 (error-msg errors))
+      (not= (count arguments) 1) (exit 1 (usage summary))
+      (:install-dependencies options) (execute-install
+                                       (app/load-tests (first arguments))
+                                       (app/load-targets (:targets options)))
+      :default (execute-server-test
+                (app/load-tests (first arguments))
+                (app/load-targets (:targets options))))))
