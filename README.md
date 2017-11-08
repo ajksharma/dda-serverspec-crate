@@ -30,15 +30,13 @@ For the remote whitebox test, the serverspec crate can be used from a source mac
 This can be achieed by either utilizing the jar provided on GitHub, or by calling the functions of the source code directly.
 
 ### Configuration
-The configuration of this crate can be distinguished into two categories - the configuration for the actual tests to be executed, and the configuration for the target nodes which should be tested.
-Usually all of the dda-pallet crate provide an integration folder, which is responsible for handling the configuration and calling the underlying infrastructure utilities.
-In order to utilize the integration functionality, an IDE and basic clojure knowledge is required. A more convenient way is to use the jar provided on Github. This jar can be downloaded and .edn configuration files will be used to customize the tests to be executed.
 Two configuration file will be necessary to call the main method successfully. The first argument requires the configuration for the actualy tests for this crate, while the second configuration
 file is responsible for the target nodes.
+
 The following examples will make the creation of these files more clear. Please note that, we will reference the files for the test configuration and target configuration "test.edn"
 and "targets.edn", respectively.
 
-#### Targets config
+#### Targets config Example
 ```clojure
 {:existing [{:node-name "test-vm1"
              :node-ip "35.157.19.218"}
@@ -50,7 +48,7 @@ The keyword :existing has to be assigned a vector that contains maps of the info
 The nodes are the target machines that will be tested. The node-name has to be set to be able to identify the target machine and the node-ip has to be set so that the source machine can reach it.
 The provsioning-user has to be the same for all nodes that are to be tested. Furthermore, if the public-key of the executing host is authorized on all target nodes, a password for authorization can be omitted. If this is not the case the provisioning user has to contain a password. This can be seen in the schema for the targets.
 
-#### Test config
+#### Test config Example
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}
            {:process-name "sshd" :port "22"}
@@ -74,14 +72,12 @@ java -jar dda-serverspec-crate-standalone.jar test.edn targets.edn
 ```
 
 ## Reference
-The Infra configuration is a configuration on the infrastructure level of a crate. It contains the complete configuration options that are possible with the crate functions.
-The Infra configuration is not very convenient in most use case scenarios as it can be quite complex.
-The domain configuration acts as an abstraction of the Infra configuration to provide the most important configuration without adding the overhead of the Infra configuration.
-It is much more convenient in its usage and should be preferred in most use cases.
-Furthermore, functions in the domain namespace will create an infrastructure configuration from the domain config. This can be seen by comparing the Domain-Schema and Infra-Schema provided below.
-In contrast to the Domain-Schema, the Infra-Schema references the configuration used at the most bottom level functions in the respective namespaces.
+We provide two levels of API - domain is a high level API with many build in conventions. If this conventions doe not fit your needs, you can use our low-level (infra) API and realize your own conventions.
 
-### Schema for Targets
+### Domain API
+
+#### Targets
+The schema is:
 ```clojure
 (def ExistingNode {:node-name Str
                    :node-ip Str})
@@ -94,7 +90,8 @@ In contrast to the Domain-Schema, the Infra-Schema references the configuration 
 ```
 The "targets.edn" has the schema of the Targets
 
-### Domain-Schema for Tests
+#### Tests
+The schema is:
 ```clojure
 (def ServerTestDomainConfig {(optional-key :package) [{:name Str
                                                        (optional-key :installed?) Bool}]
@@ -114,6 +111,11 @@ The "tests.edn" has the schema of the ServerTestDomainConfig-variable.
 The default-value is that the test expects a positive boolean (e.g. :reachable? true) and this value can be omitted.
 
 ### Infra-Schema for Facts & Tests
+The Infra configuration is a configuration on the infrastructure level of a crate. It contains the complete configuration options that are possible with the crate functions.
+On infra level we distinguishe between collecting facts (done in the settings phase without side effects) and test (done in test phase intentionally without sideeffects).
+Settings can also be used without tests in order to provide informations for conditional installations / configurations.
+
+The schema is:
 ```clojure
 (def ServerTestConfig {
  (optional-key :netcat-test) {Keyword {:reachable? Bool}},
