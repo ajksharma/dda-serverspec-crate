@@ -79,7 +79,7 @@
              {(keyword name) {:installed? installed?}})
           package-domain-config)))
 
-(s/defn ^:allways-validate infra-configuration :- InfraResult
+(s/defn ^:always-validate infra-configuration :- InfraResult
   [domain-config :- ServerTestDomainConfig]
   (let [{:keys [file package netstat netcat]} domain-config]
     {infra/facility
