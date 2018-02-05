@@ -25,20 +25,32 @@
 
 (def CertificateConfig
   {s/Keyword
-   {:certificate-file s/Str         ;with full path
+   {:file-name s/Str         ;with full path
     :expiration-days s/Num}})   ;TODO not above 1000000 (a million)
 
-(def CertificateResult {:certificate-file s/Str
-                            :still-valid? s/Bool})
+(def CertificateResult {:valid? s/Bool
+                        :message s/Str})
 
 (def CertificateResults {s/Keyword CertificateResult})
 
 ; -----------------------  functions  -------------------------------
+(s/defn build-certificate-script
+  "builds the script to check the certificate from the given config"
+  [certificate-config :- CertificateConfig]
+  (let [config-val (val certificate-config)
+        {:keys [file-name expiration-days]} config-val]
+    (str
+     "openssl x509 -checkend "
+     (* 86400 (- expiration-days 1))
+     " -in "
+     file-name
+     "; echo $?")))
+
 (s/defn parse-certificate :- CertificateResult
   "returns a CertificateResult from the result text of one certificate check"
   [script-result]
   (let [result-vec (string/split script-result #"\n")]
-    {:still-valid? (= "0" (peek result-vec))
+    {:valid? (= "0" (peek result-vec))
      :message (clojure.string/join(pop result-vec))}))
 
 (defn collect-certificate-fact

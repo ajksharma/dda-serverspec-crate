@@ -45,11 +45,11 @@ unable to load certificate
   (testing
     "test parsing certificate check output"
       (is (= true
-             (:still-valid?
+             (:valid?
                (sut/parse-certificate non-expiring-result))))
       (is (= false
-             (:still-valid?
+             (:valid?
                (sut/parse-certificate expiring-result))))
       (is (= false
-             (:still-valid?
+             (:valid?
                (sut/parse-certificate certificate-not-found-result))))))
