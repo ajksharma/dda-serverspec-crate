@@ -64,10 +64,12 @@
                              :_nonexist_sth {:path "/nonexist/sth"}}
                  :file-test {:_etc {:exist? true},
                              :_nonexist_sth {:exist? false}}}}
-            (sut/infra-configuration domain-config-2)))
+            (sut/infra-configuration domain-config-2)))))
+
+(deftest test-certificate-configuration
       (is (=  {:dda-servertest
                 {:certificate-fact {:_etc_ssl_crt_primary.crt {:file "/etc/ssl/crt/primary.crt"}
                                     :_etc_ssl_crt_nonvalid.crt {:file "/etc/ssl/crt/nonvalid.crt"}}
                  :certificate-test {:_etc_ssl_crt_primary.crt {:expiration-days 33},
                                     :_etc_ssl_crt_nonvalid.crt {:expiration-days 22}}}}
-            (sut/infra-configuration domain-config-3)))))
+            (sut/infra-configuration domain-config-3))))

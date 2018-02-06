@@ -84,17 +84,16 @@
 (defn- domain-2-certificatefacts [certificate-domain-config]
   (apply merge
          (map
-          #(let [{:keys [file expiration-days]} certificate-domain-config]
+          #(let [{:keys [file expiration-days]} %]
              {(infra/certificate-file-to-keyword file)
-              {:file file
-               :expiration-days expiration-days}})
+              {:file file}})
           certificate-domain-config)))
 
 (defn- domain-2-certificatetests [certificate-domain-config]
   (apply merge
          (map
-          #(let [{:keys [file valid?] :or {valid? true}} %]
-             {(infra/certificate-file-to-keyword file) {:valid? valid?}})
+          #(let [{:keys [file expiration-days] :or {expiration-days 0}} %]
+             {(infra/certificate-file-to-keyword file) {:expiration-days expiration-days}})
           certificate-domain-config)))
 
 (s/defn ^:always-validate infra-configuration :- InfraResult
