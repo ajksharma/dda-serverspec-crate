@@ -23,37 +23,38 @@
 ; -----------------------  fields & schemas  ------------------------
 (def fact-id-certificate ::certificate)
 
-(def CertificateConfig
-  {s/Keyword
-   {:file-name s/Str         ;with full path
-    :expiration-days s/Num}})   ;TODO not above 1000000 (a million)
+(def CertificateFactConfig
+  {s/Keyword {:file s/Str}})         ;with full path   TODO repl with file type??
 
-(def CertificateResult {:valid? s/Bool
-                        :message s/Str})
+(def CertificateFactResult {:expiration-days s/Num})
 
-(def CertificateResults {s/Keyword CertificateResult})
+(def CertificateFactResults {s/Keyword CertificateFactResult})
 
 ; -----------------------  functions  -------------------------------
 (s/defn build-certificate-script
   "builds the script to check the certificate from the given config"
-  [certificate-config :- CertificateConfig]
+  [certificate-config :- CertificateFactConfig]
   (let [config-val (val certificate-config)
-        {:keys [file-name expiration-days]} config-val]
+        {:keys [file expiration-days]} config-val]
     (str
      "openssl x509 -checkend "
      (* 86400 (- expiration-days 1))
      " -in "
-     file-name
+     file
      "; echo $?")))
 
-(s/defn parse-certificate :- CertificateResult
-  "returns a CertificateResult from the result text of one certificate check"
+(s/defn certificate-file-to-keyword :- s/Keyword
+  [file :- s/Str] (keyword (clojure.string/replace file #"/" "_")))
+
+(s/defn parse-certificate :- CertificateFactResult
+  "returns a CertificateFactResult from the result text of one certificate check"
   [script-result]
   (let [result-vec (string/split script-result #"\n")]
     {:valid? (= "0" (peek result-vec))
      :message (clojure.string/join(pop result-vec))}))
 
-(defn collect-certificate-fact
+(s/defn collect-certificate-fact
   "Defines the certificate-check resource."
-  []
-  (collect-fact fact-id-certificate '("openssl" "x509") :transform-fn parse-certificate))
+  [fact-config :- CertificateFactConfig]
+  (collect-fact fact-id-certificate [(build-certificate-script fact-config)]
+                :transform-fn parse-certificate))

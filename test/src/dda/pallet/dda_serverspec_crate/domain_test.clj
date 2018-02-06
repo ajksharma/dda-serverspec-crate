@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-
 (ns dda.pallet.dda-serverspec-crate.domain-test
   (:require
     [clojure.test :refer :all]
     [dda.pallet.dda-serverspec-crate.domain :as sut]))
 
+; -----------------------  test data  ------------------------
 (def domain-config-1
   {:netstat '({:process-name "sshd" :port "22"})
    :package '({:name "firefox" :installed? false})
@@ -33,6 +33,13 @@
   {:file '({:path "/etc"}
            {:path "/nonexist/sth" :exist? false})})
 
+(def domain-config-3
+  {:certificate '({:file "/etc/ssl/crt/primary.crt"
+                   :expiration-days 33}
+                  {:file "/etc/ssl/crt/nonvalid.crt"
+                   :expiration-days 22})})
+
+; ------------------------  tests  ---------------------------
 (deftest test-infra-configuration
   (testing
     "test creation of infra configuration"
@@ -56,5 +63,11 @@
                 {:file-fact {:_etc {:path "/etc"}
                              :_nonexist_sth {:path "/nonexist/sth"}}
                  :file-test {:_etc {:exist? true},
-                             :_nonexist_sth  {:exist? false}}}}
-            (sut/infra-configuration domain-config-2)))))
+                             :_nonexist_sth {:exist? false}}}}
+            (sut/infra-configuration domain-config-2)))
+      (is (=  {:dda-servertest
+                {:certificate-fact {:_etc_ssl_crt_primary.crt {:file "/etc/ssl/crt/primary.crt"}
+                                    :_etc_ssl_crt_nonvalid.crt {:file "/etc/ssl/crt/nonvalid.crt"}}
+                 :certificate-test {:_etc_ssl_crt_primary.crt {:expiration-days 33},
+                                    :_etc_ssl_crt_nonvalid.crt {:expiration-days 22}}}}
+            (sut/infra-configuration domain-config-3)))))

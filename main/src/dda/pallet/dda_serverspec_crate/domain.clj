@@ -32,7 +32,9 @@
                             (s/optional-key :exist?) s/Bool}]
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
-                              (s/optional-key :reachable?) s/Bool}]})
+                              (s/optional-key :reachable?) s/Bool}]
+   (s/optional-key :certificate) [{:file s/Str  ;TODO repl by type file evtl from dir-model
+                                   :expiration-days s/Num}]})   ;TODO not above 1000000 (a million)
 
 (def InfraResult {infra/facility infra/ServerTestConfig})
 
@@ -75,13 +77,29 @@
 (defn- domain-2-packagetests [package-domain-config]
   (apply merge
          (map
-          #(let [{:keys [name installed?] :or  {installed? true}} %]
+          #(let [{:keys [name installed?] :or {installed? true}} %]
              {(keyword name) {:installed? installed?}})
           package-domain-config)))
 
+(defn- domain-2-certificatefacts [certificate-domain-config]
+  (apply merge
+         (map
+          #(let [{:keys [file expiration-days]} certificate-domain-config]
+             {(infra/certificate-file-to-keyword file)
+              {:file file
+               :expiration-days expiration-days}})
+          certificate-domain-config)))
+
+(defn- domain-2-certificatetests [certificate-domain-config]
+  (apply merge
+         (map
+          #(let [{:keys [file valid?] :or {valid? true}} %]
+             {(infra/certificate-file-to-keyword file) {:valid? valid?}})
+          certificate-domain-config)))
+
 (s/defn ^:always-validate infra-configuration :- InfraResult
   [domain-config :- ServerTestDomainConfig]
-  (let [{:keys [file package netstat netcat]} domain-config]
+  (let [{:keys [file package netstat netcat certificate]} domain-config]
     {infra/facility
      (merge
       (if (contains? domain-config :package)
@@ -99,4 +117,8 @@
       (if (contains? domain-config :netcat)
         {:netcat-fact (domain-2-netcatfacts netcat)
          :netcat-test (domain-2-netcattests netcat)}
+        {})
+      (if (contains? domain-config :certificate)
+        {:certificate-fact (domain-2-certificatefacts certificate)
+         :certificate-test (domain-2-certificatetests certificate)}
         {}))}))

@@ -25,11 +25,14 @@
    [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.netcat :as netcat-fact]
+   [dda.pallet.dda-serverspec-crate.infra.fact.certificate :as certificate-fact]
    [dda.pallet.dda-serverspec-crate.infra.test.package :as package-test]
    [dda.pallet.dda-serverspec-crate.infra.test.netstat :as netstat-test]
    [dda.pallet.dda-serverspec-crate.infra.test.file :as file-test]
-   [dda.pallet.dda-serverspec-crate.infra.test.netcat :as netcat-test]))
+   [dda.pallet.dda-serverspec-crate.infra.test.netcat :as netcat-test]
+   [dda.pallet.dda-serverspec-crate.infra.test.certificate :as certificate-test]))
 
+; -----------------------  fields and schemas  ----------------------
 (def facility :dda-servertest)
 (def version  [0 1 0])
 
@@ -38,11 +41,14 @@
    (s/optional-key :netstat-fact) s/Any
    (s/optional-key :file-fact) file-fact/FileFactConfig
    (s/optional-key :netcat-fact) netcat-fact/NetcatFactConfig
+   (s/optional-key :certificate-fact) certificate-fact/CertificateFactConfig
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
    (s/optional-key :file-test) file-test/FileTestConfig
-   (s/optional-key :netcat-test) netcat-test/NetcatTestConfig})
+   (s/optional-key :netcat-test) netcat-test/NetcatTestConfig
+   (s/optional-key :certificate-test) certificate-test/CertificateTestConfig})
 
+; -----------------------  functions and methods  ------------------------
 (s/defn ^:always-validate path-to-keyword :- s/Keyword
   [path :- s/Str]
   (file-fact/path-to-keyword path))
@@ -50,6 +56,10 @@
 (s/defn ^:always-validate config-to-string :- s/Str
   [host :- s/Str port :- s/Num timeout :- s/Num]
   (netcat-fact/config-to-string host port timeout))
+
+(s/defn ^:always-validate certificate-file-to-keyword :- s/Keyword
+  [file :- s/Str]
+  (certificate-fact/certificate-file-to-keyword file))
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]

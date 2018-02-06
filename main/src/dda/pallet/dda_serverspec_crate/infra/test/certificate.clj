@@ -20,7 +20,7 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.certificate :as certificate-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def CertificateTestConfig {s/Keyword {:valid? s/Bool}})
+(def CertificateTestConfig {s/Keyword {:expiration-days s/Num}})
 
 (s/defn fact-check :- server-test/FactCheckResult
   "Compare facts & expectation in order to return test-results."
@@ -47,7 +47,7 @@
 (s/defn test-certificate-internal :- server-test/TestResult
   "Exposing fact input to signature for tests."
   [test-config :- CertificateTestConfig
-   input :- {s/Keyword certificate-fact/CertificateResults}]
+   input :- {s/Keyword certificate-fact/CertificateFactResults}]
   (let [fact-result (fact-check server-test/fact-check-seed test-config input)]
     (server-test/fact-result-to-test-result input fact-result)))
 
