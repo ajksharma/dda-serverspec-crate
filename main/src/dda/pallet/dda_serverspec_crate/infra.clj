@@ -72,7 +72,9 @@
     (when (contains? config :file-fact)
       (file-fact/collect-file-fact file-fact))
     (when (contains? config :netcat-fact)
-      (netcat-fact/collect-netcat-fact netcat-fact))))
+      (netcat-fact/collect-netcat-fact netcat-fact))
+    (when (contains? config :certificate-fact)
+      (certificate-fact/collect-certificate-fact certificate-fact))))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
@@ -84,7 +86,9 @@
     (when (contains? config :file-test)
       (file-test/test-file (:file-test config)))
     (when (contains? config :netcat-test)
-      (netcat-test/test-netcat (:netcat-test config)))))
+      (netcat-test/test-netcat (:netcat-test config)))
+    (when (contains? config :certificate-test)
+      (certificate-test/test-certificate (:certificate-test config)))))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate
