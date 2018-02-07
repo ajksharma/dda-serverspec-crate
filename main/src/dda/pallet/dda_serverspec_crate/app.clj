@@ -39,11 +39,13 @@
   {:group-specific-config
    {s/Keyword InfraResult}})
 
-(s/defn ^:always-validate load-targets :- Targets
+(s/defn ^:always-validate
+  load-targets :- Targets
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
-(s/defn ^:always-validate load-tests :- ServerSpecDomainConfig
+(s/defn ^:always-validate
+  load-domain :- ServerSpecDomainConfig
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
