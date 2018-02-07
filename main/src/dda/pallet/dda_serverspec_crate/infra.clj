@@ -64,7 +64,7 @@
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
   "dda-servertest: setting"
-  (let [{:keys [file-fact netcat-fact]} config]
+  (let [{:keys [file-fact netcat-fact certificate-fact]} config]
     (when (contains? config :package-fact)
       (package-fact/collect-package-fact))
     (when (contains? config :netstat-fact)
@@ -78,17 +78,17 @@
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
-  (let [{:keys [file-facts]} config]
-    (when (contains? config :package-test)
-      (package-test/test-package (:package-test config)))
-    (when (contains? config :netstat-test)
-      (netstat-test/test-netstat (:netstat-test config)))
-    (when (contains? config :file-test)
-      (file-test/test-file (:file-test config)))
-    (when (contains? config :netcat-test)
-      (netcat-test/test-netcat (:netcat-test config)))
-    (when (contains? config :certificate-test)
-      (certificate-test/test-certificate (:certificate-test config)))))
+  ;TODO remove (let [{:keys [file-facts ]} config]
+  (when (contains? config :package-test)
+    (package-test/test-package (:package-test config)))
+  (when (contains? config :netstat-test)
+    (netstat-test/test-netstat (:netstat-test config)))
+  (when (contains? config :file-test)
+    (file-test/test-file (:file-test config)))
+  (when (contains? config :netcat-test)
+    (netcat-test/test-netcat (:netcat-test config)))
+  (when (contains? config :certificate-test)
+    (certificate-test/test-certificate (:certificate-test config))))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate
