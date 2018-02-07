@@ -62,7 +62,7 @@
     (app/existing-provisioning-spec domain-config provisioning-user)
     :summarize-session summarize-session)))
 
-(defn test
+(defn serverspec
   [& options]
   (let [{:keys [summarize-session]
          :or {summarize-session true}} options]
