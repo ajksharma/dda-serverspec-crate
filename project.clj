@@ -1,10 +1,10 @@
-(defproject dda/dda-serverspec-crate "0.4.1-SNAPSHOT"
+(defproject dda/dda-serverspec-crate "1.0.0-SNAPSHOT"
   :description "A crate to get facts from server nodes and test these facst against your expectation."
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [dda/dda-pallet "0.6.2"]
+                 [dda/dda-pallet "1.0.1"]
                  [org.clojure/tools.cli "0.3.5"]]
   :source-paths ["main/src"]
   :resource-paths ["main/resources"]
@@ -24,6 +24,7 @@
                     [org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
                    :plugins [[lein-sub "0.3.0"]
                              [lein-pprint "1.1.2"]]
+                   :repl-options {:init-ns dda.pallet.dda-serverspec-crate.app.instantiate-aws}
                    :leiningen/reply  {:dependencies [[org.slf4j/jcl-over-slf4j "1.8.0-alpha2"
                                                       :exclusions [commons-logging]]]}}
              :test {:test-paths ["test/src"]
