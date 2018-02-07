@@ -88,7 +88,11 @@
   (when (contains? config :netcat-test)
     (netcat-test/test-netcat (:netcat-test config)))
   (when (contains? config :certificate-test)
-    (certificate-test/test-certificate (:certificate-test config))))
+    (certificate-test/test-certificate (:certificate-test config)))
+  (actions/as-action
+    (logging/info @(:dda.pallet.dda-serverspec-crate.infra.fact.package/package
+                     (crate/get-settings :dda-serverspec-fact
+                                         {:instance-id (crate/target-node)})))))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate
