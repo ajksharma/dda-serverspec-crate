@@ -22,32 +22,28 @@
     [dda.pallet.dda-serverspec-crate.infra.test.certificate :as sut]))
 
 ; -----------------------  test data  --------------------------
-(def test-config-1 {:primary_crt {:valid? true}
-                    :nonvalid_crt {:valid? false}})
+(def test-config-1 {:primary_crt {:expiration-days 10}
+                    :nonvalid_crt {:expiration-days 20}})
 
-(def test-config-2 {:primary_crt {:valid? true}
-                    :nonvalid_crt {:valid? true}})
+(def test-config-2 {:primary_crt {:expiration-days 20}
+                    :nonvalid_crt {:expiration-days 21}})
 
-(def test-config-3 {:primary_crt {:valid? false}
-                    :nonvalid_crt {:valid? true}})
+(def test-config-3 {:primary_crt {:expiration-days 30}
+                    :nonvalid_crt {:expiration-days 30}})
 
-(def input
-  {:primary_crt {:path "/etc/ssl/crt/primary.crt" :valid? true}
-   :nonvalid_crt {:path "/etc/ssl/crt/nonvalid.crt" :valid? false}})
-
-(def input-old
-  {:_etc_hosts {:path "/etc/hosts" :valid? true}
-   :_root_.ssh_authorized_keys {:path "/root/.ssh/authorized_keys" :valid? false}})
+(def fact-result
+  {:primary_crt {:expiration-days 20}
+   :nonvalid_crt {:expiration-days 20}})
 
 ; -----------------------  tests  --------------------------
 (deftest test-certificate-internal
  (testing
    "test test-certificate-internal"
     (is (= 0
-          (:no-failed (sut/test-certificate-internal {} input))))
+          (:no-failed (sut/test-certificate-internal {} fact-result))))
     (is (= 0
-          (:no-failed (sut/test-certificate-internal test-config-1 input))))
+          (:no-failed (sut/test-certificate-internal test-config-1 fact-result))))
     (is (= 1
-          (:no-failed (sut/test-certificate-internal test-config-2 input))))
+          (:no-failed (sut/test-certificate-internal test-config-2 fact-result))))
     (is (= 2
-          (:no-failed (sut/test-certificate-internal test-config-3 input))))))
+          (:no-failed (sut/test-certificate-internal test-config-3 fact-result))))))

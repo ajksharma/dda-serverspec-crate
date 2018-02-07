@@ -30,15 +30,18 @@
   (if (<= (count spec) 0)
     result
     (let [elem (first spec)
-          expected-valid? (:valid? (val elem))
+          expected-expiration-days (:expiration-days (val elem))
           fact-elem  (get-in fact-map [(key elem)])
-          fact-valid? (:valid? fact-elem)
-          passed? (= expected-valid? fact-valid?)]
+          fact-expiration-days (:expiration-days fact-elem)
+          passed? (<= expected-expiration-days fact-expiration-days)]
         (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test certificate: " (name (key elem))
-                              ", expected valid?: " expected-valid? ", was valid?: "
-                              fact-valid? ", passed?: " passed? "\n")
+                              ", expected min expiration-days: " expected-expiration-days " vs actual expiration-days "
+                              (if (= fact-expiration-days -1)
+                                "---ERROR RETRIEVING EXPIRATION---"
+                                fact-expiration-days)
+                              ", passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)

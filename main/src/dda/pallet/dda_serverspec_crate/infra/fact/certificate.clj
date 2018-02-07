@@ -26,7 +26,7 @@
 (def CertificateFactConfig
   {s/Keyword {:file s/Str}})         ;with full path   TODO repl with file type??
 
-(def CertificateFactResult {:expiration-days s/Num})
+(def CertificateFactResult {:expiration-days s/Num})    ;value -1 in case of error (e.g. missing file)
 
 (def CertificateFactResults {s/Keyword CertificateFactResult})
 

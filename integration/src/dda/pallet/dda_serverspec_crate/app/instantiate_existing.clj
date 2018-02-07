@@ -41,7 +41,8 @@
                     :netcat '({:host "www.google.com" :port 80}
                               {:host "www.google.c" :port 80 :reachable? false})
                     :package '({:name "test" :installed? false}
-                               {:name "nano"})})
+                               {:name "nano"})
+                    :certificate '({:file "/somefolder/cert.pem" :expiration-days 100})})
 
 (defn apply-install
  [& options]
@@ -61,7 +62,7 @@
     (app/existing-provisioning-spec domain-config provisioning-user)
     :summarize-session summarize-session)))
 
-(defn test
+(defn serverspec
   [& options]
   (let [{:keys [summarize-session]
          :or {summarize-session true}} options]
