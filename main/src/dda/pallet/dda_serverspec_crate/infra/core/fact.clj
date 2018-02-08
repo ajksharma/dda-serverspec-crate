@@ -28,3 +28,5 @@
     (if (>= (count split-string) 4) (nth split-string 4) sudo-string)))
 
 (def collect-fact (partial fact/collect-fact fact-facility))
+
+(def collect-exit-code-fact (partial fact/collect-exit-code-fact fact-facility))

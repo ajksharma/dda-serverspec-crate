@@ -3,7 +3,7 @@
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
  :file [{:path "/root/.bashrc"}
         {:path "/etc"}
-        {:path "/absent" :exist? false}]
+        {:path "/absent" :exist? true}]
  :netcat [{:host "www.google.com" :port 80}
           {:host "www.google.c" :port 80 :reachable? false}]
  :package [{:name "test" :installed? false}

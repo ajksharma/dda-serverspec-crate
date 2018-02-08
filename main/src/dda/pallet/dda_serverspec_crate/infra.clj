@@ -90,7 +90,9 @@
     (netcat-test/test-netcat (:netcat-test config)))
   (when (contains? config :certificate-test)
     (certificate-test/test-certificate (:certificate-test config)))
-  (core-test/test-summary []))
+  ;(core-test/test-summary (keys config)
+  (core-test/test-summary [package-fact/fact-id-package netcat-fact/fact-id-netcat
+                           file-fact/fact-id-file netstat-fact/fact-id-netstat]))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate

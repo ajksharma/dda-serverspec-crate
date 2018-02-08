@@ -106,9 +106,12 @@
   {:pallet/plan-fn true}
   [fact-keys :- [s/Keyword]]
   (actions/as-action
-    (let [result @(:dda.pallet.dda-serverspec-crate.infra.fact.netcat/netcat
-                      (crate/get-settings :dda-serverspec-test
-                                          {:instance-id (crate/target-node)}))]
-    ;(.write *out* (str "result for " fact-key-name " :\n" (-> action-result :out)))
-    ;(.write *out* (str (-> action-result :summary) "\n\n"))
-      (logging/info result))))
+    (logging/info fact-keys)
+    (if (every? true? (for [key fact-keys
+                            :let [result @(key
+                                           (crate/get-settings :dda-serverspec-test
+                                                                {:instance-id (crate/target-node)}))]]
+                        (do (logging/info result)
+                            (get-in result [:result :test-passed]))))
+        (logging/info "success")
+        (throw (Exception. "my exception message")))))
