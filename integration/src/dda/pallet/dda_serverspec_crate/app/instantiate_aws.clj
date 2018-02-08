@@ -48,7 +48,7 @@
               target "integration/resources/jem-aws-target.edn"}} options
         target-config (cloud-target/load-targets target)
         domain-config (app/load-domain domain)]
-   (operation/do-server-test
+   (operation/do-test
      (cloud-target/provider (:context target-config))
      (provisioning-spec domain-config (:node-spec target-config) 0)
      :summarize-session true)))
