@@ -66,7 +66,7 @@
   [& options]
   (let [{:keys [summarize-session]
          :or {summarize-session true}} options]
-   (operation/do-server-test
+   (operation/do-test
     (existing/provider {:dda-servertest-group targets})
     (app/existing-provisioning-spec domain-config provisioning-user)
     :summarize-session summarize-session)))
