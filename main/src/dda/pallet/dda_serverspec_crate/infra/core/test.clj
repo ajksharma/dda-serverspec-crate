@@ -19,7 +19,10 @@
     [clojure.tools.logging :as logging]
     [schema.core :as s]
     [pallet.crate :as crate]
-    [pallet.actions :as actions]))
+    [pallet.actions :as actions]
+    [dda.pallet.dda-serverspec-crate.infra.core.fact :as fact]))
+
+(def test-facility :dda-serverspec-test)
 
 (def FactCheckResult
   {:test-passed s/Bool
@@ -38,6 +41,7 @@
    :action-symbol s/Any
    :input s/Any
    :out s/Str
+   :result FactCheckResult
    :exit s/Num
    :summary s/Str})
 
@@ -67,26 +71,44 @@
      :action-symbol action-symbol
      :input (-> test-result :input)
      :out (-> test-result :test-message)
+     :result test-result
      :exit 0
-     :summary (-> test-result :summary)}))
+     :summary-text (-> test-result :summary)}))
 
 
 (s/defn test-it :- TestActionResult
+  {:pallet/plan-fn true}
   [fact-key :- s/Keyword
    test-fn]
-  (let [all-facts (crate/get-settings :dda-serverspec-fact {:instance-id (crate/target-node)})
+  (let [all-facts (crate/get-settings
+                    fact/fact-facility
+                    {:instance-id (crate/target-node)})
         facts (-> all-facts fact-key)
-        fact-key-name (name fact-key)]
-    (actions/as-action
-      (logging/info (str "testing " fact-key-name))
-      (let [input (:out @facts)
-            context (str "test: dda-serverspec-test/" fact-key-name)
-            test-result (apply test-fn (list input))
-            action-result (test-action-result context fact-key fact-key-name test-result)]
-        (logging/debug (str "input: " input))
-        (logging/debug (str "result: " test-result))
-        (logging/info (str "result for " fact-key-name " : " (-> action-result :out)))
-        (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
-        (.write *out* (str "result for " fact-key-name " :\n" (-> action-result :out)))
-        (.write *out* (str (-> action-result :summary) "\n\n"))
-        action-result))))
+        fact-key-name (name fact-key)
+        test-action-result
+        (actions/as-action
+          (logging/info (str "testing " fact-key-name))
+          (let [input (:out @facts)
+                context (str "test: dda-serverspec-test/" fact-key-name)
+                test-result (apply test-fn (list input))
+                action-result (test-action-result context fact-key fact-key-name test-result)]
+            (logging/debug (str "input: " input))
+            (logging/debug (str "result: " test-result))
+            (logging/info (str "result for " fact-key-name " : " (-> action-result :out)))
+            (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
+            action-result))]
+       (crate/assoc-settings
+            test-facility
+            {fact-key test-action-result}
+            {:instance-id (crate/target-node)})))
+
+(s/defn test-summary :- TestActionResult
+  {:pallet/plan-fn true}
+  [fact-keys :- [s/Keyword]]
+  (actions/as-action
+    (let [result @(:dda.pallet.dda-serverspec-crate.infra.fact.netcat/netcat
+                      (crate/get-settings :dda-serverspec-test
+                                          {:instance-id (crate/target-node)}))]
+    ;(.write *out* (str "result for " fact-key-name " :\n" (-> action-result :out)))
+    ;(.write *out* (str (-> action-result :summary) "\n\n"))
+      (logging/info result))))

@@ -26,6 +26,7 @@
    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.netcat :as netcat-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.certificate :as certificate-fact]
+   [dda.pallet.dda-serverspec-crate.infra.core.test :as core-test]
    [dda.pallet.dda-serverspec-crate.infra.test.package :as package-test]
    [dda.pallet.dda-serverspec-crate.infra.test.netstat :as netstat-test]
    [dda.pallet.dda-serverspec-crate.infra.test.file :as file-test]
@@ -89,10 +90,7 @@
     (netcat-test/test-netcat (:netcat-test config)))
   (when (contains? config :certificate-test)
     (certificate-test/test-certificate (:certificate-test config)))
-  (actions/as-action
-    (logging/info @(:dda.pallet.dda-serverspec-crate.infra.fact.package/package
-                     (crate/get-settings :dda-serverspec-fact
-                                         {:instance-id (crate/target-node)})))))
+  (core-test/test-summary []))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate
