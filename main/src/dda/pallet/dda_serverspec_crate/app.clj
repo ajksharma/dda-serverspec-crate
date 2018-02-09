@@ -78,8 +78,10 @@
    (servertest-group-spec (app-configuration domain-config))
    (existing/node-spec provisioning-user)))
 
+; TODO: add boundary validation
 (defn summarize-test-session [& params]
   (apply summary/summarize-test-session params))
 
+; TODO: add boundary validation
 (defn session-passed? [& params]
   (apply summary/session-passed? params))
