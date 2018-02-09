@@ -13,6 +13,7 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+
 (ns dda.pallet.dda-serverspec-crate.infra
   (:require
    [clojure.tools.logging :as logging]
@@ -26,12 +27,14 @@
    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.netcat :as netcat-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.certificate :as certificate-fact]
+   [dda.pallet.dda-serverspec-crate.infra.fact.http :as http-fact]
    [dda.pallet.dda-serverspec-crate.infra.core.test :as core-test]
    [dda.pallet.dda-serverspec-crate.infra.test.package :as package-test]
    [dda.pallet.dda-serverspec-crate.infra.test.netstat :as netstat-test]
    [dda.pallet.dda-serverspec-crate.infra.test.file :as file-test]
    [dda.pallet.dda-serverspec-crate.infra.test.netcat :as netcat-test]
-   [dda.pallet.dda-serverspec-crate.infra.test.certificate :as certificate-test]))
+   [dda.pallet.dda-serverspec-crate.infra.test.certificate :as certificate-test]
+   [dda.pallet.dda-serverspec-crate.infra.test.http :as http-test]))
 
 ; -----------------------  fields and schemas  ----------------------
 (def facility :dda-servertest)
@@ -43,11 +46,13 @@
    (s/optional-key :file-fact) file-fact/FileFactConfig
    (s/optional-key :netcat-fact) netcat-fact/NetcatFactConfig
    (s/optional-key :certificate-fact) certificate-fact/CertificateFactConfig
+   (s/optional-key :http-fact) http-fact/HttpFactConfig
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
    (s/optional-key :file-test) file-test/FileTestConfig
    (s/optional-key :netcat-test) netcat-test/NetcatTestConfig
-   (s/optional-key :certificate-test) certificate-test/CertificateTestConfig})
+   (s/optional-key :certificate-test) certificate-test/CertificateTestConfig
+   (s/optional-key :http-test) http-test/HttpTestConfig})
 
 ; -----------------------  functions and methods  ------------------------
 (s/defn ^:always-validate path-to-keyword :- s/Keyword
@@ -62,10 +67,14 @@
   [file :- s/Str]
   (certificate-fact/certificate-file-to-keyword file))
 
+(s/defn ^:always-validate url-to-keyword :- s/Keyword
+  [url :- s/Str]
+  (http-fact/url-to-keyword url))
+
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
   "dda-servertest: setting"
-  (let [{:keys [file-fact netcat-fact certificate-fact]} config]
+  (let [{:keys [file-fact netcat-fact certificate-fact http-fact]} config]
     (when (contains? config :package-fact)
       (package-fact/collect-package-fact))
     (when (contains? config :netstat-fact)
@@ -75,11 +84,12 @@
     (when (contains? config :netcat-fact)
       (netcat-fact/collect-netcat-fact netcat-fact))
     (when (contains? config :certificate-fact)
-      (certificate-fact/collect-certificate-fact certificate-fact))))
+      (certificate-fact/collect-certificate-fact certificate-fact))
+    (when (contains? config :http-fact)
+      (http-fact/collect-http-fact http-fact))))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
-  ;TODO remove (let [{:keys [file-facts ]} config]
   (when (contains? config :package-test)
     (package-test/test-package (:package-test config)))
   (when (contains? config :netstat-test)
@@ -89,7 +99,11 @@
   (when (contains? config :netcat-test)
     (netcat-test/test-netcat (:netcat-test config)))
   (when (contains? config :certificate-test)
-    (certificate-test/test-certificate (:certificate-test config))))
+    (certificate-test/test-certificate (:certificate-test config)))
+  (when (contains? config :http-test)
+    (http-test/test-http (:http-test config)))
+  (core-test/test-summary [package-fact/fact-id-package netcat-fact/fact-id-netcat certificate-fact/fact-id-certificate http-fact/fact-id-http
+                           file-fact/fact-id-file netstat-fact/fact-id-netstat certificate-fact/fact-id-certificate http-fact/fact-id-http]))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate

@@ -14,18 +14,18 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-serverspec-crate.infra.test.certificate
+(ns dda.pallet.dda-serverspec-crate.infra.test.http
   (:require
     [schema.core :as s]
-    [dda.pallet.dda-serverspec-crate.infra.fact.certificate :as certificate-fact]
+    [dda.pallet.dda-serverspec-crate.infra.fact.http :as http-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def CertificateTestConfig {s/Keyword {:expiration-days s/Num}})
+(def HttpTestConfig {s/Keyword {:expiration-days s/Num}})
 
 (s/defn fact-check :- server-test/FactCheckResult
   "Compare facts & expectation in order to return test-results."
   [result :- server-test/FactCheckResult
-   spec :- CertificateTestConfig
+   spec :- HttpTestConfig
    fact-map]
   (if (<= (count spec) 0)
     result
@@ -36,7 +36,7 @@
           passed? (<= expected-expiration-days fact-expiration-days)]
         (recur
           {:test-passed (and (:test-passed result) passed?)
-           :test-message (str (:test-message result) "test certificate: " (name (key elem))
+           :test-message (str (:test-message result) "test http: " (name (key elem))
                               ", expected min expiration-days: " expected-expiration-days " vs actual expiration-days "
                               (if (= fact-expiration-days -1)
                                 "---ERROR RETRIEVING EXPIRATION---"
@@ -47,17 +47,17 @@
           (rest spec)
           fact-map))))
 
-(s/defn test-certificate-internal :- server-test/TestResult
+(s/defn test-http-internal :- server-test/TestResult
   "Exposing fact input to signature for tests."
-  [test-config :- CertificateTestConfig
-   input :- {s/Keyword certificate-fact/CertificateFactResults}]
+  [test-config :- HttpTestConfig
+   input :- {s/Keyword http-fact/HttpFactResults}]
   (let [fact-result (fact-check server-test/fact-check-seed test-config input)]
     (server-test/fact-result-to-test-result input fact-result)))
 
-(s/defn test-certificate :- server-test/TestActionResult
+(s/defn test-http :- server-test/TestActionResult
   "The delayed action to be called in test phase.
   Getting upfront the facts from session."
-  [test-config :- CertificateTestConfig]
+  [test-config :- HttpTestConfig]
   (server-test/test-it
-    certificate-fact/fact-id-certificate
-    #(test-certificate-internal test-config %)))
+    http-fact/fact-id-http
+    #(test-http-internal test-config %)))
