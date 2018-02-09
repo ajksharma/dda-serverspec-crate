@@ -24,12 +24,14 @@
 
 (def test-facility :dda-serverspec-test)
 
+; TODO: Rename to TestResult
 (def FactCheckResult
   {:test-passed s/Bool
    :test-message s/Str
    :no-passed s/Num
    :no-failed s/Num})
 
+; TODO: Rename to TestResultHuman
 (def TestResult
   (merge
     FactCheckResult
@@ -84,34 +86,21 @@
                     fact/fact-facility
                     {:instance-id (crate/target-node)})
         facts (-> all-facts fact-key)
-        fact-key-name (name fact-key)
-        test-action-result
-        (actions/as-action
-          (logging/info (str "testing " fact-key-name))
-          (let [input (:out @facts)
-                context (str "test: dda-serverspec-test/" fact-key-name)
-                test-result (apply test-fn (list input))
-                action-result (test-action-result context fact-key fact-key-name test-result)]
-            (logging/debug (str "input: " input))
-            (logging/debug (str "result: " test-result))
-            (logging/info (str "result for " fact-key-name " : " (-> action-result :out)))
-            (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
-            action-result))]
-       (crate/assoc-settings
-            test-facility
-            {fact-key test-action-result}
-            {:instance-id (crate/target-node)})))
+        fact-key-name (name fact-key)]
+    (actions/as-action
+      (logging/info (str "testing " fact-key-name))
+      (let [input (:out @facts)
+            context (str "test: dda-serverspec-test/" fact-key-name)
+            test-result (apply test-fn (list input))
+            action-result (test-action-result context fact-key fact-key-name test-result)]
+        (logging/debug (str "input: " input))
+        (logging/debug (str "result: " test-result))
+        (logging/info (str "result for " fact-key-name " : " (-> action-result :out)))
+        (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
+        action-result))))
 
-(s/defn test-summary :- TestActionResult
-  {:pallet/plan-fn true}
-  [fact-keys :- [s/Keyword]]
-  (actions/as-action
-    (logging/info fact-keys)
-    (if (every? true? (for [key fact-keys
-                            :let [result @(key
-                                           (crate/get-settings :dda-serverspec-test
-                                                                {:instance-id (crate/target-node)}))]]
-                        (do (logging/info result)
-                            (get-in result [:result :test-passed]))))
-        (logging/info "success")
-        (throw (Exception. "my exception message")))))
+(defn run-results [session]
+  (:runs (pallet.core.data-api/session-data session)))
+
+(defn node-results [session]
+  (filter some? (:action-results (first (run-results session)))))

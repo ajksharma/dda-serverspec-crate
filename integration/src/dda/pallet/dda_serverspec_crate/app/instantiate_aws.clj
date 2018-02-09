@@ -13,7 +13,6 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-
 (ns dda.pallet.dda-serverspec-crate.app.instantiate-aws
   (:require
    [clojure.inspector :as inspector]
@@ -48,7 +47,8 @@
               target "integration/resources/jem-aws-target.edn"}} options
         target-config (cloud-target/load-targets target)
         domain-config (app/load-domain domain)]
-   (operation/do-test
-     (cloud-target/provider (:context target-config))
-     (provisioning-spec domain-config (:node-spec target-config) 0)
-     :summarize-session true)))
+   (app/summarize-test-session
+     (operation/do-test
+       (cloud-target/provider (:context target-config))
+       (provisioning-spec domain-config (:node-spec target-config) 0)
+       :summarize-session false))))

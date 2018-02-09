@@ -25,14 +25,16 @@
     [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (defn execute-serverspec
-  [domain-config targets]
-  (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-test
-     (existing/provider {:dda-servertest-group existing})
-     (app/existing-provisioning-spec
-       domain-config
-       provisioning-user)
-     :summarize-session true)))
+  [domain-config targets verbosity]
+  (let [{:keys [existing provisioning-user]} targets
+        session (operation/do-test
+                  (existing/provider {:dda-servertest-group existing})
+                  (app/existing-provisioning-spec
+                    domain-config
+                    provisioning-user)
+                  :summarize-session false)]
+    (app/summarize-test-session session :verbose verbosity)
+    (app/session-passed? session)))
 
 (defn execute-install
   [domain-config targets]
@@ -47,8 +49,9 @@
 (def cli-options
   [["-h" "--help"]
    ["-i" "--install-dependencies"]
-   ["-t" "--targets TARGETS.edn" "edn file containing the targets to test."
-    :default "targets.edn"]])
+   ["-t" "--targets [targets.edn]" "edn file containing the targets to test."
+    :default "targets.edn"]
+   ["-v" "--verbose"]])
 
 (defn usage [options-summary]
   (str/join
@@ -74,16 +77,18 @@
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)]
-    (println
-      (str "x"
-        (cond
-          help (exit 0 (usage summary))
-          errors (exit 1 (error-msg errors))
-          (not= (count arguments) 1) (exit 1 (usage summary))
-          (:install-dependencies options) (execute-install
-                                           (app/load-domain (first arguments))
-                                           (app/load-targets (:targets options)))
-          :default (execute-serverspec
-                    (app/load-domain (first arguments))
-                    (app/load-targets (:targets options))))))))
+  (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)
+        verbose (if (contains? options :verbose) 1 0)]
+    (cond
+      help (exit 0 (usage summary))
+      errors (exit 1 (error-msg errors))
+      (not= (count arguments) 1) (exit 1 (usage summary))
+      (:install-dependencies options) (execute-install
+                                       (app/load-domain (first arguments))
+                                       (app/load-targets (:targets options)))
+      :default (if (execute-serverspec
+                     (app/load-domain (first arguments))
+                     (app/load-targets (:targets options))
+                     verbose)
+                   (exit 0 "TESTS PASSED")
+                   (exit 2 "TESTS FAILED")))))

@@ -23,7 +23,8 @@
    [dda.pallet.dda-config-crate.infra :as config-crate]
    [dda.pallet.dda-serverspec-crate.infra :as infra]
    [dda.pallet.dda-serverspec-crate.domain :as domain]
-   [dda.pallet.commons.external-config :as ext-config]))
+   [dda.pallet.commons.external-config :as ext-config]
+   [dda.pallet.dda-serverspec-crate.app.summary :as summary]))
 
 (def with-serverspec infra/with-serverspec)
 
@@ -76,3 +77,9 @@
   (merge
    (servertest-group-spec (app-configuration domain-config))
    (existing/node-spec provisioning-user)))
+
+(defn summarize-test-session [& params]
+  (apply summary/summarize-test-session params))
+
+(defn session-passed? [& params]
+  (apply summary/session-passed? params))
