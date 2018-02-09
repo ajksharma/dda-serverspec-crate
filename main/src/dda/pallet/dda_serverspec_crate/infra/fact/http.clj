@@ -42,12 +42,13 @@
   [http-config :- HttpFactConfig]
   (let [config-val (val http-config)
         config-key (key http-config)
-        {:keys [file]} config-val]
+        {:keys [url]} config-val
+        servername (first (clojure.string/split (peek (clojure.string/split url #"://")) #"/"))]
     (str
+      ;write key in first line
       "echo '" (name config-key) "';"
-      "echo $(( ( $(date --date=\"$(openssl x509 -in "
-      file
-      " -noout -enddate | cut -d= -f 2)\" \"+%s\") - $(date \"+%s\") ) / 86400));"
+      ;retrieve certificate end-date
+      "echo 'Q'| openssl s_client -connect " servername ":443 2>/dev/null | openssl x509 -enddate -noout;"
       "echo -n '" output-separator "'")))
 
 (s/defn parse-http-response :- HttpFactResult
@@ -56,10 +57,11 @@
   (let [result-lines (string/split single-script-result #"\n")
         result-key (first result-lines)
         result-text (nth result-lines 1)
-        ;convert to number or nil:
-        result-number (re-find #"^\d+$" result-text)]
-    (if result-number
-      {(keyword result-key) {:expiration-days (Integer. result-number)}}
+        ;convert to date
+        expiration-date (peek (clojure.string/split result-text #"notAfter="))]
+    ;TODO
+    (if expiration-date
+      {(keyword result-key) {:expiration-days 100}}
       {(keyword result-key) {:expiration-days -1}})))
 
 (defn parse-http-script-responses
