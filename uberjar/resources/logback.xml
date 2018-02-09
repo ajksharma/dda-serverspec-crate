@@ -43,12 +43,8 @@
     <appender-ref ref="PALLETFILE" />
   </logger>
 
-  <root level="INFO">
+  <root level="ERROR">
     <appender-ref ref="CONSOLE" />
   </root>
-
-  <logger name="pallet" level="ERROR"/>
-  <logger name="pallet.ssh.execute" level="INFO"/>
-  <logger name="dda" level="INFO"/>
 
 </configuration>
