@@ -101,9 +101,7 @@
   (when (contains? config :certificate-test)
     (certificate-test/test-certificate (:certificate-test config)))
   (when (contains? config :http-test)
-    (http-test/test-http (:http-test config)))
-  (core-test/test-summary [package-fact/fact-id-package netcat-fact/fact-id-netcat certificate-fact/fact-id-certificate http-fact/fact-id-http
-                           file-fact/fact-id-file netstat-fact/fact-id-netstat certificate-fact/fact-id-certificate http-fact/fact-id-http]))
+    (http-test/test-http (:http-test config))))
 
 (def dda-serverspec-crate
   (dda-crate/make-dda-crate
