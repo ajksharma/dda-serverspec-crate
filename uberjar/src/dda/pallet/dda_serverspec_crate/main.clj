@@ -24,10 +24,10 @@
     [dda.pallet.commons.operation :as operation]
     [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(defn execute-server-test
+(defn execute-serverspec
   [domain-config targets]
   (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-server-test
+    (operation/do-test
      (existing/provider {:dda-servertest-group existing})
      (app/existing-provisioning-spec
        domain-config
@@ -75,13 +75,15 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)]
-    (cond
-      help (exit 0 (usage summary))
-      errors (exit 1 (error-msg errors))
-      (not= (count arguments) 1) (exit 1 (usage summary))
-      (:install-dependencies options) (execute-install
-                                       (app/load-tests (first arguments))
-                                       (app/load-targets (:targets options)))
-      :default (execute-server-test
-                (app/load-tests (first arguments))
-                (app/load-targets (:targets options))))))
+    (println
+      (str "x"
+        (cond
+          help (exit 0 (usage summary))
+          errors (exit 1 (error-msg errors))
+          (not= (count arguments) 1) (exit 1 (usage summary))
+          (:install-dependencies options) (execute-install
+                                           (app/load-domain (first arguments))
+                                           (app/load-targets (:targets options)))
+          :default (execute-serverspec
+                    (app/load-domain (first arguments))
+                    (app/load-targets (:targets options))))))))
