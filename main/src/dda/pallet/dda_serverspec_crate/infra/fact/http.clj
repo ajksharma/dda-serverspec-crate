@@ -35,7 +35,7 @@
 ; -----------------------  functions  -------------------------------
 (s/defn url-to-keyword :- s/Keyword
   "creates a keyword from the url"
-  [url :- s/Str] (keyword (clojure.string/replace url #"/" "_")))
+  [url :- s/Str] (keyword (clojure.string/replace url #"[:/]" "_")))
 
 (s/defn build-http-script
   "builds the script to retrieve the http response of the url"
