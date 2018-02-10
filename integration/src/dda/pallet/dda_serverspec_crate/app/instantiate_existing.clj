@@ -26,11 +26,11 @@
 
 (def targets
   [{:node-name "node-id"
-    :node-ip "192.168.56.105"}])
+    :node-ip "127.0.0.1"}])
 
 (def provisioning-user
   {:login "initial"
-   :password "test1234"})
+   :password "secure1234"})
 
 (def domain-config {:netstat '({:process-name "sshd" :port "11" :running? false}
                                {:process-name "sshd" :port "22"}
@@ -38,11 +38,12 @@
                     :file '({:path "/root"}
                             {:path "/etc"}
                             {:path "/absent" :exist? false})
-                    :netcat '({:host "www.google.com" :port 80}
-                              {:host "www.google.c" :port 80 :reachable? false})
+                    ;:netcat '({:host "www.google.com" :port 80}
+                    ;          {:host "www.google.c" :port 80 :reachable? false}})
                     :package '({:name "test" :installed? false}
                                {:name "nano"})
-                    :certificate '({:file "/somefolder/cert.pem" :expiration-days 100})})
+                    :certificate '({:file "/home/az/serverspec-certs-tmp/cert.pem" :expiration-days 300})
+                    :http '({:url "https://google.com" :expiration-days 1000})})
 
 (defn apply-install
  [& options]
@@ -66,7 +67,8 @@
   [& options]
   (let [{:keys [summarize-session]
          :or {summarize-session true}} options]
-   (operation/do-test
-    (existing/provider {:dda-servertest-group targets})
-    (app/existing-provisioning-spec domain-config provisioning-user)
-    :summarize-session summarize-session)))
+    (app/summarize-test-session
+      (operation/do-test
+       (existing/provider {:dda-servertest-group targets})
+       (app/existing-provisioning-spec domain-config provisioning-user)
+       :summarize-session summarize-session))))

@@ -1,5 +1,4 @@
 {:existing [{:node-name "test-vm1"
-             :node-ip "18.195.73.149"}
-            {:node-name "test-vm2"
-             :node-ip "52.58.236.134"}]
- :provisioning-user {:login "ubuntu"}}
+             :node-ip "127.0.0.1"}]
+ :provisioning-user {:login "initial"
+                     :password ""}}
