@@ -51,24 +51,42 @@
       "echo 'Q'| openssl s_client -connect " servername ":443 2>/dev/null | openssl x509 -enddate -noout;"
       "echo -n '" output-separator "'")))
 
+(s/defn parse-ASN1-DateTime :- java.time.LocalDate
+  ""
+  [date-string :- s/Str]
+  (let [date-format "MMM dd HH:mm:ss yyyy z"]
+    (java.time.LocalDate/parse date-string
+      (java.time.format.DateTimeFormatter/ofPattern date-format))))
+
 (s/defn parse-http-response :- HttpFactResult
   "returns a HttpFactResult from the result text of one http check"
-  [single-script-result]
-  (let [result-lines (string/split single-script-result #"\n")
+  [single-script-result :- s/Str
+   & today] ;as java.time.LocalDate
+  (let [today (or today (java.time.LocalDate/now))
+        result-lines (string/split single-script-result #"\n")
         result-key (first result-lines)
         result-text (nth result-lines 1)
-        ;convert to date
-        expiration-date (peek (clojure.string/split result-text #"notAfter="))]
-    ;TODO
-    (if expiration-date
-      {(keyword result-key) {:expiration-days 100}}
+        expiration-date-text (peek (clojure.string/split result-text #"notAfter="))
+        ;convert to date and calculate expirations days from today
+        expiration-days
+        (try
+          (.between (java.time.temporal.ChronoUnit/DAYS)
+                    (java.time.LocalDate/now)
+                    (parse-ASN1-DateTime expiration-date-text))
+          (catch java.time.DateTimeException extend
+            nil))]
+    (if expiration-days
+      {(keyword result-key) {:expiration-days expiration-days}}
       {(keyword result-key) {:expiration-days -1}})))
 
 (defn parse-http-script-responses
   "returns a HttpFactResult from the result text of one http check"
-  [raw-script-results]
+  [raw-script-results
+   & today] ;as java.time.LocalDate
   (apply merge
-    (map parse-http-response (clojure.string/split raw-script-results (re-pattern output-separator)))))
+    (map parse-http-response
+         (clojure.string/split raw-script-results (re-pattern output-separator))
+         (repeat today))))
 
 (s/defn collect-http-fact
   "Collects the facts for all http checks by executing the script and parsing the results"
