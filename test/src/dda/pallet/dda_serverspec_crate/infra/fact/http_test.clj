@@ -33,19 +33,17 @@ notAfter=Apr 17 13:36:00 2022 GMT
   (str
     "_someurl\nnotAfter=Apr 17 13:36:00 2022 GMT\n"
     sut/output-separator
-    "_someotherurl\nnotAfter=Apr 17 13:36:00 2017 GMT\n"
+    "_some_other_url\nnotAfter=Apr 17 13:36:00 2017 GMT\n"
     sut/output-separator))
 
 (def fact2 {:_someurl {:expiration-days 1527}
-            :_someotherurl {:expiration-days -299}})
+            :_some_other_url {:expiration-days -299}})
 
 (def output3
-  "_somedir_cert3.pem\nError opening Certificate cert3.pem
-139973823276696:error:02001002:system library:fopen:No such file or directory:bss_file.c:398:fopen('ccert.pem','r')
-139973823276696:error:20074002:BIO routines:FILE_CTRL:system lib:bss_file.c:400:
-unable to load certificate")
+  "_someinvalidurl\nunable to load certificate
+139913245157016:error:0906D06C:PEM routines:PEM_read_bio:no start line:pem_lib.c:701:Expecting: TRUSTED CERTIFICATE")
 
-(def fact3 {:_somedir_cert3.pem {:expiration-days -1}})
+(def fact3 {:_someinvalidurl {:expiration-days -1}})
 
 (def test-date
   (java.time.LocalDate/parse "01.01.2018"
@@ -58,6 +56,6 @@ unable to load certificate")
     (is (= fact1
            (sut/parse-http-script-responses output1 test-date)))
     (is (= fact2
-           (sut/parse-http-script-responses output2 test-date)))))
-;    (is (= fact3
-;           (sut/parse-http-script-responses output3)))))
+           (sut/parse-http-script-responses output2 test-date)))
+    (is (= fact3
+           (sut/parse-http-script-responses output3 test-date)))))
