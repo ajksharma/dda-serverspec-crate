@@ -34,10 +34,10 @@
            {:path "/nonexist/sth" :exist? false})})
 
 (def domain-config-certificate-file-test
-  {:certificate '({:file "/etc/ssl/crt/primary.crt"
-                   :expiration-days 33}
-                  {:file "/etc/ssl/crt/nonvalid.crt"
-                   :expiration-days 22})})
+  {:certificate-file '({:file "/etc/ssl/crt/primary.crt"
+                        :expiration-days 33}
+                       {:file "/etc/ssl/crt/nonvalid.crt"
+                        :expiration-days 22})})
 
 (def domain-config-http-test
   {:http '({:url "https://google.com"

@@ -33,10 +33,10 @@
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
                               (s/optional-key :reachable?) s/Bool}]
-   (s/optional-key :certificate) [{:file s/Str                ;incl path as e.g. /path/file.crt
-                                   :expiration-days s/Num}]   ;min days certificate must be valid
-   (s/optional-key :http) [{:url s/Str                        ;url e.g. http://google.com
-                            :expiration-days s/Num}]})        ;min days certificate must be valid
+   (s/optional-key :certificate-file) [{:file s/Str               ;incl path as e.g. /path/file.crt
+                                        :expiration-days s/Num}]  ;min days certificate must be valid
+   (s/optional-key :http) [{:url s/Str                            ;full url e.g. http://google.com
+                            :expiration-days s/Num}]})            ;minimum days the certificate must be valid
 
 (def InfraResult {infra/facility infra/ServerTestConfig})
 
@@ -115,7 +115,7 @@
 
 (s/defn ^:always-validate infra-configuration :- InfraResult
   [domain-config :- ServerTestDomainConfig]
-  (let [{:keys [file package netstat netcat certificate http]} domain-config]
+  (let [{:keys [file package netstat netcat certificate-file http]} domain-config]
     {infra/facility
      (merge
       (if (contains? domain-config :package)
@@ -134,9 +134,9 @@
         {:netcat-fact (domain-2-netcatfacts netcat)
          :netcat-test (domain-2-netcattests netcat)}
         {})
-      (if (contains? domain-config :certificate)
-        {:certificate-fact (domain-2-certificatefacts certificate)
-         :certificate-test (domain-2-certificatetests certificate)}
+      (if (contains? domain-config :certificate-file)
+        {:certificate-fact (domain-2-certificatefacts certificate-file)
+         :certificate-test (domain-2-certificatetests certificate-file)}
         {})
       (if (contains? domain-config :http)
         {:http-fact (domain-2-httpfacts http)
