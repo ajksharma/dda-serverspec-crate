@@ -14,20 +14,20 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-serverspec-crate.infra.fact.certificate
+(ns dda.pallet.dda-serverspec-crate.infra.fact.certificate-file
   (:require
    [schema.core :as s]
    [clojure.string :as string]
    [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
 
 ; -----------------------  fields & schemas  ------------------------
-(def fact-id-certificate ::certificate)
+(def fact-id-certificate-file ::certificate-file)
 
-(def CertificateFactConfig {s/Keyword {:file s/Str}})  ;with full path
+(def CertificateFileFactConfig {s/Keyword {:file s/Str}})  ;with full path
 
-(def CertificateFactResult {:expiration-days s/Num})   ;value -1 in case of error (e.g. missing file)
+(def CertificateFileFactResult {:expiration-days s/Num})   ;value -1 in case of error (e.g. missing file)
 
-(def CertificateFactResults {s/Keyword CertificateFactResult})
+(def CertificateFileFactResults {s/Keyword CertificateFileFactResult})
 
 (def output-separator "----- certificate output separator -----\n")
 
@@ -38,7 +38,7 @@
 
 (s/defn build-certificate-script
   "builds the script to check the expiration days certificate"
-  [certificate-config :- CertificateFactConfig]
+  [certificate-config :- CertificateFileFactConfig]
   (let [config-val (val certificate-config)
         config-key (key certificate-config)
         {:keys [file]} config-val]
@@ -49,8 +49,8 @@
       " -noout -enddate | cut -d= -f 2)\" \"+%s\") - $(date \"+%s\") ) / 86400));"
       "echo -n '" output-separator "'")))
 
-(s/defn parse-certificate-response :- CertificateFactResult
-  "returns a CertificateFactResult from the result text of one certificate check"
+(s/defn parse-certificate-response :- CertificateFileFactResult
+  "returns a CertificateFileFactResult from the result text of one certificate check"
   [single-script-result]
   (let [result-lines (string/split single-script-result #"\n")
         result-key (first result-lines)
@@ -62,16 +62,16 @@
       {(keyword result-key) {:expiration-days -1}})))
 
 (defn parse-certificate-script-responses
-  "returns a CertificateFactResult from the result text of one certificate check"
+  "returns a CertificateFileFactResult from the result text of one certificate check"
   [raw-script-results]
   (apply merge
     (map parse-certificate-response (clojure.string/split raw-script-results (re-pattern output-separator)))))
 
-(s/defn collect-certificate-fact
+(s/defn collect-certificate-file-fact
   "Collects the facts for the certificates using the script"
-  [fact-config :- CertificateFactConfig]
+  [fact-config :- CertificateFileFactConfig]
   (collect-fact
-    fact-id-certificate
+    fact-id-certificate-file
     (str
       (clojure.string/join
        "; " (map #(build-certificate-script %) fact-config))

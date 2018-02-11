@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-serverspec-crate.infra.test.certificate-test
+(ns dda.pallet.dda-serverspec-crate.infra.test.certificate-file-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.dda-serverspec-crate.infra.test.certificate :as sut]))
+    [dda.pallet.dda-serverspec-crate.infra.test.certificate-file :as sut]))
 
 ; -----------------------  test data  --------------------------
 (def test-config-1 {:primary_crt {:expiration-days 10}
@@ -36,14 +36,14 @@
    :nonvalid_crt {:expiration-days 20}})
 
 ; -----------------------  tests  --------------------------
-(deftest test-certificate-internal
+(deftest test-certificate-file-internal
  (testing
-   "test test-certificate-internal"
+   "test test-certificate-file-internal"
     (is (= 0
-          (:no-failed (sut/test-certificate-internal {} fact-result))))
+          (:no-failed (sut/test-certificate-file-internal {} fact-result))))
     (is (= 0
-          (:no-failed (sut/test-certificate-internal test-config-1 fact-result))))
+          (:no-failed (sut/test-certificate-file-internal test-config-1 fact-result))))
     (is (= 1
-          (:no-failed (sut/test-certificate-internal test-config-2 fact-result))))
+          (:no-failed (sut/test-certificate-file-internal test-config-2 fact-result))))
     (is (= 2
-          (:no-failed (sut/test-certificate-internal test-config-3 fact-result))))))
+          (:no-failed (sut/test-certificate-file-internal test-config-3 fact-result))))))

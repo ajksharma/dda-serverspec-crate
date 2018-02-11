@@ -135,8 +135,8 @@
          :netcat-test (domain-2-netcattests netcat)}
         {})
       (if (contains? domain-config :certificate-file)
-        {:certificate-fact (domain-2-certificatefacts certificate-file)
-         :certificate-test (domain-2-certificatetests certificate-file)}
+        {:certificate-file-fact (domain-2-certificatefacts certificate-file)
+         :certificate-file-test (domain-2-certificatetests certificate-file)}
         {})
       (if (contains? domain-config :http)
         {:http-fact (domain-2-httpfacts http)
