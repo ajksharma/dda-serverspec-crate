@@ -42,8 +42,8 @@
                     ;          {:host "www.google.c" :port 80 :reachable? false}})
                     :package '({:name "test" :installed? false}
                                {:name "nano"})
-                    :certificate '({:file "/home/az/serverspec-certs-tmp/cert.pem" :expiration-days 300})
-                    :http '({:url "https://google.com" :expiration-days 1000})})
+                    :certificate-file '({:file "/etc/ssl/crt/primary.crt" :expiration-days 10})
+                    :http '({:url "https://google.com" :expiration-days 10})})
 
 (defn apply-install
  [& options]
