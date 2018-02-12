@@ -22,40 +22,118 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.http :as sut]))
 
 ; ------------------------  test data  ------------------------
-(def output1
-  "_someurl
-notAfter=Apr 17 13:36:00 2022 GMT
+(def reference-date
+  (java.time.LocalDate/parse "10.02.2018"
+    (java.time.format.DateTimeFormatter/ofPattern "dd.MM.yyyy")))
+
+(def date-offset
+  (try
+    (.between (java.time.temporal.ChronoUnit/DAYS)
+              reference-date
+              (java.time.LocalDate/now))
+    (catch java.time.DateTimeException ex
+      nil)))
+
+(def script-output1
+  "_some_url
+* Rebuilt URL to: https://google.com/
+*   Trying 216.58.207.46...
+* Connected to google.com (216.58.207.46) port 443 (#0)
+* found 148 certificates in /etc/ssl/certs/ca-certificates.crt
+* found 597 certificates in /etc/ssl/certs
+* ALPN, offering http/1.1
+* SSL connection using TLS1.2 / ECDHE_ECDSA_AES_128_GCM_SHA256
+* 	 server certificate verification OK
+* 	 server certificate status verification SKIPPED
+* 	 common name: *.google.com (matched)
+* 	 server certificate expiration date OK
+* 	 server certificate activation date OK
+* 	 certificate public key: EC
+* 	 certificate version: #3
+* 	 subject: C=US,ST=California,L=Mountain View,O=Google Inc,CN=*.google.com
+* 	 start date: Tue, 23 Jan 2018 13:36:00 GMT
+* 	 expire date: Sat, 7 Mar 2020 23:59:59 GMT
+* 	 issuer: C=US,O=Google Inc,CN=Google Internet Authority G2
+* 	 compression: NULL
+* ALPN, server accepted to use http/1.1
+> GET / HTTP/1.1
+> Host: google.com
+> User-Agent: curl/7.47.0
+> Accept: */*
+>
+< HTTP/1.1 302 Found
+<
+<HTML><HEAD>...</HEAD><BODY>
+</BODY></HTML>
+* Connection #0 to host google.com left intact
 ")
 
-(def fact1 {:_someurl {:expiration-days 1527}})
+(def fact1 {:_some_url {:expiration-days (- 756 date-offset)}})
 
-(def output2
+(def script-output2
   (str
-    "_someurl\nnotAfter=Apr 17 13:36:00 2022 GMT\n"
+    "https___google.com
+  * Rebuilt URL to: https://google.com/
+  *   Trying 216.58.207.46...
+  * Connected to google.com (216.58.207.46) port 443 (#0)
+  * found 148 certificates in /etc/ssl/certs/ca-certificates.crt
+  * found 597 certificates in /etc/ssl/certs
+  * ALPN, offering http/1.1
+  * SSL connection using TLS1.2 / ECDHE_ECDSA_AES_128_GCM_SHA256
+  * 	 server certificate verification OK
+  * 	 server certificate status verification SKIPPED
+  * 	 common name: *.google.com (matched)
+  * 	 server certificate expiration date OK
+  * 	 server certificate activation date OK
+  * 	 certificate public key: EC
+  * 	 certificate version: #3
+  * 	 subject: C=US,ST=California,L=Mountain View,O=Google Inc,CN=*.google.com
+  * 	 start date: Tue, 23 Jan 2018 13:36:00 GMT
+  * 	 expire date: Tue, 17 Apr 2018 13:36:00 GMT
+  * 	 issuer: C=US,O=Google Inc,CN=Google Internet Authority G2
+"
     sut/output-separator
-    "_some_other_url\nnotAfter=Apr 17 13:36:00 2017 GMT\n"
+    "https___bahn.de
+* Rebuilt URL to: https://bahn.de/
+*   Trying 46.18.63.152...
+* Connected to bahn.de (46.18.63.152) port 443 (#0)
+* found 148 certificates in /etc/ssl/certs/ca-certificates.crt
+* found 597 certificates in /etc/ssl/certs
+* ALPN, offering http/1.1
+* SSL connection using TLS1.2 / ECDHE_RSA_AES_256_GCM_SHA384
+* 	 server certificate verification SKIPPED
+* 	 server certificate status verification SKIPPED
+* 	 common name: bahn.de (matched)
+* 	 server certificate expiration date OK
+* 	 server certificate activation date OK
+* 	 certificate public key: RSA
+* 	 certificate version: #3
+* 	 subject: C=DE,ST=Hessen,L=Frankfurt am Main,O=DB Systel GmbH,CN=bahn.de
+* 	 start date: Fri, 10 Mar 2017 00:00:00 GMT
+* 	 expire date: Sat, 7 Mar 2020 23:59:59 GMT
+* 	 issuer: C=US,O=Symantec Corporation,OU=Symantec Trust Network,CN=Symantec Class 3 Secure Server SHA256 SSL CA
+"
     sut/output-separator))
 
-(def fact2 {:_someurl {:expiration-days 1527}
-            :_some_other_url {:expiration-days -299}})
+(def fact2 {:https___google.com {:expiration-days (- 66 date-offset)}
+            :https___bahn.de {:expiration-days (- 756 date-offset)}})
 
-(def output3
-  "_someinvalidurl\nunable to load certificate
-139913245157016:error:0906D06C:PEM routines:PEM_read_bio:no start line:pem_lib.c:701:Expecting: TRUSTED CERTIFICATE")
+(def script-output3
+  "_someinvalidurl\n* Rebuilt URL to: https://google.c/
+* Could not resolve host: google.c
+* Closing connection 0
+curl: (6) Could not resolve host: google.c
+")
 
 (def fact3 {:_someinvalidurl {:expiration-days -1}})
-
-(def test-date
-  (java.time.LocalDate/parse "01.01.2018"
-    (java.time.format.DateTimeFormatter/ofPattern "dd.MM.yyyy")))
 
 ; ------------------------  tests  ------------------------------
 (deftest test-parse
   (testing
     "test parsing http output"
     (is (= fact1
-           (sut/parse-http-script-responses output1 test-date)))
+           (sut/parse-http-response script-output1)))
     (is (= fact2
-           (sut/parse-http-script-responses output2 test-date)))
+           (sut/parse-http-script-responses script-output2)))
     (is (= fact3
-           (sut/parse-http-script-responses output3 test-date)))))
+           (sut/parse-http-script-responses script-output3)))))
