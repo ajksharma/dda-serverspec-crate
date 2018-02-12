@@ -44,7 +44,7 @@
         {:keys [url]} config-val]
     (str
       "echo '" (name config-key) "';"
-      "curl --trace-ascii - " url ";"
+      "curl --insecure --trace-ascii - " url ";"
       "echo -n '" output-separator "'")))
 
 (s/defn parse-date :- java.time.LocalDate
