@@ -43,7 +43,7 @@
                     :package '({:name "test" :installed? false}
                                {:name "nano"})
                     :certificate-file '({:file "/etc/ssl/crt/primary.crt" :expiration-days 10})
-                    :http '({:url "https://google.com" :expiration-days 10})})
+                    :http '({:url "https://meissa-gmbh.de" :expiration-days 10})})
 
 (defn apply-install
  [& options]

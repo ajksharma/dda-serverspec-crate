@@ -44,7 +44,7 @@
         {:keys [url]} config-val]
     (str
       "echo '" (name config-key) "';"
-      "curl -kv " url ";"
+      "curl --trace-ascii - " url ";"
       "echo -n '" output-separator "'")))
 
 (s/defn parse-date :- java.time.LocalDate
@@ -59,7 +59,7 @@
   (let [result-lines (string/split single-script-result #"\n" 2)
         result-key (first result-lines)
         result-text (nth result-lines 1)
-        expiration-date-line-pattern #"(?:\*\s*expire date: )(.+)(?:\R)"
+        expiration-date-line-pattern #"(?:\s*expire date: )(.+)(?:\R)"
         expiration-date-text (nth (re-find expiration-date-line-pattern result-text) 1)
         ;convert to date and calculate expirations days from today
         expiration-days
