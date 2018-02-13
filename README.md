@@ -82,7 +82,7 @@ We provide two levels of API - domain is a high level API with many built-in con
 The schema of the domain layer for the targets is:
 ```clojure
 (def ExistingNode {:node-name Str                   ; your name for the node
-                   :node-ip Str                     ; nodes ip4 address       
+                   :node-ip Str                     ; nodes ip4 address
                    })
 
 (def ProvisioningUser {:login Str                   ; user account used for provisioning / executing tests
@@ -98,22 +98,23 @@ The "targets.edn" file has to match this schema.
 #### Tests
 The schema for the tests is:
 ```clojure
-(def ServerTestDomainConfig {(optional-key :package)
-                              [{:name Str            
-                                (optional-key :installed?) Bool}]
-                             (optional-key :netstat)
-                             [{:process-name Str
-                               :port Str
-                               (optional-key :running?) Bool
-                               (optional-key :ip) Str
-                               (optional-key :exp-proto) Str}]
-                             (optional-key :file)
-                             [{:path Str
-                              (optional-key :exist?) Bool}]
-                             (optional-key :netcat)
-                             [{:host Str
-                              :port Num
-                              (optional-key :reachable?) Bool}]})
+(def ServerTestDomainConfig
+  {(s/optional-key :package) [{:name s/Str
+                               (s/optional-key :installed?) s/Bool}]
+   (s/optional-key :netstat) [{:process-name s/Str
+                               :port s/Str
+                               (s/optional-key :running?) s/Bool
+                               (s/optional-key :ip) s/Str
+                               (s/optional-key :exp-proto) s/Str}]
+   (s/optional-key :file) [{:path s/Str
+                            (s/optional-key :exist?) s/Bool}]
+   (s/optional-key :netcat) [{:host s/Str
+                              :port s/Num
+                              (s/optional-key :reachable?) s/Bool}]
+   (s/optional-key :certificate) [{:file s/Str                ;incl path as e.g. /path/file.crt
+                                   :expiration-days s/Num}]   ;min days certificate must be valid
+   (s/optional-key :http) [{:url s/Str                        ;url e.g. http://google.com
+                            :expiration-days s/Num}]})        ;min days certificate must be valid
 ```
 The "tests.edn" file has to match this schema.
 The default value is that the test expects a positive boolean (e.g. :reachable? true) and this value can be omitted.
