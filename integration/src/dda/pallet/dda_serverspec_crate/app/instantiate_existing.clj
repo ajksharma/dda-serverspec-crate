@@ -17,11 +17,11 @@
 (ns dda.pallet.dda-serverspec-crate.app.instantiate-existing
   (:require
    [clojure.inspector :as inspector]
-   [pallet.repl :as pr]
    [dda.pallet.commons.session-tools :as session-tools]
    [dda.pallet.commons.pallet-schema :as ps]
    [dda.pallet.commons.operation :as operation]
    [dda.pallet.commons.existing :as existing]
+   [dda.pallet.dda-serverspec-crate.infra :as infra]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def targets
@@ -46,27 +46,31 @@
 
 (defn apply-install
  [& options]
- (let [{:keys [summarize-session]
-        :or {summarize-session true}} options]
+ (let [{:keys [domain targets]
+        :or {domain "serverspec.edn"
+             targets "targets.edn"}} options
+       target-config (app/load-targets targets)
+       domain-config (app/load-domain domain)
+       {:keys [existing provisioning-user]} target-config]
    (operation/do-apply-install
-    (existing/provider {:dda-servertest-group targets})
-    (app/existing-provisioning-spec domain-config provisioning-user)
-    :summarize-session summarize-session)))
-
-(defn apply-configure
-  [& options]
-  (let [{:keys [summarize-session]
-         :or {summarize-session true}} options]
-   (operation/do-apply-configure
-    (existing/provider {:dda-servertest-group targets})
-    (app/existing-provisioning-spec domain-config provisioning-user)
-    :summarize-session summarize-session)))
+    (existing/provider {:dda-servertest-group existing})
+    (app/existing-provisioning-spec
+      domain-config
+      provisioning-user)
+    :summarize-session true)))
 
 (defn serverspec
   [& options]
-  (let [{:keys [summarize-session]
-         :or {summarize-session true}} options]
-   (operation/do-test
-    (existing/provider {:dda-servertest-group targets})
-    (app/existing-provisioning-spec domain-config provisioning-user)
-    :summarize-session summarize-session)))
+  (let [{:keys [domain targets]
+         :or {domain "serverspec.edn"
+              targets "targets.edn"}} options
+        target-config (app/load-targets targets)
+        domain-config (app/load-domain domain)
+        {:keys [existing provisioning-user]} target-config]
+   (app/summarize-test-session
+    (operation/do-test
+      (existing/provider {:dda-servertest-group existing})
+      (app/existing-provisioning-spec
+        domain-config
+        provisioning-user)
+      :summarize-session false))))
