@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-serverspec-crate.infra.fact.certificate-test
+(ns dda.pallet.dda-serverspec-crate.infra.fact.certificate-file-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.dda-serverspec-crate.infra.fact.certificate :as sut]))
+    [dda.pallet.dda-serverspec-crate.infra.fact.certificate-file :as sut]))
 
 ; ------------------------  test data  ------------------------
 (def output1

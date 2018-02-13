@@ -14,36 +14,36 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-serverspec-crate.infra.test.certificate-test
+(ns dda.pallet.dda-serverspec-crate.infra.test.http-test
   (:require
     [clojure.test :refer :all]
     [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
-    [dda.pallet.dda-serverspec-crate.infra.test.certificate :as sut]))
+    [dda.pallet.dda-serverspec-crate.infra.test.http :as sut]))
 
 ; -----------------------  test data  --------------------------
-(def test-config-1 {:primary_crt {:expiration-days 10}
-                    :nonvalid_crt {:expiration-days 20}})
+(def test-config-1 {:some_url {:expiration-days 10}
+                    :another_url {:expiration-days 20}})
 
-(def test-config-2 {:primary_crt {:expiration-days 20}
-                    :nonvalid_crt {:expiration-days 21}})
+(def test-config-2 {:some_url {:expiration-days 20}
+                    :another_url {:expiration-days 21}})
 
-(def test-config-3 {:primary_crt {:expiration-days 30}
-                    :nonvalid_crt {:expiration-days 30}})
+(def test-config-3 {:some_url {:expiration-days 30}
+                    :another_url {:expiration-days 30}})
 
 (def fact-result
-  {:primary_crt {:expiration-days 20}
-   :nonvalid_crt {:expiration-days 20}})
+  {:some_url {:expiration-days 20}
+   :another_url {:expiration-days 20}})
 
 ; -----------------------  tests  --------------------------
-(deftest test-certificate-internal
+(deftest test-http-internal
  (testing
-   "test test-certificate-internal"
+   "test test-http-internal"
     (is (= 0
-          (:no-failed (sut/test-certificate-internal {} fact-result))))
+          (:no-failed (sut/test-http-internal {} fact-result))))
     (is (= 0
-          (:no-failed (sut/test-certificate-internal test-config-1 fact-result))))
+          (:no-failed (sut/test-http-internal test-config-1 fact-result))))
     (is (= 1
-          (:no-failed (sut/test-certificate-internal test-config-2 fact-result))))
+          (:no-failed (sut/test-http-internal test-config-2 fact-result))))
     (is (= 2
-          (:no-failed (sut/test-certificate-internal test-config-3 fact-result))))))
+          (:no-failed (sut/test-http-internal test-config-3 fact-result))))))
