@@ -43,8 +43,8 @@
 (def cli-options
   [["-h" "--help"]
    ["-i" "--install-dependencies"]
-   ["-t" "--targets [targets.edn]" "edn file containing the targets to test."
-    :default "targets.edn"]
+   ["-t" "--targets [localhost-target.edn]" "edn file containing the targets to test."
+    :default "localhost-target.edn"]
    ["-v" "--verbose"]])
 
 (defn usage [options-summary]
