@@ -70,13 +70,21 @@
     app-config [(config-crate/with-config app-config)
                 with-serverspec]))
 
-(s/defn ^:always-validate existing-provisioning-spec
+(s/defn ^:always-validate
+  existing-provisioning-spec
   "Creates an integrated group spec from a domain config and a provisioning user."
   [domain-config :- ServerSpecDomainConfig
-   provisioning-user :- ProvisioningUser]
-  (merge
-   (servertest-group-spec (app-configuration domain-config))
-   (existing/node-spec provisioning-user)))
+   targets :- Targets]
+  (let [{:keys [existing provisioning-user]} targets]
+    (merge
+     (servertest-group-spec (app-configuration domain-config))
+     (existing/node-spec provisioning-user))))
+
+(s/defn ^:always-validate
+  existing-provider
+  [targets :- Targets]
+  (let [{:keys [existing provisioning-user]} targets]
+    (existing/provider {:dda-servertest-group existing})))
 
 ; TODO: add boundary validation
 (defn summarize-test-session [& params]

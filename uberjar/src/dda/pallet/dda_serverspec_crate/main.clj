@@ -25,26 +25,20 @@
     [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (defn execute-serverspec
-  [domain-config targets verbosity]
-  (let [{:keys [existing provisioning-user]} targets
-        session (operation/do-test
-                  (existing/provider {:dda-servertest-group existing})
-                  (app/existing-provisioning-spec
-                    domain-config
-                    provisioning-user)
+  [domain-config target-config verbosity]
+  (let [session (operation/do-test
+                  (app/existing-provider target-config)
+                  (app/existing-provisioning-spec domain-config target-config)
                   :summarize-session false)]
     (app/summarize-test-session session :verbose verbosity)
     (app/session-passed? session)))
 
 (defn execute-install
-  [domain-config targets]
-  (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-apply-install
-     (existing/provider {:dda-servertest-group existing})
-     (app/existing-provisioning-spec
-       domain-config
-       provisioning-user)
-     :summarize-session true)))
+  [domain-config target-config]
+  (operation/do-apply-install
+    (app/existing-provider target-config)
+    (app/existing-provisioning-spec domain-config target-config)
+    :summarize-session true))
 
 (def cli-options
   [["-h" "--help"]

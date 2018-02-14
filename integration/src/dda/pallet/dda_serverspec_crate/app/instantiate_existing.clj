@@ -21,7 +21,6 @@
    [dda.pallet.commons.pallet-schema :as ps]
    [dda.pallet.commons.operation :as operation]
    [dda.pallet.commons.existing :as existing]
-   [dda.pallet.dda-serverspec-crate.infra :as infra]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (def targets
@@ -51,14 +50,11 @@
         :or {domain "serverspec.edn"
              targets "targets.edn"}} options
        target-config (app/load-targets targets)
-       domain-config (app/load-domain domain)
-       {:keys [existing provisioning-user]} target-config]
+       domain-config (app/load-domain domain)]
    (operation/do-apply-install
-    (existing/provider {:dda-servertest-group existing})
-    (app/existing-provisioning-spec
-      domain-config
-      provisioning-user)
-    :summarize-session true)))
+     (app/existing-provider target-config)
+     (app/existing-provisioning-spec domain-config target-config)
+     :summarize-session true)))
 
 (defn serverspec
   [& options]
@@ -66,12 +62,9 @@
          :or {domain "serverspec.edn"
               targets "targets.edn"}} options
         target-config (app/load-targets targets)
-        domain-config (app/load-domain domain)
-        {:keys [existing provisioning-user]} target-config]
+        domain-config (app/load-domain domain)]
    (app/summarize-test-session
     (operation/do-test
-      (existing/provider {:dda-servertest-group existing})
-      (app/existing-provisioning-spec
-        domain-config
-        provisioning-user)
+      (app/existing-provider target-config)
+      (app/existing-provisioning-spec domain-config target-config)
       :summarize-session false))))
