@@ -28,7 +28,7 @@ java -jar dda-serverspec-crate-standalone.jar --targets targets.edn test.edn
 ```
 
 ### Remote white-box
-![alt text](./ServerSpecRemoteWhitebox.png "ServerSpecRemoteWhitebox")
+![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
 For the remote white-box test, the serverspec crate can be used from a source machine to test different aspects of the remote target machines.
 This can be achieved by either utilizing the jar provided on GitHub (as described above), or by calling the functions of the Clojure source code directly.
@@ -62,7 +62,7 @@ The ```provisioning-user``` has to be the same for all nodes that will be tested
           {:host "www.google.c" :port 80 :reachable? false}]
  :package [{:name "test" :installed? false}
            {:name "nano"}]}
-```         
+```
 The test config file determines the tests that are executed. For example the part containing ```{:path "/root"}``` checks if the folder ```/root``` exists.
 At the moment we have four different types of tests that can be configured. The exact details can be found in the reference below.
 
@@ -81,17 +81,24 @@ We provide two levels of API - domain is a high level API with many built-in con
 #### Targets
 The schema of the domain layer for the targets is:
 ```clojure
-(def ExistingNode {:node-name Str                   ; your name for the node
-                   :node-ip Str                     ; nodes ip4 address
-                   })
+(def ExistingNode
+  "Represents a target node with ip and its name."
+  {:node-name s/Str
+   :node-ip s/Str})
 
-(def ProvisioningUser {:login Str                   ; user account used for provisioning / executing tests
-                       (optional-key :password) Str ; password, is no authorized ssh key is avail.
-                       })
+(def ExistingNodes
+  "A sequence of ExistingNodes."
+  {s/Keyword [ExistingNode]})
 
-(def Targets {:existing [ExistingNode]              ; nodes to test or install
-              :provisioning-user ProvisioningUser   ; common user account on all nodes given above
-              })
+(def ProvisioningUser
+  "User used for provisioning."
+  {:login s/Str
+   (s/optional-key :password) secret/Secret})
+
+(def Targets
+  "Targets to be used during provisioning."
+  {:existing [ExistingNode]
+   (s/optional-key :provisioning-user) ProvisioningUser})
 ```
 The "targets.edn" file has to match this schema.
 
