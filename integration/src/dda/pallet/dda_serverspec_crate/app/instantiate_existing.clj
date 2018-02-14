@@ -48,7 +48,7 @@
  [& options]
  (let [{:keys [domain targets]
         :or {domain "serverspec.edn"
-             targets "targets.edn"}} options
+             targets "localhost-target.edn"}} options
        target-config (app/load-targets targets)
        domain-config (app/load-domain domain)]
    (operation/do-apply-install
@@ -60,7 +60,7 @@
   [& options]
   (let [{:keys [domain targets]
          :or {domain "serverspec.edn"
-              targets "targets.edn"}} options
+              targets "localhost-target.edn"}} options
         target-config (app/load-targets targets)
         domain-config (app/load-domain domain)]
    (app/summarize-test-session
