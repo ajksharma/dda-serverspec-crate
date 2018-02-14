@@ -30,10 +30,6 @@
 
 (def ServerSpecDomainConfig domain/ServerTestDomainConfig)
 
-(def ProvisioningUser existing/ProvisioningUser)
-
-(def Targets existing/Targets)
-
 (def InfraResult domain/InfraResult)
 
 (def ServertestAppConfig
@@ -41,7 +37,7 @@
    {s/Keyword InfraResult}})
 
 (s/defn ^:always-validate
-  load-targets :- Targets
+  load-targets :- existing/Targets
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
@@ -56,7 +52,8 @@
   {:group-specific-config
      {group-key config}})
 
-(s/defn ^:always-validate app-configuration :- ServertestAppConfig
+(s/defn ^:always-validate
+  app-configuration :- ServertestAppConfig
   [domain-config :- ServerSpecDomainConfig
    & options]
   (let [{:keys [group-key]
@@ -64,27 +61,40 @@
     {:group-specific-config
        {group-key (domain/infra-configuration domain-config)}}))
 
-(s/defn ^:always-validate servertest-group-spec
+(s/defn ^:always-validate
+  servertest-group-spec
   [app-config :- ServertestAppConfig]
   (group/group-spec
     app-config [(config-crate/with-config app-config)
                 with-serverspec]))
 
 (s/defn ^:always-validate
-  existing-provisioning-spec
+  existing-provisioning-spec-resolved
   "Creates an integrated group spec from a domain config and a provisioning user."
   [domain-config :- ServerSpecDomainConfig
-   targets :- Targets]
-  (let [{:keys [existing provisioning-user]} targets]
+   targets-config :- existing/TargetsResolved]
+  (let [{:keys [existing provisioning-user]} targets-config]
     (merge
      (servertest-group-spec (app-configuration domain-config))
      (existing/node-spec provisioning-user))))
 
 (s/defn ^:always-validate
-  existing-provider
-  [targets :- Targets]
-  (let [{:keys [existing provisioning-user]} targets]
+  existing-provisioning-spec
+  "Creates an integrated group spec from a domain config and a provisioning user."
+  [domain-config :- ServerSpecDomainConfig
+   targets-config :- existing/Targets]
+  (existing-provisioning-spec-resolved domain-config (existing/resolve-targets targets-config)))
+
+(s/defn ^:always-validate
+  existing-provider-resolved
+  [targets-config :- existing/TargetsResolved]
+  (let [{:keys [existing provisioning-user]} targets-config]
     (existing/provider {:dda-servertest-group existing})))
+
+(s/defn ^:always-validate
+  existing-provider
+  [targets-config :- existing/Targets]
+  (existing-provider-resolved (existing/resolve-targets targets-config)))
 
 ; TODO: add boundary validation
 (defn summarize-test-session [& params]
