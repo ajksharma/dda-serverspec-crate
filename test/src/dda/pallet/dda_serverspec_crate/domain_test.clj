@@ -74,17 +74,17 @@
 
 (deftest test-certificate-file-configuration
   (testing
-    "test creation of infra configuration"
+    "test creation of certificate-file infra configuration"
     (is (=  {:dda-servertest
-              {:certificate-fact {:_etc_ssl_crt_primary.crt {:file "/etc/ssl/crt/primary.crt"}
-                                  :_etc_ssl_crt_nonvalid.crt {:file "/etc/ssl/crt/nonvalid.crt"}}
-               :certificate-test {:_etc_ssl_crt_primary.crt {:expiration-days 33},
-                                  :_etc_ssl_crt_nonvalid.crt {:expiration-days 22}}}}
+              {:certificate-file-fact {:_etc_ssl_crt_primary.crt {:file "/etc/ssl/crt/primary.crt"}
+                                       :_etc_ssl_crt_nonvalid.crt {:file "/etc/ssl/crt/nonvalid.crt"}}
+               :certificate-file-test {:_etc_ssl_crt_primary.crt {:expiration-days 33},
+                                       :_etc_ssl_crt_nonvalid.crt {:expiration-days 22}}}}
           (sut/infra-configuration domain-config-certificate-file-test)))))
 
 (deftest test-http-configuration
   (testing
-    "test creation of infra configuration"
+    "test creation of http infra configuration"
     (is (=  {:dda-servertest
               {:http-fact
                {:https___google.com {:url "https://google.com"},
