@@ -1,0 +1,77 @@
+2018-02-14 18:26:03,014 DEBUG [operate-29] d.p.c.fact fact result:  {:context fact: dda-serverspec-fact/http, :action-symbol pallet.actions/exec-script*, :scri
+pt #!/usr/bin/env bash
+mkdir -p /home/jem || exit 1
+cd /home/jem
+set -h
+echo 'https___domaindrivenarchitecture.org';curl --insecure --head --trace-ascii - https://domaindrivenarchitecture.org;echo -n '----- http output separator --
+---
+'; exit 0
+exit $?, :out {:https___domaindrivenarchitecture.org {:expiration-days -1}}, :out-raw https___domaindrivenarchitecture.org
+== Info: Rebuilt URL to: https://domaindrivenarchitecture.org/
+== Info:   Trying 78.47.55.114...
+== Info: Connected to domaindrivenarchitecture.org (78.47.55.114) port 443 (#0)
+== Info: found 148 certificates in /etc/ssl/certs/ca-certificates.crt
+== Info: found 597 certificates in /etc/ssl/certs
+== Info: ALPN, offering http/1.1
+== Info: SSL connection using TLS1.2 / ECDHE_RSA_AES_128_GCM_SHA256
+== Info:         server certificate verification SKIPPED
+== Info:         server certificate status verification SKIPPED
+== Info:         common name: domaindrivenarchitecture.org (matched)
+== Info:         server certificate expiration date OK
+== Info:         server certificate activation date OK
+== Info:         certificate public key: RSA
+== Info:         certificate version: #3
+== Info:         subject: CN=domaindrivenarchitecture.org
+== Info:         start date: Mon, 15 Jan 2018 12:01:04 GMT
+== Info:         expire date: Sun, 15 Apr 2018 12:01:04 GMT
+== Info:         issuer: C=US,O=Let's Encrypt,CN=Let's Encrypt Authority X3
+== Info:         compression: NULL
+== Info: ALPN, server did not agree to a protocol
+=> Send header, 93 bytes (0x5d)
+0000: HEAD / HTTP/1.1
+0011: Host: domaindrivenarchitecture.org
+0035: User-Agent: curl/7.47.0
+004e: Accept: */*
+005b:
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+HTTP/1.1 200 OK
+<= Recv header, 37 bytes (0x25)
+0000: Date: Wed, 14 Feb 2018 17:26:02 GMT
+Date: Wed, 14 Feb 2018 17:26:02 GMT
+<= Recv header, 16 bytes (0x10)
+0000: Server: Apache
+Server: Apache
+<= Recv header, 46 bytes (0x2e)
+0000: Last-Modified: Fri, 24 Nov 2017 08:15:21 GMT
+Last-Modified: Fri, 24 Nov 2017 08:15:21 GMT
+<= Recv header, 28 bytes (0x1c)
+0000: ETag: "4a05-55eb6275d9a26"
+ETag: "4a05-55eb6275d9a26"
+<= Recv header, 22 bytes (0x16)
+0000: Content-Type: text/html
+Content-Type: text/html
+
+<= Recv header, 2 bytes (0x2)
+0000:
+== Info: Connection #0 to host domaindrivenarchitecture.org left intact
+----- http output separator -----
+, :exit 0, :summary SUCCESSFUL}
+2018-02-14 18:26:03,030 DEBUG [operate-28] p.c.operations lift-partitions :phases [:test] :targets [:dda-servertest-group]
+2018-02-14 18:26:03,048 DEBUG [operate-32] p.c.operations lift :phases [:test] :targets [:dda-servertest-group]
+2018-02-14 18:26:03,053 DEBUG [operate-28] p.c.primitives build-and-execute-phase :test on 1 target(s)
+2018-02-14 18:26:03,055 DEBUG [operate-28] p.c.api-impl target-os-details node {:os-family :ubuntu, :packager :apt} detected {:os-family :ubuntu, :os-version "16.04"}
+2018-02-14 18:26:03,055 DEBUG [operate-28] p.c.api-impl Script context: [:ubuntu :apt :ubuntu-16.04]
+2018-02-14 18:26:03,063 DEBUG [operate-29] p.core.api environment-execution-settings {:user #pallet.core.user.User{:username "jem", :public-key-path "/home/jem/.ssh/id_rsa.pub", :private-key-path "/home/jem/.ssh/id_rsa", :public-key nil, :private-key nil, :passphrase nil, :password nil, :sudo-password nil, :no-sudo nil, :sudo-user nil, :state-root nil, :state-group nil}, :compute #object[pallet.compute.node_list.NodeList 0x1ed1596e "pallet.compute.node_list.NodeList@1ed1596e"]}
+2018-02-14 18:26:03,063 DEBUG [operate-29] p.core.api Env user pallet.core.user.User@66538b37
+2018-02-14 18:26:03,065 DEBUG [operate-29] p.c.api-impl target-os-details node {:os-family :ubuntu, :packager :apt} detected {:os-family :ubuntu, :os-version "16.04"}
+2018-02-14 18:26:03,065 DEBUG [operate-29] p.c.api-impl Script context: [:ubuntu :apt :ubuntu-16.04]
+2018-02-14 18:26:03,066 DEBUG [operate-29] p.l.execute clojure-on-origin dda.pallet.core.dda_crate$fn__18826$action__5486__auto___direct__18828$clj_action18827__18829@66422bd1
+2018-02-14 18:26:03,067 INFO [operate-29] d.p.c.dda-crate DdaCrate[facility=:dda-config ver=[1 4 0]] : test phase.
+2018-02-14 18:26:03,068 DEBUG [operate-29] p.l.execute clojure-on-origin dda.pallet.core.dda_crate$fn__18723$G__18716__18728$fn__18729$action__5486__auto___direct__18731$clj_action18730__18732@57d52cd
+2018-02-14 18:26:03,069 INFO [operate-29] d.p.c.dda-crate DdaCrate[facility=:dda-config ver=[1 4 0]] : doing nothing.
+2018-02-14 18:26:03,069 DEBUG [operate-29] p.l.execute clojure-on-origin dda.pallet.core.dda_crate$fn__18826$action__5486__auto___direct__18828$clj_action18827__18829@4d5c0e97
+2018-02-14 18:26:03,070 INFO [operate-29] d.p.c.dda-crate DdaCrate[facility=:dda-servertest ver=[0 1 0]] : test phase.
+2018-02-14 18:26:03,071 DEBUG [operate-29] p.l.execute clojure-on-origin dda.pallet.dda_serverspec_crate.infra.core.test$fn__19815$test_it__19820$fn__19821$action__5486__auto___direct__19823$clj_action19822__19824@44f67f38
+2018-02-14 18:26:03,072 INFO [operate-29] d.p.d.i.c.test testing http
+2018-02-14 18:26:03,078 DEBUG [operate-29] d.p.d.i.c.test input: {:https___domaindrivenarchitecture.org {:expiration-days -1}}
