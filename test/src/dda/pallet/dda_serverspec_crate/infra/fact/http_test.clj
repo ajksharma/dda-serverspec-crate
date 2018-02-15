@@ -17,8 +17,7 @@
 (ns dda.pallet.dda-serverspec-crate.infra.fact.http-test
   (:require
     [clojure.test :refer :all]
-    [pallet.build-actions :as build-actions]
-    [pallet.actions :as actions]
+    [clojure.tools.logging :as logging]
     [dda.pallet.dda-serverspec-crate.infra.fact.http :as sut]))
 
 ; ------------------------  test data  ------------------------
@@ -32,7 +31,7 @@
               reference-date
               (java.time.LocalDate/now))
     (catch java.time.DateTimeException ex
-      nil)))
+      (logging/warn "Exception encountered : " ex))))
 
 (def script-output1
   "_some_url

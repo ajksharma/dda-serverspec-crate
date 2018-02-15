@@ -72,7 +72,9 @@
             (catch java.time.DateTimeException ex
               (logging/warn "Exception parsing http certificate date (" expiration-date-text ") : " ex)
               nil))
-          nil)]
+          (do
+            (logging/warn "No 'expire date' found in the http response below:\n" result-text)
+            nil))]
     (if expiration-days
       {(keyword result-key) {:expiration-days expiration-days}}
       {(keyword result-key) {:expiration-days -1}})))
