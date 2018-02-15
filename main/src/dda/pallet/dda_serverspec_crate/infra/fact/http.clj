@@ -16,9 +16,10 @@
 
 (ns dda.pallet.dda-serverspec-crate.infra.fact.http
   (:require
-   [schema.core :as s]
-   [clojure.string :as string]
-   [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
+    [clojure.string :as string]
+    [clojure.tools.logging :as logging]
+    [schema.core :as s]
+    [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
 
 ; -----------------------  fields & schemas  ------------------------
 (def fact-id-http ::http)
@@ -69,6 +70,7 @@
                       (java.time.LocalDate/now)
                       (parse-date expiration-date-text))
             (catch java.time.DateTimeException ex
+              (logging/warn "Exception parsing http certificate date (" expiration-date-text ") : " ex)
               nil))
           nil)]
     (if expiration-days
