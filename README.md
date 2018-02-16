@@ -12,17 +12,19 @@ dda-pallet is compatible with the following versions
  * (x)ubunutu 16.04
 
 ## Features
-This software allows you to easily check the configurations or settings of servers.   You can check if
-* certain files or folders existing or don't exist on the server(s)
+The dda-serverspec-crate allows you to easily check the configurations or settings of servers.   
+You can check if
+* certain files or folders exist or don't exist on the server(s)
 * packages are installed / available
 * programs are running
-* certificates are valid and much more.
+* certificates are valid
+* and much more.
 
-[![asciicast](https://asciinema.org/a/163372.png)](https://asciinema.org/a/163372)
+  [![asciicast](https://asciinema.org/a/163372.png)](https://asciinema.org/a/163372)
 
 ## Usage
-1. Download the jar-file from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
-1. Create the ```serverspec.edn``` configruration file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
+1. **Download the jar-file** from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
+1. **Create the ```serverspec.edn``` configruration file** in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
   ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
@@ -56,7 +58,7 @@ You may use and adjust the following example config:
   java -jar dda-serverspec-crate-standalone.jar --install-dependencies --targets targets.edn test.edn
   ```
 
-5. Run the jar with the following options and inspect the output.
+5. **Run the jar** with the following options and inspect the output.
 
   ```bash
 java -jar dda-serverspec-crate-standalone.jar serverspec.edn
@@ -70,7 +72,7 @@ java -jar dda-serverspec-crate-standalone.jar --targets targets.edn serverspec.e
 #### Remote testing
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
-For the remote white-box test, the serverspec crate can be used from a source machine to test different aspects of the remote target machines.
+For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
 
 
 ## Additional info about the configuration
