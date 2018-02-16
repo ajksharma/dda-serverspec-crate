@@ -19,17 +19,21 @@
     [clojure.tools.logging :as logging]
     [schema.core :as s]
     [pallet.crate :as crate]
-    [pallet.actions :as actions]))
+    [pallet.actions :as actions]
+    [pallet.core.data-api :as data-api]
+    [dda.pallet.dda-serverspec-crate.infra.core.fact :as fact]))
 
-(def FactCheckResult
+(def test-facility :dda-serverspec-test)
+
+(def TestResult
   {:test-passed s/Bool
    :test-message s/Str
    :no-passed s/Num
    :no-failed s/Num})
 
-(def TestResult
+(def TestResultHuman
   (merge
-    FactCheckResult
+    TestResult
     {:input s/Any
      :summary s/Str}))
 
@@ -38,6 +42,7 @@
    :action-symbol s/Any
    :input s/Any
    :out s/Str
+   :result TestResult
    :exit s/Num
    :summary s/Str})
 
@@ -47,9 +52,9 @@
   :no-passed 0
   :no-failed 0})
 
-(s/defn fact-result-to-test-result :- TestResult
+(s/defn fact-result-to-test-result :- TestResultHuman
   [input :- s/Any
-   fact-result :- FactCheckResult]
+   fact-result :- TestResult]
   (merge
     fact-result
     {:input input
@@ -61,20 +66,24 @@
   [context :- s/Str
    fact-key :- s/Keyword
    fact-key-name :- s/Str
-   test-result :- TestResult]
+   test-result :- TestResultHuman]
   (let [action-symbol (str "test-" fact-key-name)]
     {:context context
      :action-symbol action-symbol
      :input (-> test-result :input)
      :out (-> test-result :test-message)
+     :result test-result
      :exit 0
-     :summary (-> test-result :summary)}))
+     :summary-text (-> test-result :summary)}))
 
 
 (s/defn test-it :- TestActionResult
+  {:pallet/plan-fn true}
   [fact-key :- s/Keyword
    test-fn]
-  (let [all-facts (crate/get-settings :dda-serverspec-fact {:instance-id (crate/target-node)})
+  (let [all-facts (crate/get-settings
+                    fact/fact-facility
+                    {:instance-id (crate/target-node)})
         facts (-> all-facts fact-key)
         fact-key-name (name fact-key)]
     (actions/as-action
@@ -87,6 +96,10 @@
         (logging/debug (str "result: " test-result))
         (logging/info (str "result for " fact-key-name " : " (-> action-result :out)))
         (logging/info (str "result for " fact-key-name " : " (-> action-result :summary)))
-        (.write *out* (str "result for " fact-key-name " :\n" (-> action-result :out)))
-        (.write *out* (str (-> action-result :summary) "\n\n"))
         action-result))))
+
+(defn run-results [session]
+  (:runs (data-api/session-data session)))
+
+(defn node-results [session]
+  (filter some? (:action-results (first (run-results session)))))

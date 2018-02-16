@@ -13,42 +13,38 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-;[dda.pallet.commons.cli-helper :as cli-helper]
-
 (ns dda.pallet.dda-serverspec-crate.main
   (:gen-class)
   (:require
     [clojure.string :as str]
     [clojure.tools.cli :as cli]
+    [dda.config.commons.styled-output :as styled]
     [dda.pallet.commons.existing :as existing]
     [dda.pallet.commons.operation :as operation]
     [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(defn execute-server-test
-  [domain-config targets]
-  (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-server-test
-     (existing/provider {:dda-servertest-group existing})
-     (app/existing-provisioning-spec
-       domain-config
-       provisioning-user)
-     :summarize-session true)))
+(defn execute-serverspec
+  [domain-config target-config verbosity]
+  (let [session (operation/do-test
+                  (app/existing-provider target-config)
+                  (app/existing-provisioning-spec domain-config target-config)
+                  :summarize-session false)]
+    (app/summarize-test-session session :verbose verbosity)
+    (app/session-passed? session)))
 
 (defn execute-install
-  [domain-config targets]
-  (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-apply-install
-     (existing/provider {:dda-servertest-group existing})
-     (app/existing-provisioning-spec
-       domain-config
-       provisioning-user)
-     :summarize-session true)))
+  [domain-config target-config]
+  (operation/do-apply-install
+    (app/existing-provider target-config)
+    (app/existing-provisioning-spec domain-config target-config)
+    :summarize-session true))
 
 (def cli-options
   [["-h" "--help"]
    ["-i" "--install-dependencies"]
-   ["-t" "--targets TARGETS.edn" "edn file containing the targets to test."
-    :default "targets.edn"]])
+   ["-t" "--targets [localhost-target.edn]" "edn file containing the targets to test."
+    :default "localhost-target.edn"]
+   ["-v" "--verbose"]])
 
 (defn usage [options-summary]
   (str/join
@@ -74,14 +70,18 @@
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)]
+  (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)
+        verbose (if (contains? options :verbose) 1 0)]
     (cond
       help (exit 0 (usage summary))
       errors (exit 1 (error-msg errors))
       (not= (count arguments) 1) (exit 1 (usage summary))
       (:install-dependencies options) (execute-install
-                                       (app/load-tests (first arguments))
+                                       (app/load-domain (first arguments))
                                        (app/load-targets (:targets options)))
-      :default (execute-server-test
-                (app/load-tests (first arguments))
-                (app/load-targets (:targets options))))))
+      :default (if (execute-serverspec
+                     (app/load-domain (first arguments))
+                     (app/load-targets (:targets options))
+                     verbose)
+                   (exit 0 (styled/styled "ALL TESTS PASSED" :green))
+                   (exit 2 (styled/styled "SOME TESTS FAILED" :red))))))

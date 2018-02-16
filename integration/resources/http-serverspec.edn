@@ -1,0 +1,2 @@
+{:http [{:url "https://domaindrivenarchitecture.org"
+         :expiration-days 15}]}

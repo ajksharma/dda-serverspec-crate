@@ -14,47 +14,50 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-serverspec-crate.infra.test.file
+(ns dda.pallet.dda-serverspec-crate.infra.test.certificate-file
   (:require
     [schema.core :as s]
-    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
+    [dda.pallet.dda-serverspec-crate.infra.fact.certificate-file :as certificate-file-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def FileTestConfig {s/Keyword {:exist? s/Bool}})
+(def CertificateFileTestConfig {s/Keyword {:expiration-days s/Num}})
 
 (s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
   [result :- server-test/TestResult
-   spec :- FileTestConfig
+   spec :- CertificateFileTestConfig
    fact-map]
   (if (<= (count spec) 0)
     result
     (let [elem (first spec)
-          expected-exist? (:exist? (val elem))
+          expected-expiration-days (:expiration-days (val elem))
           fact-elem  (get-in fact-map [(key elem)])
-          fact-exist? (:exist? fact-elem)
-          passed? (= expected-exist? fact-exist?)]
+          fact-expiration-days (:expiration-days fact-elem)
+          passed? (<= expected-expiration-days fact-expiration-days)]
         (recur
           {:test-passed (and (:test-passed result) passed?)
-           :test-message (str (:test-message result) "test file: " (name (key elem))
-                              ", expected exist?: " expected-exist? ", was exist?: "
-                              fact-exist? ", passed?: " passed? "\n")
+           :test-message (str (:test-message result) "test certificate-file: " (name (key elem))
+                              ", expected min expiration-days: " expected-expiration-days " vs actual expiration-days "
+                              (if (= fact-expiration-days -1)
+                                "---ERROR RETRIEVING EXPIRATION---"
+                                fact-expiration-days)
+                              ", passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)
           fact-map))))
 
-(s/defn test-file-internal :- server-test/TestResultHuman
+(s/defn test-certificate-file-internal :- server-test/TestResultHuman
   "Exposing fact input to signature for tests."
-  [test-config :- FileTestConfig
-   input :- {s/Keyword file-fact/FileFactResults}]
+  [test-config :- CertificateFileTestConfig
+   input :- {s/Keyword certificate-file-fact/CertificateFileFactResults}]
   (let [fact-result (fact-check server-test/fact-check-seed test-config input)]
     (server-test/fact-result-to-test-result input fact-result)))
 
-(s/defn test-file :- server-test/TestActionResult
+(s/defn test-certificate-file :- server-test/TestActionResult
   "The delayed action to be called in test phase.
-Getting upfront filled facts from session."
-  [test-config :- FileTestConfig]
+  Getting upfront the facts from session."
+  [test-config :- CertificateFileTestConfig]
   (server-test/test-it
-    file-fact/fact-id-file
-    #(test-file-internal test-config %)))
+    certificate-file-fact/fact-id-certificate-file
+    #(test-certificate-file-internal test-config %)))

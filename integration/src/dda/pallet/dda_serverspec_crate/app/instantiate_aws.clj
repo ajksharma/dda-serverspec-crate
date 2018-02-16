@@ -13,53 +13,43 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-
 (ns dda.pallet.dda-serverspec-crate.app.instantiate-aws
   (:require
    [clojure.inspector :as inspector]
-   [pallet.repl :as pr]
-   [dda.pallet.commons.encrypted-credentials :as crypto]
-   [dda.pallet.commons.session-tools :as session-tools]
-   [dda.pallet.commons.pallet-schema :as ps]
+   [schema.core :as s]
    [dda.pallet.commons.operation :as operation]
    [dda.pallet.commons.aws :as cloud-target]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(def domain-config {:netstat '({:process-name "sshd" :port "22"}
-                               {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"})
-                    :file '({:path "/root"}
-                            {:path "/etc"})
-                    :netcat '({:host "www.google.com" :port 80}
-                              {:host "www.google.c" :port 80 :reachable? false})
-                    :package {:test {:installed? false}
-                              :nano {:installed? true}}})
-
-(defn provisioning-spec [count]
+(defn provisioning-spec [domain-config target-config count]
   (merge
-   (app/servertest-group-spec (app/app-configuration domain-config))
-   (cloud-target/node-spec "jem")
+   (app/servertest-group-spec
+     (app/app-configuration domain-config))
+   (cloud-target/node-spec target-config)
    {:count count}))
 
 (defn converge-install
   [count & options]
-  (let [{:keys [gpg-key-id gpg-passphrase
-                summarize-session]
-         :or {summarize-session true}} options]
-    (operation/do-converge-install
-     (if (some? gpg-key-id)
-       (cloud-target/provider gpg-key-id gpg-passphrase)
-       (cloud-target/provider))
-     (provisioning-spec count)
-     :summarize-session summarize-session)))
+  (let [{:keys [gpg-key-id gpg-passphrase domain target]
+         :or {domain "example-serverspec.edn"
+              target "integration/resources/jem-aws-target.edn"}} options
+        target-config (cloud-target/load-targets target)
+        domain-config (app/load-domain domain)]
+   (operation/do-converge-install
+     (cloud-target/provider (:context target-config))
+     (provisioning-spec domain-config (:node-spec target-config) count)
+     :summarize-session true)))
 
-(defn server-test
-  [count & options]
-  (let [{:keys [gpg-key-id gpg-passphrase
-                summarize-session]
-         :or {summarize-session true}} options]
-    (operation/do-server-test
-     (if (some? gpg-key-id)
-       (cloud-target/provider gpg-key-id gpg-passphrase)
-       (cloud-target/provider))
-     (provisioning-spec count)
-     :summarize-session summarize-session)))
+(defn serverspec
+  [& options]
+  (let [{:keys [gpg-key-id gpg-passphrase domain target]
+         :or {domain "example-serverspec.edn"
+              target "integration/resources/jem-aws-target.edn"}} options
+        target-config (cloud-target/load-targets target)
+        domain-config (app/load-domain domain)]
+   (app/summarize-test-session
+     (operation/do-test
+       (cloud-target/provider (:context target-config))
+       (provisioning-spec domain-config (:node-spec target-config) 0)
+       :summarize-session false)
+     :verbose 1)))
