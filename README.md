@@ -24,7 +24,7 @@ You can check if
 
 ## Usage
 1. **Download the jar-file** from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
-1. **Create the ```serverspec.edn``` configruration file** in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
+1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
   ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
@@ -40,8 +40,7 @@ You can check if
  :http [{:url "https://domaindrivenarchitecture.org" ;provide full url
          :expiration-days 15}]}                      ; check if certificate of url is at least 15 days valid
   ```
-
-1. (optional) If you want to perform the tests on a remote server, please create additionally a ```targets.edn``` file. In this file you define gainst which server(s) the tests are performed and the corresponding login information.  
+3. (optional) If you want to perform the tests on a remote server, please create additionally a ```targets.edn``` file. In this file you define gainst which server(s) the tests are performed and the corresponding login information.  
 You may use and adjust the following example config:
   ```clojure
   {:existing [{:node-name "target1"            ; semantic name (keep the default or use a name that suits you)
