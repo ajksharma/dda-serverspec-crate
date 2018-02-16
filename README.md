@@ -5,24 +5,17 @@
 
 [![Slack](https://img.shields.io/badge/chat-clojurians-green.svg?style=flat)](https://clojurians.slack.com/messages/#dda-pallet/) | [<img src="https://domaindrivenarchitecture.org/img/meetup.svg" width=50 alt="DevOps Hacking with Clojure Meetup"> DevOps Hacking with Clojure](https://www.meetup.com/de-DE/preview/dda-pallet-DevOps-Hacking-with-Clojure) | [Website & Blog](https://domaindrivenarchitecture.org)
 
-## Table of content
-
-## Compatibility
-dda-pallet is compatible with the following versions
- * pallet 0.8
- * clojure 1.7
- * (x)ubunutu 16.0
-
- ## Jump to
- [Local-remote-testing](#local-remote-testing)
- [Usage](#usage)
- [Additional-info-about-the-configuration](#additional-info-about-the-configuration)
- [Targets-config-example](#targets-config-example)
- [Serverspec-config-example](#serverspec-config-example)
- [Reference](#reference)
- [Targets](#targets)
- [Serverspec](#serverspec)
- [Infra-API](#infra-api)
+## Jump to
+[Local-remote-testing](#local-remote-testing)
+[Usage](#usage)
+[Additional-info-about-the-configuration](#additional-info-about-the-configuration)
+[Targets-config-example](#targets-config-example)
+[Serverspec-config-example](#serverspec-config-example)
+[Reference](#reference)
+[Targets](#targets)
+[Serverspec](#serverspec)
+[Infra-API](#infra-api)
+[Compatibility](#compatibility)
 
 ## Features
 The dda-serverspec-crate allows you to specify target-systems expected state and test against current state. dda-serverspec-crate provides:
@@ -209,6 +202,12 @@ The schema is:
 ```
 On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
 These results are returned in a map that follows the schema depicted above.
+
+## Compatibility
+dda-pallet is compatible with the following versions
+ * pallet 0.8
+ * clojure 1.7
+ * (x)ubunutu 16.0
 
 ## License
 Published under [apache2.0 license](LICENSE.md)
