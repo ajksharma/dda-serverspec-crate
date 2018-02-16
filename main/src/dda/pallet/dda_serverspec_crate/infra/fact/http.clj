@@ -102,3 +102,7 @@
        "; " (map #(build-http-script %) fact-config))
       "; exit 0")
     :transform-fn parse-http-script-responses))
+
+(s/defn install
+  []
+  (actions/package "curl"))

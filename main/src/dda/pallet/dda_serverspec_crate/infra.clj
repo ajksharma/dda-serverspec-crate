@@ -73,7 +73,7 @@
 
 (s/defmethod dda-crate/dda-settings facility
   [dda-crate config]
-  "dda-servertest: setting"
+  "dda-serverspec: setting"
   (let [{:keys [file-fact netcat-fact certificate-file-fact http-fact]} config]
     (when (contains? config :package-fact)
       (package-fact/collect-package-fact))
@@ -87,6 +87,12 @@
       (certificate-file-fact/collect-certificate-file-fact certificate-file-fact))
     (when (contains? config :http-fact)
       (http-fact/collect-http-fact http-fact))))
+
+(s/defmethod dda-crate/dda-install facility
+  [dda-crate config]
+  "dda-serverspec: install"
+  (when (contains? config :http-fact)
+    (http-fact/install)))
 
 (s/defmethod dda-crate/dda-test facility
   [dda-crate config]
