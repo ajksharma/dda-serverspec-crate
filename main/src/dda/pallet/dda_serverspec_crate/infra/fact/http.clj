@@ -75,9 +75,14 @@
           (do
             (logging/warn "No 'expire date' found in the http response below:\n" result-text)
             nil))]
-    (if expiration-days
-      {(keyword result-key) {:expiration-days expiration-days}}
-      {(keyword result-key) {:expiration-days -1}})))
+    (do
+      (logging/debug "result-lines:" result-lines)
+      (logging/debug "result-key:" result-key)
+      (logging/debug "result-text:" result-text)
+      (logging/debug "expiration-date-text:" expiration-date-text)
+      (if expiration-days
+        {(keyword result-key) {:expiration-days expiration-days}}
+        {(keyword result-key) {:expiration-days -1}}))))
 
 (s/defn parse-http-script-responses :- HttpFactResult
   "returns a HttpFactResult from the result text of one http check"
