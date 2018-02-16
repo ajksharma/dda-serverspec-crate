@@ -23,31 +23,10 @@
    [dda.pallet.commons.existing :as existing]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(def targets
-  [{:node-name "node-id"
-    :node-ip "127.0.0.1"}])
-
-(def provisioning-user
-  {:login "initial"
-   :password "secure1234"})
-
-(def domain-config {:netstat '({:process-name "sshd" :port "11" :running? false}
-                               {:process-name "sshd" :port "22"}
-                               {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"})
-                    :file '({:path "/root"}
-                            {:path "/etc"}
-                            {:path "/absent" :exist? false})
-                    ;:netcat '({:host "www.google.com" :port 80}
-                    ;          {:host "www.google.c" :port 80 :reachable? false}})
-                    :package '({:name "test" :installed? false}
-                               {:name "nano"})
-                    :certificate-file '({:file "/etc/ssl/crt/primary.crt" :expiration-days 10})
-                    :http '({:url "https://meissa-gmbh.de" :expiration-days 10})})
-
 (defn apply-install
  [& options]
  (let [{:keys [domain targets]
-        :or {domain "serverspec.edn"
+        :or {domain "example-serverspec.edn"
              targets "localhost-target.edn"}} options
        target-config (app/load-targets targets)
        domain-config (app/load-domain domain)]
@@ -59,7 +38,7 @@
 (defn serverspec
   [& options]
   (let [{:keys [domain targets]
-         :or {domain "serverspec.edn"
+         :or {domain "example-serverspec.edn"
               targets "localhost-target.edn"}} options
         target-config (app/load-targets targets)
         domain-config (app/load-domain domain)]

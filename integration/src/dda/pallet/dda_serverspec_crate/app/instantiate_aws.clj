@@ -31,7 +31,7 @@
 (defn converge-install
   [count & options]
   (let [{:keys [gpg-key-id gpg-passphrase domain target]
-         :or {domain "serverspec.edn"
+         :or {domain "example-serverspec.edn"
               target "integration/resources/jem-aws-target.edn"}} options
         target-config (cloud-target/load-targets target)
         domain-config (app/load-domain domain)]
@@ -43,7 +43,7 @@
 (defn serverspec
   [& options]
   (let [{:keys [gpg-key-id gpg-passphrase domain target]
-         :or {domain "serverspec.edn"
+         :or {domain "example-serverspec.edn"
               target "integration/resources/jem-aws-target.edn"}} options
         target-config (cloud-target/load-targets target)
         domain-config (app/load-domain domain)]
