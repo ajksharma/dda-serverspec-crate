@@ -18,6 +18,8 @@
   (:require
    [schema.core :as s]
    [dda.cm.group :as group]
+   ; TODO: validate as soon as pallet-commons issue is fixed
+   ;[dda.pallet.commons.session :as session]
    [dda.pallet.commons.existing :as existing]
    [dda.pallet.core.dda-crate :as dda-crate]
    [dda.pallet.dda-config-crate.infra :as config-crate]
@@ -39,7 +41,7 @@
 (s/defn ^:always-validate
   load-targets :- existing/Targets
   [file-name :- s/Str]
-  (ext-config/parse-config file-name))
+  (existing/load-targets file-name))
 
 (s/defn ^:always-validate
   load-domain :- ServerSpecDomainConfig
@@ -96,10 +98,17 @@
   [targets-config :- existing/Targets]
   (existing-provider-resolved (existing/resolve-targets targets-config)))
 
-; TODO: add boundary validation
-(defn summarize-test-session [& params]
-  (apply summary/summarize-test-session params))
+; TODO: validate as soon as pallet-commons issue is fixed
+;[session :- session/SessionSpec
+(s/defn ^:always-validate
+  summarize-test-session
+  [session
+   & options]
+  (apply summary/summarize-test-session (cons session options)))
 
-; TODO: add boundary validation
-(defn session-passed? [& params]
-  (apply summary/session-passed? params))
+; TODO: validate as soon as pallet-commons issue is fixed
+;[session :- session/SessionSpec]
+(s/defn ^:always-validate
+  session-passed? :- s/Bool
+  [session]
+  (apply summary/session-passed? '(session)))
