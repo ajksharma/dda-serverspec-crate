@@ -25,6 +25,10 @@
   (java.time.LocalDate/parse "10.02.2018"
     (java.time.format.DateTimeFormatter/ofPattern "dd.MM.yyyy")))
 
+(def date-2018-04-15
+  (java.time.LocalDate/parse "15.04.2018"
+    (java.time.format.DateTimeFormatter/ofPattern "dd.MM.yyyy")))
+
 (def date-offset
   (try
     (.between (java.time.temporal.ChronoUnit/DAYS)
@@ -115,8 +119,8 @@
     sut/output-separator))
 
 (def fact2
-  {:https___bahn.de {:expiration-days (- 756 date-offset)}})
-   :https___google.com {:expiration-days (- 66 date-offset)}
+  {:https___bahn.de {:expiration-days (- 756 date-offset)}
+   :https___google.com {:expiration-days (- 66 date-offset)}})
 
 
 (def script-output3
@@ -197,7 +201,7 @@ Access-Control-Allow-Origin: *.meissa-gmbh.de
 == Info: Connection #0 to host domaindrivenarchitecture.org left intact
 ")
 
-(def fact4 {:https___domaindrivenarchitecture.org {:expiration-days -1}})
+(def fact4 {:https___domaindrivenarchitecture.org {:expiration-days 58}})
 
 ; ------------------------  tests  ------------------------------
 (deftest test-parse
@@ -208,12 +212,12 @@ Access-Control-Allow-Origin: *.meissa-gmbh.de
     (is (= fact2
            (sut/parse-http-script-responses script-output2)))
     (is (= fact3
-           (sut/parse-http-script-responses script-output3)))))
-    ;(is (= fact4
-    ;       (sut/parse-http-script-responses script-output4)))))
+           (sut/parse-http-script-responses script-output3)))
+    (is (= fact4
+           (sut/parse-http-script-responses script-output4)))))
 
 (deftest test-parse-date
   (testing
     "test parsing http output"
-    (is (= nil
+    (is (= date-2018-04-15
            (sut/parse-date "Sun, 15 Apr 2018 12:01:04 GMT")))))
