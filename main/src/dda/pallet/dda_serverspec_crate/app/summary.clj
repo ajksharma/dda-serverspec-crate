@@ -68,7 +68,7 @@
     (let [{:keys [context summary-text out result]} action-result]
       (println (str "  " context " - ")
         (if (:test-passed result)
-          summary-text
+          (styled summary-text :green)
           (styled summary-text :red)))
       (when (> verbose 0)
         (summarize-tests out (+ 2 indent) verbose)))))
@@ -90,7 +90,7 @@
           (str
             (get-in run [:node :primary-ip]) " - "
             (if (run-passed? run)
-              "PASSED"
+              (styled "PASSED" :green)
               (styled "FAILED" :red))))
         (summarize-node-tests action-results 2 verbose)))))
 

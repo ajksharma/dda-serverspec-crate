@@ -20,6 +20,7 @@
     [schema.core :as s]
     [pallet.crate :as crate]
     [pallet.actions :as actions]
+    [pallet.core.data-api :as data-api]
     [dda.pallet.dda-serverspec-crate.infra.core.fact :as fact]))
 
 (def test-facility :dda-serverspec-test)
@@ -100,7 +101,7 @@
         action-result))))
 
 (defn run-results [session]
-  (:runs (pallet.core.data-api/session-data session)))
+  (:runs (data-api/session-data session)))
 
 (defn node-results [session]
   (filter some? (:action-results (first (run-results session)))))
