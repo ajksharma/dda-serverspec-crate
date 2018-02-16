@@ -146,7 +146,7 @@ The schema for the tests is:
 (def ServerTestDomainConfig
   {(s/optional-key :package) [{:name s/Str
                                (s/optional-key :installed?) s/Bool}]
-   (s/optional-key :netstat) [{:process-name s/Str
+   (s/optional-key :netstat) [{:process-name s/Str             ; works only for sudoer.
                                :port s/Str
                                (s/optional-key :running?) s/Bool
                                (s/optional-key :ip) s/Str
@@ -156,10 +156,10 @@ The schema for the tests is:
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
                               (s/optional-key :reachable?) s/Bool}]
-   (s/optional-key :certificate) [{:file s/Str                ;incl path as e.g. /path/file.crt
-                                   :expiration-days s/Num}]   ;min days certificate must be valid
-   (s/optional-key :http) [{:url s/Str                        ;url e.g. http://google.com
-                            :expiration-days s/Num}]})        ;min days certificate must be valid
+   (s/optional-key :certificate) [{:file s/Str                ; incl path as e.g. /path/file.crt
+                                   :expiration-days s/Num}]   ; min days certificate must be valid
+   (s/optional-key :http) [{:url s/Str                        ; url e.g. http://google.com
+                            :expiration-days s/Num}]})        ; min days certificate must be valid
 ```
 The "tests.edn" file has to match this schema.
 The default value is that the test expects a positive boolean (e.g. :reachable? true) and this value can be omitted.
@@ -184,7 +184,7 @@ The schema is:
            :port Str,
            :exp-proto Str}},
  (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored.
- (optional-key :file-test)
+ (optional-key :file-test)              ; fact can be only collected by sudoers
  {Keyword {:exist? Bool}},
  (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\"
  {Keyword {:path Str}},
