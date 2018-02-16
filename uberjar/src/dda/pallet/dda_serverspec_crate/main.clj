@@ -22,7 +22,8 @@
     [clojure.tools.cli :as cli]
     [dda.pallet.commons.existing :as existing]
     [dda.pallet.commons.operation :as operation]
-    [dda.pallet.dda-serverspec-crate.app :as app]))
+    [dda.pallet.dda-serverspec-crate.app :as app]
+    [dda.pallet.dda-serverspec-crate.app.summary :as summary]))
 
 (defn execute-serverspec
   [domain-config target-config verbosity]
@@ -84,5 +85,5 @@
                      (app/load-domain (first arguments))
                      (app/load-targets (:targets options))
                      verbose)
-                   (exit 0 "TESTS PASSED")
-                   (exit 2 "TESTS FAILED")))))
+                   (exit 0 (summary/styled "ALL TESTS PASSED" :green))
+                   (exit 2 (summary/styled "SOME TESTS FAILED" :red))))))
