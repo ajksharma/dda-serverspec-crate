@@ -114,8 +114,10 @@
 "
     sut/output-separator))
 
-(def fact2 {:https___google.com {:expiration-days (- 66 date-offset)}
-            :https___bahn.de {:expiration-days (- 756 date-offset)}})
+(def fact2
+  {:https___bahn.de {:expiration-days (- 756 date-offset)}})
+   :https___google.com {:expiration-days (- 66 date-offset)}
+
 
 (def script-output3
   "_someinvalidurl\n* Rebuilt URL to: https://google.c/
@@ -195,7 +197,7 @@ Access-Control-Allow-Origin: *.meissa-gmbh.de
 == Info: Connection #0 to host domaindrivenarchitecture.org left intact
 ")
 
-(def fact4 {:_someinvalidurl {:expiration-days -1}})
+(def fact4 {:https___domaindrivenarchitecture.org {:expiration-days -1}})
 
 ; ------------------------  tests  ------------------------------
 (deftest test-parse
