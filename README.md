@@ -5,11 +5,24 @@
 
 [![Slack](https://img.shields.io/badge/chat-clojurians-green.svg?style=flat)](https://clojurians.slack.com/messages/#dda-pallet/) | [<img src="https://domaindrivenarchitecture.org/img/meetup.svg" width=50 alt="DevOps Hacking with Clojure Meetup"> DevOps Hacking with Clojure](https://www.meetup.com/de-DE/preview/dda-pallet-DevOps-Hacking-with-Clojure) | [Website & Blog](https://domaindrivenarchitecture.org)
 
+## Table of content
+
 ## Compatibility
 dda-pallet is compatible with the following versions
  * pallet 0.8
  * clojure 1.7
- * (x)ubunutu 16.04
+ * (x)ubunutu 16.0
+
+ ## Jump to
+ [Local-remote-testing](#Local-remote-testing)
+ [Usage](#Usage)
+ [Additional-info-about-the-configuration](#Additional-info-about-the-configuration)
+ [Targets-config-example](#Targets-config-example)
+ [Serverspec-config-example](#Serverspec-config-example)
+ [Reference](#Reference)
+ [Targets](#Targets)
+ [Serverspec](#Serverspec)
+ [Infra-API](#Infra-API)
 
 ## Features
 The dda-serverspec-crate allows you to specify target-systems expected state and test against current state. dda-serverspec-crate provides:
@@ -23,7 +36,7 @@ The dda-serverspec-crate allows you to specify target-systems expected state and
 
   <a href="https://asciinema.org/a/163372?autoplay=1"><img src="https://asciinema.org/a/163372.png" width="836"/></a>
 
-## Local / remote testing
+## Local-remote-testing
 There are two modes of testing targets, either local or remote. For local tests are executed on the node the jar is running.
 ![ServerSpecLocalWhitebox](./doc/ServerSpecLocalWhitebox.png)
 
@@ -76,13 +89,13 @@ java -jar dda-serverspec-crate-standalone.jar serverspec.edn
 java -jar dda-serverspec-crate-standalone.jar --targets targets.edn serverspec.edn
 ```
 
-## Additional info about the configuration
+## Additional-info-about-the-configuration
 Two configuration files are required by the dda-serverspec-crate:: "serverspec.edn" and "targets.edn" (or similar names). These files specify both WHAT to test resp. WHERE. In detail: the first file defines the configuration for the actual tests performed, while the second configuration file specifies the target nodes/systems, on which the tests will be performed. The following examples will explain these files more in details.
 
 (**Remark:** The second file "targets.edn" is *optional*. This means, if none is specified, then a default file is used, which defines that the tests are performed against  **localhost**.)
 
 
-### Targets config example
+### Targets-config-example
 ```clojure
 {:existing [{:node-name "test-vm1"
              :node-ip "35.157.19.218"}
@@ -94,7 +107,7 @@ The keyword ```:existing``` has to be assigned a vector, that contains maps with
 The nodes are the target machines that will be tested. The ```node-name``` has to be set to be able to identify the target machine and the ```node-ip``` has to be set so that the source machine can reach it.
 The ```provisioning-user``` has to be the same for all nodes that will be tested. Furthermore, if the ssh-key of the executing host is authorized on all target nodes, a password for authorization can be omitted. If this is not the case, the provisioning user has to contain a password.
 
-### Serverspec config example
+### Serverspec-config-example
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}
            {:process-name "sshd" :port "22"}
@@ -140,7 +153,7 @@ The schema of the domain layer for the targets is:
 ```
 The "targets.edn" file has to match this schema.
 
-#### Tests
+#### Serverspec
 The schema for the tests is:
 ```clojure
 (def ServerTestDomainConfig
@@ -164,7 +177,7 @@ The schema for the tests is:
 The "tests.edn" file has to match this schema.
 The default value is that the test expects a positive boolean (e.g. :reachable? true) and this value can be omitted.
 
-### Infra API
+### Infra-API
 The infra configuration is a configuration on the infrastructure level of a crate. It contains the complete configuration options that are possible with the crate functions.
 On infra level we distinguish between collecting facts (done in the settings phase without side effects) and testing (done in test phase intentionally without side effects).
 Settings can also be used without tests in order to provide informations for conditional installations / configurations.
