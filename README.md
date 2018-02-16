@@ -23,11 +23,19 @@ The dda-serverspec-crate allows you to specify target-systems expected state and
 
   <a href="https://asciinema.org/a/163372?autoplay=1"><img src="https://asciinema.org/a/163372.png" width="836"/></a>
 
+## Local / remote testing
+There are two modes of testing targets, either local or remote. For local tests are executed on the node the jar is running.
+![ServerSpecLocalWhitebox](./doc/ServerSpecLocalWhitebox.png)
+
+For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
+![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
+
+For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
+
 ## Usage
 1. **Download the jar-file** from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
 1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
-
-  ```clojure
+   ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
            {:process-name "sshd" :port "22"}         ;check if sshd is running on port 22
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
@@ -41,16 +49,15 @@ The dda-serverspec-crate allows you to specify target-systems expected state and
  :http [{:url "https://domaindrivenarchitecture.org" ;provide full url
          :expiration-days 15}]}                      ; check if certificate of url is at least 15 days valid
   ```
-3. (optional) If you want to perform the tests on a remote server, please create additionally a ```targets.edn``` file. In this file you define gainst which server(s) the tests are performed and the corresponding login information.  
-You may use and adjust the following example config:
-  ```clojure
-  {:existing [{:node-name "target1"            ; semantic name (keep the default or use a name that suits you)
-               :node-ip "192.168.56.104"}]      ; the ip4 address of the machine to be provisioned
-               {:node-name "target2"            ; semantic name (keep the default or use a name that suits you)
-                            :node-ip "192.168.56.105"}]      ; the ip4 address of the machine to be provisioned
-   :provisioning-user {:login "initial"         ; user on the target machine, must have sudo rights
-                       :password "secure1234"}} ; password can be empty, if a ssh key is authorized
-  ```
+3. (optional) If you want to perform the tests on a remote server, please create additionally a ```targets.edn``` file. In this file you define gainst which server(s) the tests are performed and the corresponding login information. You may use and adjust the following example config:
+   ```clojure
+{:existing [{:node-name "target1"                      ; semantic name (keep the default or use a name that suits you)
+             :node-ip "192.168.56.104"}]               ; the ip4 address of the machine to be provisioned
+             {:node-name "target2"                     ; semantic name (keep the default or use a name that suits you)
+                          :node-ip "192.168.56.105"}]  ; the ip4 address of the machine to be provisioned
+ :provisioning-user {:login "initial"                  ; user on the target machine, must have sudo rights
+                     :password {:plain "secure1234"}}} ; password can be ommited, if a ssh key is authorized
+```
 
 4. (optional) If you want to ensure, that certain test tools (like netcat or netstat) are present on the target system, you can once use the ```--install-dependencies``` option:
 
@@ -59,7 +66,7 @@ You may use and adjust the following example config:
   ```
 
 5. **Run the jar** with the following options and inspect the output.
-
+  For testing against localhost:
   ```bash
 java -jar dda-serverspec-crate-standalone.jar serverspec.edn
   ```
@@ -69,19 +76,13 @@ java -jar dda-serverspec-crate-standalone.jar serverspec.edn
 java -jar dda-serverspec-crate-standalone.jar --targets targets.edn serverspec.edn
 ```
 
-#### Remote testing
-![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
-
-For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
-
-
 ## Additional info about the configuration
 Two configuration files are required by the dda-serverspec-crate:: "serverspec.edn" and "targets.edn" (or similar names). These files specify both WHAT to test resp. WHERE. In detail: the first file defines the configuration for the actual tests performed, while the second configuration file specifies the target nodes/systems, on which the tests will be performed. The following examples will explain these files more in details.
 
 (**Remark:** The second file "targets.edn" is *optional*. This means, if none is specified, then a default file is used, which defines that the tests are performed against  **localhost**.)
 
 
-#### Targets config example
+### Targets config example
 ```clojure
 {:existing [{:node-name "test-vm1"
              :node-ip "35.157.19.218"}
@@ -93,7 +94,7 @@ The keyword ```:existing``` has to be assigned a vector, that contains maps with
 The nodes are the target machines that will be tested. The ```node-name``` has to be set to be able to identify the target machine and the ```node-ip``` has to be set so that the source machine can reach it.
 The ```provisioning-user``` has to be the same for all nodes that will be tested. Furthermore, if the ssh-key of the executing host is authorized on all target nodes, a password for authorization can be omitted. If this is not the case, the provisioning user has to contain a password.
 
-#### Serverspec config example
+### Serverspec config example
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}
            {:process-name "sshd" :port "22"}
@@ -120,8 +121,8 @@ The schema of the domain layer for the targets is:
 ```clojure
 (def ExistingNode
   "Represents a target node with ip and its name."
-  {:node-name s/Str
-   :node-ip s/Str})
+  {:node-name s/Str   ; semantic name (keep the default or use a name that suits you)
+   :node-ip s/Str})   ; the ip4 address of the machine to be provisioned
 
 (def ExistingNodes
   "A sequence of ExistingNodes."
@@ -129,13 +130,13 @@ The schema of the domain layer for the targets is:
 
 (def ProvisioningUser
   "User used for provisioning."
-  {:login s/Str
-   (s/optional-key :password) secret/Secret})
+  {:login s/Str                                ; user on the target machine, must have sudo rights
+   (s/optional-key :password) secret/Secret})  ; password can be ommited, if a ssh key is authorized
 
 (def Targets
   "Targets to be used during provisioning."
-  {:existing [ExistingNode]
-   (s/optional-key :provisioning-user) ProvisioningUser})
+  {:existing [ExistingNode]                                ; one ore more target nodes.
+   (s/optional-key :provisioning-user) ProvisioningUser})  ; user can be ommited to execute on localhost with current user
 ```
 The "targets.edn" file has to match this schema.
 
