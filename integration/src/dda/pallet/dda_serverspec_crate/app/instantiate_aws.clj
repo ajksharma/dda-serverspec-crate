@@ -51,4 +51,5 @@
      (operation/do-test
        (cloud-target/provider (:context target-config))
        (provisioning-spec domain-config (:node-spec target-config) 0)
-       :summarize-session false))))
+       :summarize-session false)
+     :verbose 1)))
