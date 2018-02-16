@@ -25,7 +25,6 @@
 
 (def test-facility :dda-serverspec-test)
 
-; TODO: Rename to TestResultHuman
 (def TestResult
   {:test-passed s/Bool
    :test-message s/Str
