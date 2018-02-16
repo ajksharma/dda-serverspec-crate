@@ -50,9 +50,10 @@
 
 (s/defn parse-date :- java.time.LocalDate
   [date-string :- s/Str]
-  (let [date-format "EEE, d MMM yyyy HH:mm:ss z"]
+  (let [date-format "EEE, d MMM yyyy HH:mm:ss z"
+        locale (java.util.Locale. "en" "US")];
     (java.time.LocalDate/parse date-string
-      (java.time.format.DateTimeFormatter/ofPattern date-format))))
+      (java.time.format.DateTimeFormatter/ofPattern date-format locale))))
 
 (s/defn parse-http-response :- HttpFactResult
   "returns a HttpFactResult from the result text of one http check"
