@@ -20,8 +20,6 @@
     [schema.core :as s]
     [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
 
-; todo: create crate boundary & schema for configuration & result
-
 (def fact-id-file ::file)
 
 (def FileFactConfig {s/Keyword {:path s/Str}})
