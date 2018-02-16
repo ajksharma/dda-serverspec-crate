@@ -41,7 +41,6 @@
        "_"
        timeout))
 
-;TODO: Make DNS always to FQDN
 (s/defn build-netcat-script
   "builds the script from the given config"
   [netcat-config :- NetcatFactConfig]
