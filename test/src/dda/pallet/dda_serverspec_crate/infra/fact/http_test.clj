@@ -208,6 +208,12 @@ Access-Control-Allow-Origin: *.meissa-gmbh.de
     (is (= fact2
            (sut/parse-http-script-responses script-output2)))
     (is (= fact3
-           (sut/parse-http-script-responses script-output3)))
-    (is (= fact4
-           (sut/parse-http-script-responses script-output4)))))
+           (sut/parse-http-script-responses script-output3)))))
+    ;(is (= fact4
+    ;       (sut/parse-http-script-responses script-output4)))))
+
+(deftest test-parse-date
+  (testing
+    "test parsing http output"
+    (is (= nil
+           (sut/parse-date "Sun, 15 Apr 2018 12:01:04 GMT")))))
