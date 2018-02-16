@@ -37,10 +37,12 @@ The dda-serverspec-crate allows you to specify target-systems expected state and
   <a href="https://asciinema.org/a/163372?autoplay=1"><img src="https://asciinema.org/a/163372.png" width="836"/></a>
 
 ## Local-remote-testing
-There are two modes of testing targets, either local or remote. For local tests are executed on the node the jar is running.
+There are two modes of testing targets, either local or remote. For local tests are executed on the node the jar is running. Tests are executed by the current user.
+
 ![ServerSpecLocalWhitebox](./doc/ServerSpecLocalWhitebox.png)
 
-For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
+For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines. Test are executed by ssh & bash. Just tools like curl has to be installed on target systems.
+
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
 For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
