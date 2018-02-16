@@ -12,15 +12,16 @@ dda-pallet is compatible with the following versions
  * (x)ubunutu 16.04
 
 ## Features
-The dda-serverspec-crate allows you to easily check the configurations or settings of servers.   
-You can check if
-* certain files or folders exist or don't exist on the server(s)
-* packages are installed / available
-* programs are running
-* certificates are valid
-* and much more.
+The dda-serverspec-crate allows you to specify target-systems expected state and test against current state. dda-serverspec-crate provides:
+* execution against localhost, remote hoste or multiple remote hosts.
+* files or folders presence / absence.
+* packages are installed / uninstalled
+* services listening to ip & port
+* validity of certificate files
+* validity of certificates by https
+* network connectivity to remote systems
 
-  [![asciicast](https://asciinema.org/a/163372.png)](https://asciinema.org/a/163372)
+  <a href="https://asciinema.org/a/163372?autoplay=1"><img src="https://asciinema.org/a/163372.png" width="836"/></a>
 
 ## Usage
 1. **Download the jar-file** from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
