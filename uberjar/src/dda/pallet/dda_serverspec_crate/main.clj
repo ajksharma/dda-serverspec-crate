@@ -20,10 +20,10 @@
   (:require
     [clojure.string :as str]
     [clojure.tools.cli :as cli]
+    [dda.config.commons.styled-output :as styled]
     [dda.pallet.commons.existing :as existing]
     [dda.pallet.commons.operation :as operation]
-    [dda.pallet.dda-serverspec-crate.app :as app]
-    [dda.pallet.dda-serverspec-crate.app.summary :as summary]))
+    [dda.pallet.dda-serverspec-crate.app :as app]))
 
 (defn execute-serverspec
   [domain-config target-config verbosity]
@@ -85,5 +85,5 @@
                      (app/load-domain (first arguments))
                      (app/load-targets (:targets options))
                      verbose)
-                   (exit 0 (summary/styled "ALL TESTS PASSED" :green))
-                   (exit 2 (summary/styled "SOME TESTS FAILED" :red))))))
+                   (exit 0 (styled/styled "ALL TESTS PASSED" :green))
+                   (exit 2 (styled/styled "SOME TESTS FAILED" :red))))))
