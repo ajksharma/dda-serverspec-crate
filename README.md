@@ -14,15 +14,15 @@ dda-pallet is compatible with the following versions
  * (x)ubunutu 16.0
 
  ## Jump to
- [Local-remote-testing](#Local-remote-testing)
- [Usage](#Usage)
- [Additional-info-about-the-configuration](#Additional-info-about-the-configuration)
- [Targets-config-example](#Targets-config-example)
- [Serverspec-config-example](#Serverspec-config-example)
- [Reference](#Reference)
- [Targets](#Targets)
- [Serverspec](#Serverspec)
- [Infra-API](#Infra-API)
+ [Local-remote-testing](#local-remote-testing)
+ [Usage](#usage)
+ [Additional-info-about-the-configuration](#additional-info-about-the-configuration)
+ [Targets-config-example](#targets-config-example)
+ [Serverspec-config-example](#serverspec-config-example)
+ [Reference](#reference)
+ [Targets](#targets)
+ [Serverspec](#serverspec)
+ [Infra-API](#infra-api)
 
 ## Features
 The dda-serverspec-crate allows you to specify target-systems expected state and test against current state. dda-serverspec-crate provides:
