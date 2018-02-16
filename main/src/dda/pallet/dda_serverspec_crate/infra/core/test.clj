@@ -25,17 +25,16 @@
 
 (def test-facility :dda-serverspec-test)
 
-; TODO: Rename to TestResult
-(def FactCheckResult
+; TODO: Rename to TestResultHuman
+(def TestResult
   {:test-passed s/Bool
    :test-message s/Str
    :no-passed s/Num
    :no-failed s/Num})
 
-; TODO: Rename to TestResultHuman
-(def TestResult
+(def TestResultHuman
   (merge
-    FactCheckResult
+    TestResult
     {:input s/Any
      :summary s/Str}))
 
@@ -44,7 +43,7 @@
    :action-symbol s/Any
    :input s/Any
    :out s/Str
-   :result FactCheckResult
+   :result TestResult
    :exit s/Num
    :summary s/Str})
 
@@ -54,9 +53,9 @@
   :no-passed 0
   :no-failed 0})
 
-(s/defn fact-result-to-test-result :- TestResult
+(s/defn fact-result-to-test-result :- TestResultHuman
   [input :- s/Any
-   fact-result :- FactCheckResult]
+   fact-result :- TestResult]
   (merge
     fact-result
     {:input input
@@ -68,7 +67,7 @@
   [context :- s/Str
    fact-key :- s/Keyword
    fact-key-name :- s/Str
-   test-result :- TestResult]
+   test-result :- TestResultHuman]
   (let [action-symbol (str "test-" fact-key-name)]
     {:context context
      :action-symbol action-symbol

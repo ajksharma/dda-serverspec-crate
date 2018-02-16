@@ -24,8 +24,8 @@
 (def NetstatTestConfig {s/Keyword {:port s/Str :ip s/Str :exp-proto s/Str
                                    :running? s/Bool}})
 
-(s/defn fact-check :- server-test/FactCheckResult
-  [result :- server-test/FactCheckResult
+(s/defn fact-check :- server-test/TestResult
+  [result :- server-test/TestResult
    spec :- NetstatTestConfig
    considered-map]
   (if (<= (count spec) 0)
@@ -66,7 +66,7 @@
   [input :- (seq netstat-fact/NetstatResult)]
   (apply merge (map (fn [e] {(keyword (str (:process-name e) "_" (:proto e) "_" (:local-ip e) ":" (:local-port e))) e}) input)))
 
-(s/defn test-netstat-internal :- server-test/TestResult
+(s/defn test-netstat-internal :- server-test/TestResultHuman
   [test-config :- NetstatTestConfig
    input :- (seq netstat-fact/NetstatResult)]
   (let [considered-map (result-to-map input)

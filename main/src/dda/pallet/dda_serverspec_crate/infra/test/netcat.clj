@@ -25,7 +25,7 @@
 
 (s/defn fact-check
   "Compare facts & expectation in order to return test-results."
-  [result :- server-test/FactCheckResult
+  [result :- server-test/TestResult
    spec :- NetcatTestConfig
    fact-map]
   (if (<= (count spec) 0)
@@ -45,7 +45,7 @@
        (rest spec)
        fact-map))))
 
-(s/defn test-netcat-internal :- server-test/TestResult
+(s/defn test-netcat-internal :- server-test/TestResultHuman
   [test-config :- NetcatTestConfig
    input :- {s/Keyword netcat-fact/NetcatFactResults}]
   (let [fact-result (fact-check server-test/fact-check-seed test-config input)]

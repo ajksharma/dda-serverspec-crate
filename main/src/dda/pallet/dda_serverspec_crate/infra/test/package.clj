@@ -21,8 +21,8 @@
 
 (def PackageTestConfig {s/Keyword {:installed? s/Bool}})
 
-(s/defn fact-check :- server-test/FactCheckResult
-  [result :- server-test/FactCheckResult
+(s/defn fact-check :- server-test/TestResult
+  [result :- server-test/TestResult
    spec :- PackageTestConfig
    considered-map]
   (if (<= (count spec) 0)
@@ -51,7 +51,7 @@
   [input :- (seq package-fact/PackageResult)]
   (apply merge (map (fn [e] {(keyword (:package e)) e}) input)))
 
-(s/defn test-package-internal :- server-test/TestResult
+(s/defn test-package-internal :- server-test/TestResultHuman
   [test-config :- PackageTestConfig
    input :- (seq package-fact/PackageResult)]
   (let [input-to-consider (filter-input-to-consider test-config input)

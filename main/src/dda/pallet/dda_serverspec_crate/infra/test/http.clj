@@ -22,9 +22,9 @@
 
 (def HttpTestConfig {s/Keyword {:expiration-days s/Num}})
 
-(s/defn fact-check :- server-test/FactCheckResult
+(s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
-  [result :- server-test/FactCheckResult
+  [result :- server-test/TestResult
    spec :- HttpTestConfig
    fact-map]
   (if (<= (count spec) 0)
@@ -47,7 +47,7 @@
           (rest spec)
           fact-map))))
 
-(s/defn test-http-internal :- server-test/TestResult
+(s/defn test-http-internal :- server-test/TestResultHuman
   "Exposing fact input to signature for tests."
   [test-config :- HttpTestConfig
    input :- {s/Keyword http-fact/HttpFactResults}]

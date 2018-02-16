@@ -40,7 +40,6 @@
 
 (def InfraResult {infra/facility infra/ServerTestConfig})
 
-;TODO: extract/abstract these functions somewhere
 (defn- domain-2-filefacts [file-domain-config]
   (apply merge
          (map
