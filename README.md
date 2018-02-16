@@ -12,14 +12,16 @@ dda-pallet is compatible with the following versions
  * (x)ubunutu 16.04
 
 ## Features
-This software allows you to easily check the configurations or settings of servers. You can check if
+This software allows you to easily check the configurations or settings of servers.   You can check if
 * certain files or folders existing or don't exist on the server(s)
 * packages are installed / available
 * programs are running
 * certificates are valid and much more.
 
+[![asciicast](https://asciinema.org/a/163372.png)](https://asciinema.org/a/163372)
+
 ## Usage
-1. Download the jar-file from the releases page of this repository (i.e. dda-serverspec-crate-x.x.x-standalone.jar)
+1. Download the jar-file from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
 1. Create the ```serverspec.edn``` configruration file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
   ```clojure
@@ -37,7 +39,8 @@ This software allows you to easily check the configurations or settings of serve
          :expiration-days 15}]}                      ; check if certificate of url is at least 15 days valid
   ```
 
-1. (optional) If you want to perform the tests on a remote server, please create additionally a ```targets.edn``` file. This file to specify the server and login information. You can use and adjust the following example:
+1. (optional) If you want to perform the tests on a remote server, please create additionally a ```targets.edn``` file. In this file you define gainst which server(s) the tests are performed and the corresponding login information.  
+You may use and adjust the following example config:
   ```clojure
   {:existing [{:node-name "target1"            ; semantic name (keep the default or use a name that suits you)
                :node-ip "192.168.56.104"}]      ; the ip4 address of the machine to be provisioned
@@ -47,7 +50,7 @@ This software allows you to easily check the configurations or settings of serve
                        :password "secure1234"}} ; password can be empty, if a ssh key is authorized
   ```
 
-4. (optional) If you want to ensure, that certain test tools (like netcat or netstat) are present on the target system, you should execute a one-time install (using the ```--install-dependencies``` option):
+4. (optional) If you want to ensure, that certain test tools (like netcat or netstat) are present on the target system, you can once use the ```--install-dependencies``` option:
 
   ```bash
   java -jar dda-serverspec-crate-standalone.jar --install-dependencies --targets targets.edn test.edn
@@ -71,11 +74,10 @@ For the remote white-box test, the serverspec crate can be used from a source ma
 
 
 ## Additional info about the configuration
-Two configuration files are required by the dda-serverspec-crate. These files specify both WHAT to test resp. WHERE. In detail: the first file defines the configuration for the actual tests performed, while the second configuration file specifies the target nodes/systems, on which the tests will be performed.
+Two configuration files are required by the dda-serverspec-crate:: "serverspec.edn" and "targets.edn" (or similar names). These files specify both WHAT to test resp. WHERE. In detail: the first file defines the configuration for the actual tests performed, while the second configuration file specifies the target nodes/systems, on which the tests will be performed. The following examples will explain these files more in details.
 
-**Remark:** The "targets.edn" file is optional in the sense, that if none is specified, a default file is used. The default defines *localhost* as the server against which the tests are performed.
+(**Remark:** The second file "targets.edn" is *optional*. This means, if none is specified, then a default file is used, which defines that the tests are performed against  **localhost**.)
 
-The following examples will make the creation of these files more clear. Please note, that we will reference the files for the test configuration and target configuration "serverspec.edn" and "targets.edn", respectively.
 
 #### Targets config example
 ```clojure
@@ -87,7 +89,7 @@ The following examples will make the creation of these files more clear. Please 
 ```
 The keyword ```:existing``` has to be assigned a vector, that contains maps with the information about the nodes.
 The nodes are the target machines that will be tested. The ```node-name``` has to be set to be able to identify the target machine and the ```node-ip``` has to be set so that the source machine can reach it.
-The ```provisioning-user``` has to be the same for all nodes that will be tested. Furthermore, if the public-key of the executing host is authorized on all target nodes, a password for authorization can be omitted. If this is not the case, the provisioning user has to contain a password. This can be seen in the schema for the targets.
+The ```provisioning-user``` has to be the same for all nodes that will be tested. Furthermore, if the ssh-key of the executing host is authorized on all target nodes, a password for authorization can be omitted. If this is not the case, the provisioning user has to contain a password.
 
 #### Serverspec config example
 ```clojure
@@ -103,7 +105,7 @@ The ```provisioning-user``` has to be the same for all nodes that will be tested
            {:name "nano"}]}
 ```
 The serverspec config file determines the tests that are executed. For example the part containing ```{:path "/root"}``` checks if the folder ```/root``` exists.
-There are different types of tests that can be configured. The exact details can be found in the reference below.
+There are different types of tests that can be used. More details can be found in the reference below.
 
 
 ## Reference
@@ -188,7 +190,7 @@ The schema is:
  (optional-key :package-fact) Any})      ; parsed result of "dpkg -l". Any is ignored.
 ```
 On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
-This results are returned in a map that follows the schema depicted above.
+These results are returned in a map that follows the schema depicted above.
 
 ## License
 Published under [apache2.0 license](LICENSE.md)
