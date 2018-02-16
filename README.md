@@ -6,37 +6,76 @@
 [![Slack](https://img.shields.io/badge/chat-clojurians-green.svg?style=flat)](https://clojurians.slack.com/messages/#dda-pallet/) | [<img src="https://domaindrivenarchitecture.org/img/meetup.svg" width=50 alt="DevOps Hacking with Clojure Meetup"> DevOps Hacking with Clojure](https://www.meetup.com/de-DE/preview/dda-pallet-DevOps-Hacking-with-Clojure) | [Website & Blog](https://domaindrivenarchitecture.org)
 
 ## Compatibility
-dda-pallet is compatible to the following versions
+dda-pallet is compatible with the following versions
  * pallet 0.8
  * clojure 1.7
  * (x)ubunutu 16.04
 
-## Usage documentation
-This crate provides integration tests for servers. E.g. it can be used to check if certain files or folders are existing, if packages are installed, if certain programs are running, etc.
+## Features
+This software allows you to easily check the configurations or settings of servers. You can check if
+* certain files or folders existing or don't exist on the server(s)
+* packages are installed / available
+* programs are running
+* certificates are valid and much more.
 
-### Usage Summary
-1. Download the jar from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
-2. Deploy the jar on the source machine
-3. Create test.edn (Domain-Schema for Tests) and target.edn (Schema for Targets) according to the reference and our example configs
+## Usage
+1. Download the jar-file from the releases page of this repository (i.e. dda-serverspec-crate-x.x.x-standalone.jar)
+1. Create the ```serverspec.edn``` configruration file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
+
+  ```clojure
+{:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
+           {:process-name "sshd" :port "22"}         ;check if sshd is running on port 22
+           {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
+ :file [{:path "/root/.bashrc"}                      ;check if file exists
+        {:path "/etc"}                               ;check if folder exists
+        {:path "/absent" :exist? false}]             ;check if file doesn't exists
+ :netcat [{:host "www.google.com" :port 80}          ;check if host is reachable
+          {:host "www.google.c" :port 80 :reachable? false}]
+ :package [{:name "test" :installed? false}          ; check if package test is NOT installed
+           {:name "nano"}]                           ; check if package nano is installed
+ :http [{:url "https://domaindrivenarchitecture.org" ;provide full url
+         :expiration-days 15}]}                      ; check if certificate of url is at least 15 days valid
+  ```
+
+1. (optional) If you want to perform the tests on a remote server, please create additionally a ```targets.edn``` file. This file to specify the server and login information. You can use and adjust the following example:
+  ```clojure
+  {:existing [{:node-name "target1"            ; semantic name (keep the default or use a name that suits you)
+               :node-ip "192.168.56.104"}]      ; the ip4 address of the machine to be provisioned
+               {:node-name "target2"            ; semantic name (keep the default or use a name that suits you)
+                            :node-ip "192.168.56.105"}]      ; the ip4 address of the machine to be provisioned
+   :provisioning-user {:login "initial"         ; user on the target machine, must have sudo rights
+                       :password "secure1234"}} ; password can be empty, if a ssh key is authorized
+  ```
+
 4. (optional) If you want to ensure, that certain test tools (like netcat or netstat) are present on the target system, you should execute a one-time install (using the ```--install-dependencies``` option):
-```bash
-java -jar dda-serverspec-crate-standalone.jar --install-dependencies --targets targets.edn test.edn
-```
+
+  ```bash
+  java -jar dda-serverspec-crate-standalone.jar --install-dependencies --targets targets.edn test.edn
+  ```
+
 5. Run the jar with the following options and inspect the output.
+
+  ```bash
+java -jar dda-serverspec-crate-standalone.jar serverspec.edn
+  ```
+
+  For testing remote server(s) please specify the targets file:
 ```bash
-java -jar dda-serverspec-crate-standalone.jar --targets targets.edn test.edn
+java -jar dda-serverspec-crate-standalone.jar --targets targets.edn serverspec.edn
 ```
 
-### Remote white-box
+#### Remote testing
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
 For the remote white-box test, the serverspec crate can be used from a source machine to test different aspects of the remote target machines.
-This can be achieved by either utilizing the jar provided on GitHub (as described above), or by calling the functions of the Clojure source code directly.
 
-### Configuration
-Two configuration files are necessary to call the main method successfully. These files specify both WHAT to test resp. WHERE. In detail: the first file defines the configuration for the actual tests performed by this crate, while the second configuration file specifies the target nodes/systems, on which the tests will be performed.
 
-The following examples will make the creation of these files more clear. Please note, that we will reference the files for the test configuration and target configuration "test.edn" and "targets.edn", respectively.
+## Additional info about the configuration
+Two configuration files are required by the dda-serverspec-crate. These files specify both WHAT to test resp. WHERE. In detail: the first file defines the configuration for the actual tests performed, while the second configuration file specifies the target nodes/systems, on which the tests will be performed.
+
+**Remark:** The "targets.edn" file is optional in the sense, that if none is specified, a default file is used. The default defines *localhost* as the server against which the tests are performed.
+
+The following examples will make the creation of these files more clear. Please note, that we will reference the files for the test configuration and target configuration "serverspec.edn" and "targets.edn", respectively.
 
 #### Targets config example
 ```clojure
@@ -50,7 +89,7 @@ The keyword ```:existing``` has to be assigned a vector, that contains maps with
 The nodes are the target machines that will be tested. The ```node-name``` has to be set to be able to identify the target machine and the ```node-ip``` has to be set so that the source machine can reach it.
 The ```provisioning-user``` has to be the same for all nodes that will be tested. Furthermore, if the public-key of the executing host is authorized on all target nodes, a password for authorization can be omitted. If this is not the case, the provisioning user has to contain a password. This can be seen in the schema for the targets.
 
-#### Test config example
+#### Serverspec config example
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}
            {:process-name "sshd" :port "22"}
@@ -63,15 +102,9 @@ The ```provisioning-user``` has to be the same for all nodes that will be tested
  :package [{:name "test" :installed? false}
            {:name "nano"}]}
 ```
-The test config file determines the tests that are executed. For example the part containing ```{:path "/root"}``` checks if the folder ```/root``` exists.
-At the moment we have four different types of tests that can be configured. The exact details can be found in the reference below.
+The serverspec config file determines the tests that are executed. For example the part containing ```{:path "/root"}``` checks if the folder ```/root``` exists.
+There are different types of tests that can be configured. The exact details can be found in the reference below.
 
-### Test with jar-file
-For a more convenient usage we created a jar file of the serverspec-crate. It can be found at [here](https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases) or by navigating to the releases page of this repo.
-
-```bash
-java -jar dda-serverspec-crate-standalone.jar test.edn targets.edn
-```
 
 ## Reference
 We provide two levels of API - domain is a high level API with many built-in conventions. If these conventions don't fit your needs, you can use our low-level API (infra) and realize your own conventions.
