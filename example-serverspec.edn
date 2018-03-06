@@ -1,0 +1,12 @@
+{:netstat [{:process-name "sshd" :port "11" :running? false}
+           {:process-name "sshd" :port "22"}
+           {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
+ :file [{:path "/root/.bashrc"}
+        {:path "/etc"}
+        {:path "/absent" :exist? false}]
+ :netcat [{:host "www.google.com" :port 80}
+          {:host "www.google.c" :port 80 :reachable? false}]
+ :package [{:name "test" :installed? false}
+           {:name "nano"}]
+ :http [{:url "https://domaindrivenarchitecture.org"
+         :expiration-days 15}]}

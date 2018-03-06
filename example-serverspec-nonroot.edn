@@ -1,0 +1,5 @@
+{:file [{:path "/etc"}]
+ :package [{:name "test" :installed? false}
+           {:name "nano"}]
+ :http [{:url "https://domaindrivenarchitecture.org"
+         :expiration-days 15}]}
