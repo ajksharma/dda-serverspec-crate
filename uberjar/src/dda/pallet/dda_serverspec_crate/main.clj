@@ -19,25 +19,8 @@
     [clojure.string :as str]
     [clojure.tools.cli :as cli]
     [dda.config.commons.styled-output :as styled]
-    [dda.pallet.commons.existing :as existing]
-    [dda.pallet.commons.operation :as operation]
+    [dda.pallet.core.app :as core-app]
     [dda.pallet.dda-serverspec-crate.app :as app]))
-
-(defn execute-serverspec
-  [domain-config target-config verbosity]
-  (let [session (operation/do-test
-                  (app/existing-provider target-config)
-                  (app/existing-provisioning-spec domain-config target-config)
-                  :summarize-session false)]
-    (app/summarize-test-session session :verbose verbosity)
-    (app/session-passed? session)))
-
-(defn execute-install
-  [domain-config target-config]
-  (operation/do-apply-install
-    (app/existing-provider target-config)
-    (app/existing-provisioning-spec domain-config target-config)
-    :summarize-session true))
 
 (def cli-options
   [["-h" "--help"]
@@ -76,12 +59,14 @@
       help (exit 0 (usage summary))
       errors (exit 1 (error-msg errors))
       (not= (count arguments) 1) (exit 1 (usage summary))
-      (:install-dependencies options) (execute-install
-                                       (app/load-domain (first arguments))
-                                       (app/load-targets (:targets options)))
-      :default (if (execute-serverspec
-                     (app/load-domain (first arguments))
-                     (app/load-targets (:targets options))
-                     verbose)
+      (:install-dependencies options) (core-app/existing-install
+                                        app/crate-app
+                                        {:domain (first arguments)
+                                         :targets (:targets options)})
+      :default (if (core-app/existing-serverspec
+                     app/crate-app
+                     {:domain (first arguments)
+                      :targets (:targets options)
+                      :verbosity verbose})
                    (exit 0 (styled/styled "ALL TESTS PASSED" :green))
                    (exit 2 (styled/styled "SOME TESTS FAILED" :red))))))
