@@ -17,33 +17,35 @@
 (ns dda.pallet.dda-serverspec-crate.app.instantiate-existing
   (:require
    [clojure.inspector :as inspector]
-   [dda.pallet.commons.session-tools :as session-tools]
-   [dda.pallet.commons.pallet-schema :as ps]
-   [dda.pallet.commons.operation :as operation]
-   [dda.pallet.commons.existing :as existing]
+   [dda.pallet.core.app :as core-app]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(defn apply-install
+(defn converge-install
+  [count & options]
+  (let [{:keys [domain targets summarize-session]
+         :or {domain "example-serverspec.edn"
+              targets "localhost-target.edn"
+              summarize-session true}} options]
+    (core-app/existing-install app/crate-app
+                          {:domain domain
+                           :targets targets})))
+
+(defn configure
  [& options]
- (let [{:keys [domain targets]
+ (let [{:keys [domain targets summarize-session]
         :or {domain "example-serverspec.edn"
-             targets "localhost-target.edn"}} options
-       target-config (app/load-targets targets)
-       domain-config (app/load-domain domain)]
-   (operation/do-apply-install
-     (app/existing-provider target-config)
-     (app/existing-provisioning-spec domain-config target-config)
-     :summarize-session true)))
+             targets "localhost-target.edn"
+             summarize-session true}} options]
+  (core-app/existing-configure app/crate-app
+                          {:domain domain
+                           :targets targets})))
 
 (defn serverspec
   [& options]
-  (let [{:keys [domain targets]
+  (let [{:keys [domain targets summarize-session]
          :or {domain "example-serverspec.edn"
-              targets "localhost-target.edn"}} options
-        target-config (app/load-targets targets)
-        domain-config (app/load-domain domain)]
-   (app/summarize-test-session
-    (operation/do-test
-      (app/existing-provider target-config)
-      (app/existing-provisioning-spec domain-config target-config)
-      :summarize-session false))))
+              targets "localhost-target.edn"
+              summarize-session true}} options]
+    (core-app/existing-serverspec app/crate-app
+                             {:domain domain
+                              :targets targets})))
