@@ -21,7 +21,7 @@
    [pallet.api :as api]
    [pallet.actions :as actions]
    [pallet.crate :as crate]
-   [dda.pallet.core.dda-crate :as dda-crate]
+   [dda.pallet.core.infra :as core-infra]
    [dda.pallet.dda-serverspec-crate.infra.fact.package :as package-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
@@ -71,8 +71,8 @@
   [url :- s/Str]
   (http-fact/url-to-keyword url))
 
-(s/defmethod dda-crate/dda-settings facility
-  [dda-crate config]
+(s/defmethod core-infra/dda-settings facility
+  [core-infra config]
   "dda-serverspec: setting"
   (let [{:keys [file-fact netcat-fact certificate-file-fact http-fact]} config]
     (when (contains? config :package-fact)
@@ -88,13 +88,13 @@
     (when (contains? config :http-fact)
       (http-fact/collect-http-fact http-fact))))
 
-(s/defmethod dda-crate/dda-install facility
+(s/defmethod core-infra/dda-install facility
   [dda-crate config]
   "dda-serverspec: install"
   (when (contains? config :http-fact)
     (http-fact/install)))
 
-(s/defmethod dda-crate/dda-test facility
+(s/defmethod core-infra/dda-test facility
   [dda-crate config]
   (when (contains? config :package-test)
     (package-test/test-package (:package-test config)))
@@ -110,9 +110,8 @@
     (http-test/test-http (:http-test config))))
 
 (def dda-serverspec-crate
-  (dda-crate/make-dda-crate
-   :facility facility
-   :version version))
+  (core-infra/make-dda-crate-infra
+   :facility facility))
 
 (def with-serverspec
-  (dda-crate/create-server-spec dda-serverspec-crate))
+  (core-infra/create-infra-plan dda-serverspec-crate))

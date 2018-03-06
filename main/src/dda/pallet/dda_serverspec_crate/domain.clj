@@ -112,7 +112,8 @@
              {(infra/url-to-keyword url) {:expiration-days expiration-days}})
           certificate-domain-config)))
 
-(s/defn ^:always-validate infra-configuration :- InfraResult
+(s/defn ^:always-validate
+  infra-configuration :- InfraResult
   [domain-config :- ServerTestDomainConfig]
   (let [{:keys [file package netstat netcat certificate-file http]} domain-config]
     {infra/facility
