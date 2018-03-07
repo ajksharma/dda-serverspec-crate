@@ -19,7 +19,6 @@
    [schema.core :as s]
    [dda.cm.group :as group]
    [dda.pallet.core.app :as core-app]
-   [dda.pallet.core.dda-crate :as dda-crate]
    [dda.pallet.dda-config-crate.infra :as config-crate]
    [dda.pallet.dda-serverspec-crate.infra :as infra]
    [dda.pallet.dda-serverspec-crate.domain :as domain]
