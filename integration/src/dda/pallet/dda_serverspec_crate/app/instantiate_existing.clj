@@ -20,8 +20,8 @@
    [dda.pallet.core.app :as core-app]
    [dda.pallet.dda-serverspec-crate.app :as app]))
 
-(defn converge-install
-  [count & options]
+(defn install
+  [& options]
   (let [{:keys [domain targets summarize-session]
          :or {domain "example-serverspec.edn"
               targets "localhost-target.edn"

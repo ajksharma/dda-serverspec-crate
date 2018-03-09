@@ -21,8 +21,7 @@
    [dda.pallet.core.app :as core-app]
    [dda.pallet.dda-config-crate.infra :as config-crate]
    [dda.pallet.dda-serverspec-crate.infra :as infra]
-   [dda.pallet.dda-serverspec-crate.domain :as domain]
-   [dda.pallet.dda-serverspec-crate.app.summary :as summary]))
+   [dda.pallet.dda-serverspec-crate.domain :as domain]))
 
 (def with-serverspec infra/with-serverspec)
 
@@ -57,19 +56,3 @@
                   :domain-schema ServerspecDomainConfig
                   :domain-schema-resolved ServerspecDomainConfig
                   :default-domain-file "serverspec.edn"))
-
-
-; TODO: validate as soon as pallet-commons issue is fixed
-;[session :- session/SessionSpec
-(s/defn ^:always-validate
-  summarize-test-session
-  [session
-   & options]
-  (apply summary/summarize-test-session (cons session options)))
-
-; TODO: validate as soon as pallet-commons issue is fixed
-;[session :- session/SessionSpec]
-(s/defn ^:always-validate
-  session-passed? :- s/Bool
-  [session]
-  (apply summary/session-passed? '(session)))
