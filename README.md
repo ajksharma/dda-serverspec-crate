@@ -41,7 +41,7 @@ For remote tests the dda-serverspec-crate can be used from a source machine to t
 For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
 
 ## Usage
-1. **Download the jar-file** from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
+1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o /serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.0.1/dda-serverspec-crate-1.0.1-standalone.jar`)
 1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
 ```clojure
