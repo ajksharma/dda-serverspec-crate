@@ -44,7 +44,7 @@ For remote tests the dda-serverspec-crate can be used from a source machine to t
 1. **Download the jar-file** from the releases page of this repository (e.g. dda-serverspec-crate-x.x.x-standalone.jar)
 1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
-   ```clojure
+```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
            {:process-name "sshd" :port "22"}         ;check if sshd is running on port 22
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
