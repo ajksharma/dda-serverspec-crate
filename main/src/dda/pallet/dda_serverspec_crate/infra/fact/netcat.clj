@@ -55,9 +55,9 @@
      (:host config-val)
      " "
      (:port config-val)
-     " -w "
+     " -z -w "
      (:timeout config-val)
-     " && echo $?")))
+     "; echo $?")))
 
 (s/defn parse-result [out-raw-line :- s/Str]
   (let [split-raw (clojure.string/split out-raw-line  #",")
