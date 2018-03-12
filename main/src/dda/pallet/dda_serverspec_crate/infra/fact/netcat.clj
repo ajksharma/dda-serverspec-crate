@@ -13,11 +13,13 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
+
 (ns dda.pallet.dda-serverspec-crate.infra.fact.netcat
   (:require
    [schema.core :as s]
    [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
 
+; -----------------------  fields & schemas  ------------------------
 (def fact-id-netcat ::netcat)
 
 (def NetcatFactConfig
@@ -30,6 +32,9 @@
 
 (def NetcatFactResults {s/Keyword NetcatFactResult})
 
+(def output-separator "----- dda-pallet netcat output separator -----\n")
+
+; -----------------------  functions  -------------------------------
 (s/defn replace-comma :- s/Str [input :- s/Str]
   (clojure.string/replace input #"," "-"))
 
@@ -43,34 +48,34 @@
 
 (s/defn build-netcat-script
   "builds the script from the given config"
-  [netcat-config :- NetcatFactConfig]
+  [netcat-config] ; :- MapEntry of NetcatFactConfig
   (let [config-val (val netcat-config)]
     (str
-     "echo -n '"
+     "echo '"
      (config-to-string
       (:host config-val)
       (:port config-val)
       (:timeout config-val))
-     ",' && nc "
+     "'; nc "
      (:host config-val)
      " "
      (:port config-val)
-     " -z -w "
+     " -w "
      (:timeout config-val)
-     "; echo $?")))
+     "; echo $?"
+     "; echo -n '" output-separator "'")))
 
-(s/defn parse-result [out-raw-line :- s/Str]
-  (let [split-raw (clojure.string/split out-raw-line  #",")
-        has-error (> (count (nth split-raw 1)) 1)
-        netcat-key (keyword (clean-up-sudo-string (nth split-raw 0)))]
-    (if has-error
-      {netcat-key {:reachable? false}}
-      {netcat-key {:reachable? (= 0 (read-string (nth split-raw 1)))}})))
+(s/defn parse-result [single-script-result :- s/Str]
+  (let [result-lines (clojure.string/split single-script-result #"\n")
+        result-key (first result-lines)
+        result-text (last result-lines)]
+    {(keyword result-key) {:reachable? (= result-text "0")}}))
 
 (defn parse-netcat
   [script-result]
   (apply merge
-         (map parse-result (clojure.string/split script-result #"\n"))))
+    (map parse-result
+      (clojure.string/split script-result (re-pattern output-separator)))))
 
 (s/defn collect-netcat-fact
   "Collects the netcat facts."
