@@ -44,7 +44,7 @@
                             (= port local-port)
                             (= ip local-ip)
                             (= exp-proto proto))))
-          expected-settings (if present-running
+          expected-settings (if running?
                               (str ", expected settings: port " port ", ip " ip ", protocol " exp-proto)
                               (str ", expected: not running on port " port ", ip " ip ", protocol " exp-proto))
           actual-settings (if present-running

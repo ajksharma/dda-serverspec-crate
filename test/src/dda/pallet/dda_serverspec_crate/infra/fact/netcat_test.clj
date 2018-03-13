@@ -21,32 +21,37 @@
    [pallet.actions :as actions]
    [dda.pallet.dda-serverspec-crate.infra.fact.netcat :as sut]))
 
-(def netcat-google "www.google.com_80_1,0")
+; ------------------------  test data  ------------------------
+(def netcat-google "www.google.com_80_1\n0")
 
-(def netcat-yahoo "www.yahoo.org_80_1,1")
+(def netcat-yahoo "www.yahoo.org_80_1\n1")
 
-(def netcat-bing "www.bing.org_80_1,2")
+(def netcat-bing "www.bing.org_80_1\n2")
 
-(def some-result
-  "www.google.com_80_1,0
-  www.yahoo.org_80_1,1
-  www.bing.org_80_1,2
-")
+(def netcat-invalid "www.google.c_80_8
+nc: getaddrinfo: Name or service not known
+1")
 
-(def empty-result
-  "
-")
+(def script-results
+  (str
+    netcat-bing
+    sut/output-separator
+    netcat-google
+    sut/output-separator
+    netcat-invalid
+    sut/output-separator
+    netcat-yahoo
+    sut/output-separator))
 
-(deftest test-parse-line
+; ------------------------  tests  ------------------------------
+(deftest test-parse-single-results
   (testing
    (is (:reachable? (val (first (sut/parse-result netcat-google)))))
    (is (not (:reachable? (val (first (sut/parse-result netcat-yahoo))))))
    (is (= "www.bing.org_80_1" (name (key (first (sut/parse-result netcat-bing))))))))
 
-(deftest test-parse
+(deftest test-parse-script-results
   (testing
-   "test parsing ls output"
-    (is (= 3
-           (count (keys (sut/parse-netcat some-result)))))
-    (is (= 0
-           (count (keys (sut/parse-netcat empty-result)))))))
+   "test parsing netcat output"
+    (is (= 4
+           (count (keys (sut/parse-netcat script-results)))))))
