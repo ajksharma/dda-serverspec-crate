@@ -59,15 +59,14 @@ For remote tests the dda-serverspec-crate can be used from a source machine to t
          :expiration-days 15}]}                      ; check if certificate of url is at least 15 days valid
   ```
 3. (optional) If you want to perform the tests on a remote server, please create additionally a `targets.edn` file. In this file you define gainst which server(s) the tests are performed and the corresponding login information. You may use and adjust the following example config:
-
-   ```clojure
+    ```clojure
 {:existing [{:node-name "target1"                      ; semantic name (keep the default or use a name that suits you)
              :node-ip "192.168.56.104"}]               ; the ip4 address of the machine to be provisioned
              {:node-name "target2"                     ; semantic name (keep the default or use a name that suits you)
                           :node-ip "192.168.56.105"}]  ; the ip4 address of the machine to be provisioned
  :provisioning-user {:login "initial"                  ; user on the target machine, must have sudo rights
                      :password {:plain "secure1234"}}} ; password can be ommited, if a ssh key is authorized
-   ```
+    ```
 
 4. (optional) If you want to ensure, that certain test tools (like netcat or netstat) are present on the target system, you can once use the ```--install-dependencies``` option:
 
