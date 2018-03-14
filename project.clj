@@ -1,4 +1,4 @@
-(defproject dda/dda-serverspec-crate "1.0.3"
+(defproject dda/dda-serverspec-crate "1.0.4-SNAPSHOT"
   :description "A crate to get facts from server nodes and test these facst against your expectation."
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
