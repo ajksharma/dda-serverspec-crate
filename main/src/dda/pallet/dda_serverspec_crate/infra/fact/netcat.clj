@@ -60,7 +60,7 @@
      (:host config-val)
      " "
      (:port config-val)
-     " -w "
+     " -z -w "
      (:timeout config-val)
      "; echo $?"
      "; echo -n '" output-separator "'")))
