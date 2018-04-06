@@ -11,11 +11,11 @@
 [Additional-info-about-the-configuration](#additional-info-about-the-configuration)
 [Targets-config-example](#targets-config-example)
 [Serverspec-config-example](#serverspec-config-example)
-[Reference](#reference)
-[Targets](#targets)
-[Serverspec](#serverspec)
-[Infra-API](#infra-api)
+[Reference: Targets](#targets)
+[Reference: Domain-API](#domain-api)
+[Reference: Infra-API](#infra-api)
 [Compatibility](#compatibility)
+[License](#license)
 
 ## Features
 The dda-serverspec-crate allows you to specify target-systems expected state and test against current state. dda-serverspec-crate provides:
@@ -41,7 +41,7 @@ For remote tests the dda-serverspec-crate can be used from a source machine to t
 For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
 
 ## Usage
-1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o /serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.0.1/dda-serverspec-crate-1.0.1-standalone.jar`)
+1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.0.1/dda-serverspec-crate-1.0.1-standalone.jar`)
 1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
 ```clojure
@@ -123,11 +123,12 @@ There are different types of tests that can be used. More details can be found i
 
 
 ## Reference
-We provide two levels of API - domain is a high level API with many built-in conventions. If these conventions don't fit your needs, you can use our low-level API (infra) and realize your own conventions.
+You will find here the reference for
+* target: How targets can be specified
+* Domain-Level-API: The high level API with many built-in conventions.
+* Infra-Level-API: If the domain conventions don't fit your needs, you can use our low-level API (infra) and easily realize your own conventions.
 
-### Domain API
-
-#### Targets
+### Targets
 The schema of the domain layer for the targets is:
 ```clojure
 (def ExistingNode
@@ -151,7 +152,7 @@ The schema of the domain layer for the targets is:
 ```
 The "targets.edn" file has to match this schema.
 
-#### Serverspec
+### Domain-API
 The schema for the tests is:
 ```clojure
 (def ServerTestDomainConfig
@@ -213,4 +214,5 @@ dda-pallet is compatible with the following versions
  * (x)ubunutu 16.0
 
 ## License
+Copyright © 2015, 2016, 2017, 2018 meissa GmbH
 Published under [apache2.0 license](LICENSE.md)
