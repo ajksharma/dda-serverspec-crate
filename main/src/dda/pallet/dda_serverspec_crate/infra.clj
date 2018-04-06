@@ -20,7 +20,6 @@
    [schema.core :as s]
    [pallet.api :as api]
    [pallet.actions :as actions]
-   [pallet.crate :as crate]
    [dda.pallet.core.infra :as core-infra]
    [dda.pallet.dda-serverspec-crate.infra.fact.package :as package-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]

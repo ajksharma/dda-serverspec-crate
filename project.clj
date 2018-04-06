@@ -1,10 +1,10 @@
-(defproject dda/dda-serverspec-crate "1.0.3"
+(defproject dda/dda-serverspec-crate "1.0.5"
   :description "A crate to get facts from server nodes and test these facst against your expectation."
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [dda/dda-pallet "2.0.1"]]
+                 [dda/dda-pallet "2.1.0"]]
   :source-paths ["main/src"]
   :resource-paths ["main/resources"]
   :repositories [["snapshots" :clojars]
