@@ -11,9 +11,9 @@
 [Additional-info-about-the-configuration](#additional-info-about-the-configuration)
 [Targets-config-example](#targets-config-example)
 [Serverspec-config-example](#serverspec-config-example)
-[Reference: Targets](#targets)
-[Reference: Domain-API](#domain-api)
-[Reference: Infra-API](#infra-api)
+[Reference-Targets](#targets)
+[Reference-Domain-API](#domain-api)
+[Reference-Infra-API](#infra-api)
 [Compatibility](#compatibility)
 [License](#license)
 
