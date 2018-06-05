@@ -29,7 +29,10 @@
                                (s/optional-key :ip) s/Str
                                (s/optional-key :exp-proto) s/Str}]
    (s/optional-key :file) [{:path s/Str
-                            (s/optional-key :exist?) s/Bool}]
+                            (s/optional-key :exist?) s/Bool
+                            (s/optional-key :mod) s/Str
+                            (s/optional-key :user) s/Str
+                            (s/optional-key :group) s/Str}]
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
                               (s/optional-key :reachable?) s/Bool}]
@@ -49,8 +52,8 @@
 (defn- domain-2-filetests [file-domain-config]
   (apply merge
          (map
-          #(let [{:keys [path exist?] :or {exist? true}} %]
-             {(infra/path-to-keyword path) {:exist? exist?}})
+          #(let [{:keys [path exist? mod user group] :or {exist? true mod "not" user "not" group "not"}} %]
+             {(infra/path-to-keyword path) {:exist? exist? :mod mod :user user :group group}})
           file-domain-config)))
 
 (defn- domain-2-netcatfacts [netcat-domain-config]

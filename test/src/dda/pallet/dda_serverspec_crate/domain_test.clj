@@ -1,7 +1,7 @@
 ; Licensed to the Apache Software Foundation (ASF) under one
 ; or more contributor license agreements. See the NOTICE file
 ; distributed with this work for additional information
-; regarding copyright ownership. The ASF licenses this file
+; regarding copyright usership. The ASF licenses this file
 ; to you under the Apache License, Version 2.0 (the
 ; "License"); you may not use this file except in compliance
 ; with the License. You may obtain a copy of the License at
@@ -59,17 +59,17 @@
                            :_absent {:path "/absent"}}
                :netstat-test {:sshd_tcp_0.0.0.0:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}}
                :package-test {:firefox {:installed? false}}
-               :file-test {:_root {:exist? true}
-                           :_etc {:exist? true},
-                           :_absent {:exist? false}}
+               :file-test {:_root {:exist? true :mod "not" :user "not" :group "not"}
+                           :_etc {:exist? true :mod "not" :user "not" :group "not"}
+                           :_absent {:exist? false :mod "not" :user "not" :group "not"}}
                :netcat-test {:www.google.com_80_8 {:reachable? true}
                              :www.google.c_80_8 {:reachable? false}}}}
           (sut/infra-configuration domain-config-1)))
     (is (=  {:dda-servertest
               {:file-fact {:_etc {:path "/etc"}
                            :_nonexist_sth {:path "/nonexist/sth"}}
-               :file-test {:_etc {:exist? true},
-                           :_nonexist_sth {:exist? false}}}}
+               :file-test {:_etc {:exist? true :mod "not" :user "not" :group "not"},
+                           :_nonexist_sth {:exist? false :mod "not" :user "not" :group "not"}}}}
           (sut/infra-configuration domain-config-2)))))
 
 (deftest test-certificate-file-configuration

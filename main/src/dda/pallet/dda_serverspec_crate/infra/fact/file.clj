@@ -25,11 +25,11 @@
 (def FileFactConfig {s/Keyword {:path s/Str}})
 
 (def FileFactResult {:path s/Str
-                     :exist? s/Bool
+                     :real-exist? s/Bool
                      (s/optional-key :size-in-bytes) s/Num
-                     (s/optional-key :user) s/Str
-                     (s/optional-key :group) s/Str
-                     (s/optional-key :mod) s/Str
+                     :real-user s/Str
+                     :real-group s/Str
+                     :real-mod s/Str
                      (s/optional-key :type) s/Str ;use keywords instead here?
                      (s/optional-key :created) s/Str
                      (s/optional-key :modified) s/Str
@@ -53,13 +53,16 @@
         split-string (clojure.string/split script-result-line #"'")]
     (if match
       {:path (clean-up-negative-find (nth split-string 0))
-       :exist? false}
-      (let [result-map (zipmap [:path :size-in-bytes :user :group :mod :type :created :modified :accessed]
+       :real-exist? false
+       :real-user "not"
+       :real-group "not"
+       :real-mod "not"}
+      (let [result-map (zipmap [:path :size-in-bytes :real-user :real-group :real-mod :type :created :modified :accessed]
                                split-string)
             cleaned-path (clean-up-sudo-string (:path result-map))]
         (merge
          (assoc result-map :path cleaned-path)
-         {:exist? true})))))
+         {:real-exist? true})))))
 
 (s/defn create-line-parse-result [script-result-line]
   (let [file-fact-result (parse-find-line script-result-line)

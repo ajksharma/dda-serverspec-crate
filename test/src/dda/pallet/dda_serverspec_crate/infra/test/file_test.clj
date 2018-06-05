@@ -22,19 +22,19 @@
     [dda.pallet.dda-serverspec-crate.infra.test.file :as sut]))
 
 
-(def test-config-1 {:_etc_hosts {:exist? true}
-                    :_root_.ssh_authorized_keys {:exist? false}})
+(def test-config-1 {:_etc_hosts {:exist? true :user "not" :group "not" :mod "not"}
+                    :_root_.ssh_authorized_keys {:exist? false :user "not" :group "not" :mod "not"}})
 
-(def test-config-2 {:_etc_hosts {:exist? false}
-                    :_root_.ssh_authorized_keys {:exist? false}})
+(def test-config-2 {:_etc_hosts {:exist? false :user "not" :group "not" :mod "not"}
+                    :_root_.ssh_authorized_keys {:exist? false :user "not" :group "not" :mod "not"}})
 
-(def test-config-3 {:_etc_hosts {:exist? false}
-                    :_root_.ssh_authorized_keys {:exist? true}})
+(def test-config-3 {:_etc_hosts {:exist? false :user "not" :group "not" :mod "not"}
+                    :_root_.ssh_authorized_keys {:exist? true :user "not" :group "not" :mod "not"}})
 
 
 (def input
-  {:_etc_hosts {:path "/etc/hosts" :exist? true}
-   :_root_.ssh_authorized_keys {:path "/root/.ssh/authorized_keys" :exist? false}})
+  {:_etc_hosts {:path "/etc/hosts" :real-exist? true :real-user "not" :real-group "not" :real-mod "not"}
+   :_root_.ssh_authorized_keys {:path "/root/.ssh/authorized_keys" :real-exist? false :real-user "not" :real-group "not" :real-mod "not"}})
 
 (deftest test-file-internal
  (testing

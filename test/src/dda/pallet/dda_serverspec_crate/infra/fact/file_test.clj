@@ -53,12 +53,12 @@ find: `/not-existing`: No such file or directory
     "test parsing ls output"
     (is (= "/file"
            (:path (sut/parse-find-line one-file))))
-    (is (:exist? (sut/parse-find-line one-file)))
+    (is (:real-exist? (sut/parse-find-line one-file)))
     (is (= "f"
            (:type (sut/parse-find-line one-file))))
     (is (= "/not-existing"
            (:path (sut/parse-find-line not-existing))))
-    (is (not (:exist? (sut/parse-find-line not-existing))))))
+    (is (not (:real-exist? (sut/parse-find-line not-existing))))))
 
 
 (deftest test-parse

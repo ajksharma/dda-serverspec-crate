@@ -20,29 +20,38 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def FileTestConfig {s/Keyword {:exist? s/Bool}})
+(def FileTestConfig {s/Keyword {:exist? s/Bool
+                                :mod s/Str
+                                :user s/Str
+                                :group s/Str}})
 
 (s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
   [result :- server-test/TestResult
    spec :- FileTestConfig
-   fact-map]
+   considered-map]
   (if (<= (count spec) 0)
     result
     (let [elem (first spec)
-          expected-exist? (:exist? (val elem))
-          fact-elem  (get-in fact-map [(key elem)])
-          fact-exist? (:exist? fact-elem)
-          passed? (= expected-exist? fact-exist?)]
+          {:keys [exist? mod user group]} (val elem)
+          present-elem  (get-in considered-map [(key elem)])
+          {:keys [real-exist? real-mod real-user real-group]} present-elem
+          passed? (if (= mod "not")
+                   (= exist? real-exist?)
+                   (and
+                    (= exist? real-exist?)
+                    (= mod real-mod)
+                    (= user real-user)
+                    (= group real-group)))]
         (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test file: " (name (key elem))
-                              ", expected exist?: " expected-exist? ", was exist?: "
-                              fact-exist? ", passed?: " passed? "\n")
+                              ", expected exist?: " exist? ", was exist?: "
+                              real-exist? ", passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)
-          fact-map))))
+          considered-map))))
 
 (s/defn test-file-internal :- server-test/TestResultHuman
   "Exposing fact input to signature for tests."
