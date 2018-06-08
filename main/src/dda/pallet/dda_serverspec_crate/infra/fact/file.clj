@@ -30,7 +30,15 @@
                      :fact-user s/Str
                      :fact-group s/Str
                      :fact-mod s/Str
-                     :fact-type s/Str ;use keywords instead here?
+                     :fact-type s/Str         ; b    block (buffered) special
+                                              ; c    character (unbuffered) special
+                                              ; d    directory
+                                              ; p    named pipe (FIFO)
+                                              ; f     regular file
+                                              ; l     symbolic link
+                                              ; s    socket
+                                              ; D   door (Solaris)
+                     :fact-link-to s/Str
                      :fact-created s/Str
                      :fact-modified s/Str
                      :fact-accessed s/Str})
@@ -55,7 +63,7 @@
       {:path (clean-up-negative-find (nth split-string 0))
        :fact-exist? false}
       (let [result-map (zipmap [:path :fact-size-in-bytes :fact-user :fact-group :fact-mod
-                                :fact-type :fact-created :fact-modified :fact-accessed]
+                                :fact-type :fact-link-to :fact-created :fact-modified :fact-accessed]
                                split-string)
             cleaned-path (clean-up-sudo-string (:path result-map))]
         (merge
@@ -75,7 +83,7 @@
 (s/defn build-find-line
   "Builds the string for executing the find commands."
   [fact-config]
-  (str "find " (:path (val fact-config)) " -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\" 2>&1"))
+  (str "find " (:path (val fact-config)) " -prune -printf \"%p'%s'%u'%g'%m'%y'%l'%c'%t'%a\\n\" 2>&1"))
 
 (s/defn collect-file-fact
   "Collects the file facts."

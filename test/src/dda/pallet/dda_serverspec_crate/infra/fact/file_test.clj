@@ -22,16 +22,16 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.file :as sut]))
 
 (def one-file
-  "/file'17418'mje'mje'600'f'Sun Mar 12 13:16:42.0709127452 2017'Sun Mar 12 13:16:42.0709127452 2017'Sun Mar 12 13:16:51.0409287069 2017'")
+  "/file'17418'mje'mje'600'f''Sun Mar 12 13:16:42.0709127452 2017'Sun Mar 12 13:16:42.0709127452 2017'Sun Mar 12 13:16:51.0409287069 2017'")
 
 (def one-directory
-  "/dir'4096'mje'mje'775'd'Sat Mar 11 21:37:35.0220829981 2017'Sat Mar 11 21:37:35.0220829981 2017'Fri May 12 10:31:29.0649385998 2017'")
+  "/dir'4096'mje'mje'775'd''Sat Mar 11 21:37:35.0220829981 2017'Sat Mar 11 21:37:35.0220829981 2017'Fri May 12 10:31:29.0649385998 2017'")
 
 (def one-linked-file
-  "/linked-entry'11'mje'mje'777'l'Fri May 12 10:22:20.0668140924 2017'Fri May 12 10:22:20.0668140924 2017'Fri May 12 10:22:21.0816135163 2017'")
+  "/linked-entry'11'mje'mje'777'l'/link/target/file'Fri May 12 10:22:20.0668140924 2017'Fri May 12 10:22:20.0668140924 2017'Fri May 12 10:22:21.0816135163 2017'")
 
 (def one-linked-dir
-  "/linked-dir'12'mje'mje'777'l'Fri May 12 10:25:06.0903306720 2017'Fri May 12 10:25:06.0903306720 2017'Fri May 12 10:25:09.0595293205 2017'")
+  "/linked-dir'12'mje'mje'777'l'/link/target'Fri May 12 10:25:06.0903306720 2017'Fri May 12 10:25:06.0903306720 2017'Fri May 12 10:25:09.0595293205 2017'")
 
 (def not-existing
   "find: `/not-existing`: No such file or directory")
@@ -40,9 +40,9 @@
   "find: \"/absent\": Datei oder Verzeichnis nicht gefunden")
 
 (def some-result
-  "/home/gec/test/t1'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
-/home/gec/test/t2'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
-/home/gec/test/t3'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
+  "/home/gec/test/t1'0'gec'gec'664'f''Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
+/home/gec/test/t2'0'gec'gec'664'f''Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
+/home/gec/test/t3'0'gec'gec'664'f''Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
 find: `/not-existing`: No such file or directory
 ")
 
@@ -59,6 +59,8 @@ find: `/not-existing`: No such file or directory
     (is (:fact-exist? (sut/parse-find-line one-file)))
     (is (= "f"
            (:fact-type (sut/parse-find-line one-file))))
+    (is (= "/link/target"
+           (:fact-link-to (sut/parse-find-line one-linked-dir))))
     (is (= "mje"
            (:fact-user (sut/parse-find-line one-linked-dir))))
     (is (= "mje"
