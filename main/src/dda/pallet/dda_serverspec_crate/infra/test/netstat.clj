@@ -49,23 +49,17 @@
           passed?   (or
                       (and (= running? false) (if (not detail-check) true false))
                       (and (= running? (some? present-elem)) detail-check))
-          expected-settings (str (if running?
-                                    (str ", expected settings: running on port " port ",")
-                                    (str ", expected settings: not running on port " port ","))
-                                 (if (or test-ip test-exp-proto)
-                                   (str
-                                        (if test-ip (str " ip " ip ",") "")
-                                        (if test-exp-proto (str " protocol " exp-proto ",") ""))))
-          actual-settings (if present-running
-                            (str ", actual settings: port " local-port ", ip " local-ip ", protocol " proto)
-                            "")]
+          expected-settings (str ", expected:: running?: " running? ", port: " port
+                                 (if test-ip (str ", ip: " ip) "")
+                                 (if test-exp-proto (str ", protocol: " exp-proto) ""))
+          actual-settings (str " - found facts:: running?: " (some? present-elem)
+                               ", port: " local-port ", ip: " local-ip ", protocol " proto)]
       (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test netstat: " (name (key elem))
                               expected-settings
-                              ", was running?: " (some? present-elem)
                               actual-settings
-                              ", passed?: " passed? "\n")
+                              " - passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)

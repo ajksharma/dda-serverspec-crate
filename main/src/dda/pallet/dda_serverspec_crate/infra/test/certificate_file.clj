@@ -37,11 +37,12 @@
         (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test certificate-file: " (name (key elem))
-                              ", expected min expiration-days: " expected-expiration-days " vs actual expiration-days "
+                              ", expected:: min expiration-days: " expected-expiration-days
+                              "  - found facts:: expiration-days: "
                               (if (= fact-expiration-days -1)
                                 "---ERROR RETRIEVING EXPIRATION---"
                                 fact-expiration-days)
-                              ", passed?: " passed? "\n")
+                              " - passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)
