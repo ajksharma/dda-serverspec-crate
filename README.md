@@ -18,30 +18,29 @@
 [License](#license)
 
 ## Features
-The dda-serverspec-crate allows you to specify target-systems expected state and test against current state. dda-serverspec-crate provides:
-* execution against localhost, remote hoste or multiple remote hosts.
-* files or folders presence / absence.
-* packages are installed / uninstalled
-* services listening to ip & port
-* validity of certificate files
-* validity of certificates by https
-* network connectivity to remote systems
+The dda-serverspec-crate allows you to specify expected state for target-systems and test against their current state. dda-serverspec-crate provides tests for:
+ * execution against localhost, remote hoste or multiple remote hosts.
+ * files or folders presence / absence.
+ * packages are installed / uninstalled
+ * services listening to ip & port
+ * validity of local certificate files
+ * validity of certificates by https - maybe remote or localhost.
+ * network connectivity to remote systems
 
   <a href="https://asciinema.org/a/163372?autoplay=1"><img src="https://asciinema.org/a/163372.png" width="836"/></a>
 
 ## Local-remote-testing
-There are two modes of testing targets, either local or remote. For local tests are executed on the node the jar is running. Tests are executed by the current user.
+There are two modes of testing targets, either local or remote. Local tests are executed on the system the jar is running on. Local tests are executed by the current user.
 
 ![ServerSpecLocalWhitebox](./doc/ServerSpecLocalWhitebox.png)
 
-For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines. Test are executed by ssh & bash. Just tools like curl has to be installed on target systems.
+Remote tests are collection state (we name it facts) from target system on compare these facts against expectation on the system executing the dda-serverspec jar.
+Facts are collected via ssh & bash. Test utils, needed, can be installed by using the installation phase (use `--install-dependencies` on the command line).
 
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
-For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
-
 ## Usage
-1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.0.1/dda-serverspec-crate-1.0.1-standalone.jar`)
+1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.0.5/dda-serverspec-crate-1.0.5-standalone.jar`)
 1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
 ```clojure
