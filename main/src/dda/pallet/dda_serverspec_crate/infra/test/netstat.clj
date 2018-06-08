@@ -21,7 +21,9 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def NetstatTestConfig {s/Keyword {:port s/Str :ip s/Str :exp-proto s/Str
+(def NetstatTestConfig {s/Keyword {:port s/Str
+                                   :ip s/Str 
+                                   :exp-proto s/Str
                                    :running? s/Bool}})
 
 (s/defn fact-check :- server-test/TestResult

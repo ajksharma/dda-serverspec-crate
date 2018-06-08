@@ -183,25 +183,36 @@ Settings can also be used without tests in order to provide informations for con
 The schema is:
 ```clojure
 (def ServerTestConfig {
- (optional-key :netcat-test)
- {Keyword {:reachable? Bool}},          ; keyword is used to match test against fact
- (optional-key :netcat-fact)            ; parsed result of "nc [host] -w [timeout] && echo $?"
- {Keyword {:port Num,
-           :host Str,                   ; may be ip or fqdn
-           :timeout Num}},              ; timeout given in seconds
- (optional-key :netstat-test)
- {Keyword {:ip Str,
-           :running? Bool,
-           :port Str,
-           :exp-proto Str}},
- (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored.
- (optional-key :file-test)              ; fact can be only collected by sudoers
- {Keyword {:exist? Bool}},
- (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\"
- {Keyword {:path Str}},
- (optional-key :package-test)
- {Keyword {:installed? Bool}},
- (optional-key :package-fact) Any})      ; parsed result of "dpkg -l". Any is ignored.
+  (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored. Fact can only be collected by sudoers / root.
+  (optional-key :package-fact) Any})     ; parsed result of "dpkg -l". Any is ignored.
+  (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\", fact can be collected only if executing user has access.
+  {Keyword {:path Str}},
+  (optional-key :netcat-fact)            ; parsed result of "nc [host] -w [timeout] && echo $?"
+  {Keyword {:port Num,
+            :host Str,                   ; may be ip or fqdn
+            :timeout Num}},              ; timeout given in seconds
+  (s/optional-key :certificate-file-fact); fact can only be collected is executing user has access.
+  {Keyword {:file Str}}                  ; with full path
+  (s/optional-key :http-fact)
+  {Keyword {:url Str}}                   ; full url e.g. https://google.com
+  (optional-key :package-test)
+  {Keyword {:installed? Bool}},
+  (optional-key :netstat-test)
+  {Keyword {:ip Str,
+    :running? Bool,
+    :port Str,
+    :exp-proto Str}},
+  (optional-key :file-test)
+  {s/Keyword {:exist? Bool
+              :mod Str
+              :user Str
+              :group Str}}
+  (optional-key :netcat-test)
+  {Keyword {:reachable? Bool}},
+  (optional-key :certificate-file-test)
+  {Keyword {:expiration-days Num}}
+  (optional-key :http-test)
+  {Keyword {:expiration-days Num}}})
 ```
 On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
 These results are returned in a map that follows the schema depicted above.
