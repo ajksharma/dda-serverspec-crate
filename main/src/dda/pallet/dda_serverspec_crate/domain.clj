@@ -52,8 +52,12 @@
 (defn- domain-2-filetests [file-domain-config]
   (apply merge
          (map
-          #(let [{:keys [path exist? mod user group] :or {exist? true mod "not" user "not" group "not"}} %]
-             {(infra/path-to-keyword path) {:exist? exist? :mod mod :user user :group group}})
+          #(let [{:keys [path exist? mod user group] :or {exist? true}} %
+                  test-map (merge {:exist? exist?}
+                                  (when (contains? % :mod) {:mod mod})
+                                  (when (contains? % :user) {:user user})
+                                  (when (contains? % :group) {:group group}))]
+             {(infra/path-to-keyword path) test-map})
           file-domain-config)))
 
 (defn- domain-2-netcatfacts [netcat-domain-config]

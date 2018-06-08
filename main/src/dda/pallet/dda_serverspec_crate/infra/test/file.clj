@@ -21,9 +21,9 @@
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
 (def FileTestConfig {s/Keyword {:exist? s/Bool
-                                :mod s/Str
-                                :user s/Str
-                                :group s/Str}})
+                                (s/optional-key :mod) s/Str
+                                (s/optional-key :user) s/Str
+                                (s/optional-key :group) s/Str}})
 
 (s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
@@ -35,19 +35,33 @@
     (let [elem (first spec)
           {:keys [exist? mod user group]} (val elem)
           present-elem  (get-in considered-map [(key elem)])
-          {:keys [real-exist? real-mod real-user real-group]} present-elem
-          passed? (if (= mod "not")
-                   (= exist? real-exist?)
-                   (and
-                    (= exist? real-exist?)
-                    (= mod real-mod)
-                    (= user real-user)
-                    (= group real-group)))]
+          {:keys [fact-exist? fact-mod fact-user fact-group]} present-elem
+          test-mod   (contains? elem :mod)
+          test-user  (contains? elem :user)
+          test-group (contains? elem :group)
+          passed?  (and (= exist? fact-exist?)
+                     (and
+                      (if test-mod (= mod fact-mod) true)
+                      (if test-user (= user fact-user) true)
+                      (if test-group (= group fact-group) true)))
+          expected-settings (str (if exist?
+                                    ", expected settings: exists,"
+                                    ", expected settings: exists not,")
+                                 (if (or test-mod test-user test-group)
+                                   (str
+                                        (if test-mod (str " mod " mod ",") "")
+                                        (if test-user (str " user " user ",") "")
+                                        (if test-group (str " group " group ",") ""))))
+          actual-settings (if fact-exist?
+                            (str ", actual settings: mod " fact-mod ", user " fact-user ", group " fact-group)
+                            "")]
         (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test file: " (name (key elem))
-                              ", expected exist?: " exist? ", was exist?: "
-                              real-exist? ", passed?: " passed? "\n")
+                              expected-settings
+                              " was exist?: " fact-exist?
+                              actual-settings
+                              ", passed?: " passed? "\n")
            :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
            :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
           (rest spec)

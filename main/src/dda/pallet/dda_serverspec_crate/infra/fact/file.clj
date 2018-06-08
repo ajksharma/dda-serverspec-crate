@@ -25,15 +25,15 @@
 (def FileFactConfig {s/Keyword {:path s/Str}})
 
 (def FileFactResult {:path s/Str
-                     :real-exist? s/Bool
-                     (s/optional-key :size-in-bytes) s/Num
-                     :real-user s/Str
-                     :real-group s/Str
-                     :real-mod s/Str
-                     (s/optional-key :type) s/Str ;use keywords instead here?
-                     (s/optional-key :created) s/Str
-                     (s/optional-key :modified) s/Str
-                     (s/optional-key :accessed) s/Str})
+                     :fact-exist? s/Bool
+                     :fact-size-in-bytes s/Num
+                     :fact-user s/Str
+                     :fact-group s/Str
+                     :fact-mod s/Str
+                     :fact-type s/Str ;use keywords instead here?
+                     :fact-created s/Str
+                     :fact-modified s/Str
+                     :fact-accessed s/Str})
 
 (def FileFactResults {s/Keyword FileFactResult})
 
@@ -53,16 +53,13 @@
         split-string (clojure.string/split script-result-line #"'")]
     (if match
       {:path (clean-up-negative-find (nth split-string 0))
-       :real-exist? false
-       :real-user "not"
-       :real-group "not"
-       :real-mod "not"}
-      (let [result-map (zipmap [:path :size-in-bytes :real-user :real-group :real-mod :type :created :modified :accessed]
+       :fact-exist? false}
+      (let [result-map (zipmap [:path :fact-size-in-bytes :fact-user :fact-group :fact-mod :fact-type :fact-created :fact-modified :fact-accessed]
                                split-string)
             cleaned-path (clean-up-sudo-string (:path result-map))]
         (merge
          (assoc result-map :path cleaned-path)
-         {:real-exist? true})))))
+         {:fact-exist? true})))))
 
 (s/defn create-line-parse-result [script-result-line]
   (let [file-fact-result (parse-find-line script-result-line)
