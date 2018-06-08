@@ -32,7 +32,8 @@
                             (s/optional-key :exist?) s/Bool
                             (s/optional-key :mod) s/Str
                             (s/optional-key :user) s/Str
-                            (s/optional-key :group) s/Str}]
+                            (s/optional-key :group) s/Str
+                            (s/optional-key :link-to) s/Str}]
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
                               (s/optional-key :reachable?) s/Bool}]
@@ -52,11 +53,13 @@
 (defn- domain-2-filetests [file-domain-config]
   (apply merge
          (map
-          #(let [{:keys [path exist? mod user group] :or {exist? true}} %
+          #(let [{:keys [path exist? mod user group link-to] :or {exist? true}} %
                   test-map (merge {:exist? exist?}
                                   (when (contains? % :mod) {:mod mod})
                                   (when (contains? % :user) {:user user})
-                                  (when (contains? % :group) {:group group}))]
+                                  (when (contains? % :group) {:group group})
+                                  (when (contains? % :link-to) {:type "l"
+                                                                :link-to link-to}))]
              {(infra/path-to-keyword path) test-map})
           file-domain-config)))
 
