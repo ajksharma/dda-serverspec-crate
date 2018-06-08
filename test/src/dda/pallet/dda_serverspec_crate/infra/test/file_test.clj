@@ -35,6 +35,10 @@
                     :_root_.ssh_authorized_keys {:exist? true :user "root"}
                     :_root_.profile {:mod "654"}})
 
+(def test-config-5 {:_etc_alink {:exist? true :type "l" :link-to "/etc/linktarget"}
+                    :_etc {:exist? true :type "d"}})
+
+
 
 (def input
   {:_etc_hosts {:path "/etc/hosts" :fact-exist? true}
@@ -44,6 +48,10 @@
   {:_etc_hosts {:path "/etc/hosts" :fact-exist? true :fact-user "root" :fact-group "root" :fact-mod "644"}
    :_root_.ssh_authorized_keys {:path "/root/.ssh/authorized_keys" :fact-exist? true :fact-user "root" :fact-group "root" :fact-mod "644"}
    :_root_.profile {:path "/root/.profile" :fact-user "root" :fact-group "root" :fact-mod "644"}})
+
+(def input-3
+  {:_etc_alink {:path "/etc/link" :fact-exist? true :fact-type "l" :fact-link-to "/etc/linktarget"}
+   :_etc {:path "/etc" :fact-exist? true :fact-type "d" :fact-link-to ""}})
 
 (deftest test-file-internal
  (testing
@@ -57,4 +65,6 @@
     (is (= 2
           (:no-failed (sut/test-file-internal test-config-3 input))))
     (is (= 1
-          (:no-failed (sut/test-file-internal test-config-4 input-2))))))
+          (:no-failed (sut/test-file-internal test-config-4 input-2))))
+    (is (= 0
+          (:no-failed (sut/test-file-internal test-config-5 input-3))))))

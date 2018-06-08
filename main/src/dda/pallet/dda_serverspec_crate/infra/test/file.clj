@@ -23,7 +23,9 @@
 (def FileTestConfig {s/Keyword {:exist? s/Bool
                                 (s/optional-key :mod) s/Str
                                 (s/optional-key :user) s/Str
-                                (s/optional-key :group) s/Str}})
+                                (s/optional-key :group) s/Str
+                                (s/optional-key :type) s/Str
+                                (s/optional-key :link-to) s/Str}})
 
 (s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
@@ -33,28 +35,33 @@
   (if (<= (count spec) 0)
     result
     (let [elem (first spec)
-          {:keys [exist? mod user group]} (val elem)
+          {:keys [exist? mod user group type link-to]} (val elem)
           present-elem  (get-in considered-map [(key elem)])
-          {:keys [fact-exist? fact-mod fact-user fact-group]} present-elem
+          {:keys [fact-exist? fact-mod fact-user fact-group fact-type fact-link-to]} present-elem
           test-mod   (contains? (val elem) :mod)
           test-user  (contains? (val elem) :user)
           test-group (contains? (val elem) :group)
+          test-type (contains? (val elem) :type)
+          test-link-to (contains? (val elem) :link-to)
           passed? (and
                     (= exist? fact-exist?)
                     (if test-mod (= mod fact-mod) true)
                     (if test-user (= user fact-user) true)
-                    (if test-group (= group fact-group) true))
+                    (if test-group (= group fact-group) true)
+                    (if test-type (= type fact-type) true)
+                    (if test-link-to (= link-to fact-link-to) true))
           expected-settings (str (if exist?
-                                    ", expected settings: exists,"
-                                    ", expected settings: exists not,")
-                                 (if (or test-mod test-user test-group)
-                                   (str
-                                        (if test-mod (str " mod " mod ",") "")
-                                        (if test-user (str " user " user ",") "")
-                                        (if test-group (str " group " group ",") ""))))
+                                    ", expected settings: exists"
+                                    ", expected settings: exists not")
+                                 (if test-mod (str ", mod " mod) "")
+                                 (if test-user (str ", user " user) "")
+                                 (if test-group (str ", group " group) "")
+                                 (if test-type (str ", type " type) "")
+                                 (if test-link-to (str ", link-to " link-to) ""))
           actual-settings (if fact-exist?
-                            (str ", actual settings: mod " fact-mod ", user " fact-user ", group " fact-group)
-                            "")]
+                            (str ", actual settings: existing, mod " fact-mod ", user " fact-user ", group " 
+                                 fact-group ", type" fact-type ", link-to " fact-link-to)
+                            ", actual settings: not existing")]
         (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test file: " (name (key elem))
