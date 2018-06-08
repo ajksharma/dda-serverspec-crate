@@ -3,8 +3,8 @@
   :url "https://domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [dda/dda-pallet "2.1.1"]]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [dda/dda-pallet "2.1.3-SNAPSHOT"]]
   :source-paths ["main/src"]
   :resource-paths ["main/resources"]
   :repositories [["snapshots" :clojars]
@@ -17,8 +17,8 @@
                    :resource-paths ["integration/resources"
                                     "test/resources"]
                    :dependencies
-                   [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2"]
-                    [com.palletops/pallet "0.8.12" :classifier "tests"]
+                   [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2" :exclusions [com.palletops/pallet-common]]
+                    [dda/pallet "0.8.13-SNAPSHOT" :classifier "tests"]
                     [org.clojure/tools.cli "0.3.5"]
                     [ch.qos.logback/logback-classic "1.3.0-alpha4"]
                     [org.slf4j/jcl-over-slf4j "1.8.0-beta2"]]
