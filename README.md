@@ -18,30 +18,29 @@
 [License](#license)
 
 ## Features
-The dda-serverspec-crate allows you to specify target-systems expected state and test against current state. dda-serverspec-crate provides:
-* execution against localhost, remote hoste or multiple remote hosts.
-* files or folders presence / absence.
-* packages are installed / uninstalled
-* services listening to ip & port
-* validity of certificate files
-* validity of certificates by https
-* network connectivity to remote systems
+The dda-serverspec-crate allows you to specify expected state for target-systems and test against their current state. dda-serverspec-crate provides tests for:
+ * execution against localhost, remote hoste or multiple remote hosts.
+ * files or folders presence / absence.
+ * packages are installed / uninstalled
+ * services listening to ip & port
+ * validity of local certificate files
+ * validity of certificates by https - maybe remote or localhost.
+ * network connectivity to remote systems
 
   <a href="https://asciinema.org/a/163372?autoplay=1"><img src="https://asciinema.org/a/163372.png" width="836"/></a>
 
 ## Local-remote-testing
-There are two modes of testing targets, either local or remote. For local tests are executed on the node the jar is running. Tests are executed by the current user.
+There are two modes of testing targets, either local or remote. Local tests are executed on the system the jar is running on. Local tests are executed by the current user.
 
 ![ServerSpecLocalWhitebox](./doc/ServerSpecLocalWhitebox.png)
 
-For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines. Test are executed by ssh & bash. Just tools like curl has to be installed on target systems.
+Remote tests are collection state (we name it facts) from target system on compare these facts against expectation on the system executing the dda-serverspec jar.
+Facts are collected via ssh & bash. Test utils, needed, can be installed by using the installation phase (use `--install-dependencies` on the command line).
 
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
-For remote tests the dda-serverspec-crate can be used from a source machine to test different aspects of the remote target machines.
-
 ## Usage
-1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.0.1/dda-serverspec-crate-1.0.1-standalone.jar`)
+1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.0.5/dda-serverspec-crate-1.0.5-standalone.jar`)
 1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
 ```clojure
@@ -184,25 +183,36 @@ Settings can also be used without tests in order to provide informations for con
 The schema is:
 ```clojure
 (def ServerTestConfig {
- (optional-key :netcat-test)
- {Keyword {:reachable? Bool}},          ; keyword is used to match test against fact
- (optional-key :netcat-fact)            ; parsed result of "nc [host] -w [timeout] && echo $?"
- {Keyword {:port Num,
-           :host Str,                   ; may be ip or fqdn
-           :timeout Num}},              ; timeout given in seconds
- (optional-key :netstat-test)
- {Keyword {:ip Str,
-           :running? Bool,
-           :port Str,
-           :exp-proto Str}},
- (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored.
- (optional-key :file-test)              ; fact can be only collected by sudoers
- {Keyword {:exist? Bool}},
- (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\"
- {Keyword {:path Str}},
- (optional-key :package-test)
- {Keyword {:installed? Bool}},
- (optional-key :package-fact) Any})      ; parsed result of "dpkg -l". Any is ignored.
+  (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored. Fact can only be collected by sudoers / root.
+  (optional-key :package-fact) Any})     ; parsed result of "dpkg -l". Any is ignored.
+  (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\", fact can be collected only if executing user has access.
+  {Keyword {:path Str}},
+  (optional-key :netcat-fact)            ; parsed result of "nc [host] -w [timeout] && echo $?"
+  {Keyword {:port Num,
+            :host Str,                   ; may be ip or fqdn
+            :timeout Num}},              ; timeout given in seconds
+  (s/optional-key :certificate-file-fact); fact can only be collected is executing user has access.
+  {Keyword {:file Str}}                  ; with full path
+  (s/optional-key :http-fact)
+  {Keyword {:url Str}}                   ; full url e.g. https://google.com
+  (optional-key :package-test)
+  {Keyword {:installed? Bool}},
+  (optional-key :netstat-test)
+  {Keyword {:ip Str,
+    :running? Bool,
+    :port Str,
+    :exp-proto Str}},
+  (optional-key :file-test)
+  {s/Keyword {:exist? Bool
+              :mod Str
+              :user Str
+              :group Str}}
+  (optional-key :netcat-test)
+  {Keyword {:reachable? Bool}},
+  (optional-key :certificate-file-test)
+  {Keyword {:expiration-days Num}}
+  (optional-key :http-test)
+  {Keyword {:expiration-days Num}}})
 ```
 On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
 These results are returned in a map that follows the schema depicted above.

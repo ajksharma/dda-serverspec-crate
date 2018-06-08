@@ -40,10 +40,12 @@
 (def version  [0 1 0])
 
 (def ServerTestConfig
-  {(s/optional-key :package-fact) s/Any
-   (s/optional-key :netstat-fact) s/Any
-   (s/optional-key :file-fact) file-fact/FileFactConfig
-   (s/optional-key :netcat-fact) netcat-fact/NetcatFactConfig
+  {(s/optional-key :package-fact) s/Any       ; parsed result of "netstat -tulpen". Any is ignored.
+   (s/optional-key :netstat-fact) s/Any       ; parsed result of "dpkg -l". Any is ignored.
+   (s/optional-key :file-fact)                ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\"
+   file-fact/FileFactConfig
+   (s/optional-key :netcat-fact)              ; parsed result of "nc [host] -w [timeout] && echo $?"
+   netcat-fact/NetcatFactConfig
    (s/optional-key :certificate-file-fact) certificate-file-fact/CertificateFileFactConfig
    (s/optional-key :http-fact) http-fact/HttpFactConfig
    (s/optional-key :package-test) package-test/PackageTestConfig
