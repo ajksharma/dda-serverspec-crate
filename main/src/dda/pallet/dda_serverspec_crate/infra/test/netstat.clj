@@ -22,8 +22,8 @@
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
 (def NetstatTestConfig {s/Keyword {:port s/Str
-                                   :ip s/Str 
-                                   :exp-proto s/Str
+                                   (s/optional-key :ip) s/Str
+                                   (s/optional-key :exp-proto) s/Str
                                    :running? s/Bool}})
 
 (s/defn fact-check :- server-test/TestResult
@@ -39,16 +39,22 @@
           present-running (and
                                (some? present-elem)
                                running?)
-          passed? (or
-                    (and (= running? false) (= (some? present-elem) false))
-                    (and (= running? (some? present-elem))
-                       (and
-                            (= port local-port)
-                            (= ip local-ip)
-                            (= exp-proto proto))))
-          expected-settings (if running?
-                              (str ", expected settings: port " port ", ip " ip ", protocol " exp-proto)
-                              (str ", expected: not running on port " port ", ip " ip ", protocol " exp-proto))
+          test-ip (contains? (val elem) :ip)
+          test-exp-proto (contains? (val elem) :exp-proto)
+          passed?   (or
+                      (and (= running? false) (= (some? present-elem) false))
+                      (and (= running? (some? present-elem))
+                         (and
+                              (= port local-port)
+                              (if test-ip (= ip local-ip) true)
+                              (if test-exp-proto (= exp-proto proto) true))))
+          expected-settings (str (if running?
+                                    (str ", expected settings: running on port " port)
+                                    (str ", expected settings: not running on port " port))
+                                 (if (or test-ip test-exp-proto)
+                                   (str
+                                        (if test-ip (str " ip " ip ",") "")
+                                        (if test-exp-proto (str " protocol " exp-proto ",") ""))))
           actual-settings (if present-running
                             (str ", actual settings: port " local-port ", ip " local-ip ", protocol " proto)
                             "")]

@@ -27,6 +27,10 @@
 (def test-config-2 {:not-running {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}
                     (keyword "apache2_tcp6_:::81") {:port "81" :ip "::" :exp-proto "tcp6" :running? true}
                     :sshd_tcp_0.0.0.0:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}})
+(def test-config-3 {:not-running {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? false}
+                    (keyword "apache2_tcp7_:::80") {:port "80" :ip "::" :exp-proto "tcp7" :running? false}})
+(def test-config-4 {(keyword "apache2_tcp6_:::80") {:port "80" :ip "::" :running? true}
+                    :sshd_tcp_0.0.0.0:22 {:port "22" :exp-proto "tcp" :running? true}})
 
 (def input
   '({:foreign-address ":::*",
@@ -60,7 +64,11 @@
    (is (= 1
           (:no-failed (sut/test-netstat-internal test-config-1 input))))
    (is (= 2
-          (:no-failed (sut/test-netstat-internal test-config-2 input))))))
+          (:no-failed (sut/test-netstat-internal test-config-2 input))))
+   (is (= 0
+          (:no-failed (sut/test-netstat-internal test-config-3 input))))
+   (is (= 0
+          (:no-failed (sut/test-netstat-internal test-config-4 input))))))
 
 (deftest retest-issues
  (testing

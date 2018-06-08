@@ -1,7 +1,8 @@
 {:netstat [{:process-name "sshd" :port "11" :running? false}
            {:process-name "sshd" :port "22"}
-           {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
- :file [{:path "/root/.bashrc"}
+           {:process-name "sshd" :port "22" :exp-proto "tcp6"}
+           {:process-name "sshd" :port "22" :ip "::"}]
+ :file [{:path "/root/.bashrc" :user "root"}
         {:path "/etc"}
         {:path "/absent" :exist? false}
         {:path "/root/.profile" :mod "644" :user "root" :group "root"}]

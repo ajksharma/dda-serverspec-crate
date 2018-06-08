@@ -78,8 +78,12 @@
 (defn- domain-2-netstattests [netstat-domain-config]
   (apply merge
          (map
-          #(let [{:keys [process-name port ip exp-proto running?] :or  {ip "0.0.0.0" exp-proto "tcp" running? true}} %]
-             {(keyword (str process-name "_" exp-proto "_" ip ":" port)) {:port port :ip ip :exp-proto exp-proto :running? running?}})
+          #(let [{:keys [process-name port ip exp-proto running?] :or  {running? true}} %
+                 test-map (merge {:running? running?
+                                  :port port}
+                                 (when (contains? % :ip) {:ip ip})
+                                 (when (contains? % :exp-proto) {:exp-proto exp-proto}))]
+             {(keyword (str process-name "_" exp-proto "_" ip ":" port)) test-map})
           netstat-domain-config)))
 
 (defn- domain-2-packagetests [package-domain-config]
