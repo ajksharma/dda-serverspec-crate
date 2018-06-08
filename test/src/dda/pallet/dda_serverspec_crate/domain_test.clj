@@ -61,7 +61,7 @@
                            :_absent {:path "/absent"}
                            :_root_.ssh {:path "/root/.ssh"}
                            :_root_.profile {:path "/root/.profile"}}
-               :netstat-test {:sshd_tcp_0.0.0.0:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}}
+               :netstat-test {:sshd__:22 {:port "22" :running? true}}
                :package-test {:firefox {:installed? false}}
                :file-test {:_root {:exist? true :group "root"}
                            :_etc {:exist? true :user "root"}
