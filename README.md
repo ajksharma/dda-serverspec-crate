@@ -46,10 +46,11 @@ Facts are collected via ssh & bash. Test utils, needed, can be installed by usin
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]      ;check if sshd is running on port 22 with the given config
- :file [{:path "/root/.bashrc"}                      ;check if file exists
-        {:path "/etc"}                               ;check if folder exists
-        {:path "/absent" :exist? false}              ;check if file doesn't exists
-        {:path "/root/.profile" :mod "644" :user "root" :group "root"}]     ;check if file exists and has the given config       
+ :file [{:path "/root/.bashrc"}                                               ;check if file exists
+        {:path "/etc"}                                                        ;check if folder exists
+        {:path "/absent" :exist? false}                                       ;check if file doesn't exists
+        {:path "/root/.profile" :mod "644" :user "root" :group "root"}        ;check if file exists and has the given config       
+        {:path "/etc/resolv.conf" :link-to "../run/resolvconf/resolv.conf"}]  ;check if link exists and has the given target
  :netcat [{:host "www.google.com" :port 80}          ;check if host is reachable
           {:host "www.google.c" :port 80 :reachable? false}]
  :package [{:name "test" :installed? false}          ; check if package test is NOT installed
@@ -110,7 +111,8 @@ The ```provisioning-user``` has to be the same for all nodes that will be tested
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
  :file [{:path "/root" :user "root"}
         {:path "/etc"}
-        {:path "/absent" :exist? false}]
+        {:path "/absent" :exist? false}
+        {:path "/etc/resolv.conf" :link-to "../run/resolvconf/resolv.conf"}]
  :netcat [{:host "www.google.com" :port 80}
           {:host "www.google.c" :port 80 :reachable? false}]
  :package [{:name "test" :installed? false}
@@ -162,10 +164,11 @@ The schema for the tests is:
                                (s/optional-key :ip) s/Str
                                (s/optional-key :exp-proto) s/Str}]
    (s/optional-key :file) [{:path s/Str
-                            (s/optional-key :exist?) s/Bool}
-                            (s/optional-key :mod) s/Str}
-                            (s/optional-key :user) s/Str}
-                            (s/optional-key :group) s/Str}]
+                            (s/optional-key :exist?) s/Bool
+                            (s/optional-key :mod) s/Str
+                            (s/optional-key :user) s/Str
+                            (s/optional-key :group) s/Str
+                            (s/optional-key :link-to) s/Str}]
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
                               (s/optional-key :reachable?) s/Bool}]
@@ -193,9 +196,9 @@ The schema is:
   {Keyword {:port Num,
             :host Str,                   ; may be ip or fqdn
             :timeout Num}},              ; timeout given in seconds
-  (s/optional-key :certificate-file-fact); fact can only be collected is executing user has access.
+  (optional-key :certificate-file-fact)  ; fact can only be collected is executing user has access.
   {Keyword {:file Str}}                  ; with full path
-  (s/optional-key :http-fact)
+  (optional-key :http-fact)
   {Keyword {:url Str}}                   ; full url e.g. https://google.com
   (optional-key :package-test)
   {Keyword {:installed? Bool}},
@@ -208,7 +211,9 @@ The schema is:
   {s/Keyword {:exist? Bool
               (optional-key :mod) Str
               (optional-key :user) Str
-              (optional-key :group) Str}}
+              (optional-key :group) Str
+              (optional-key :type) Str
+              (optional-key :link-to) Str}}
   (optional-key :netcat-test)
   {Keyword {:reachable? Bool}},
   (optional-key :certificate-file-test)
