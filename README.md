@@ -45,8 +45,7 @@ Facts are collected via ssh & bash. Test utils, needed, can be installed by usin
 
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
-           {:process-name "sshd" :port "22"}         ;check if sshd is running on port 22
-           {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
+           {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]      ;check if sshd is running on port 22 with the given config
  :file [{:path "/root/.bashrc"}                      ;check if file exists
         {:path "/etc"}                               ;check if folder exists
         {:path "/absent" :exist? false}              ;check if file doesn't exists
@@ -108,7 +107,6 @@ The ```provisioning-user``` has to be the same for all nodes that will be tested
 ### Serverspec-config-example
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}
-           {:process-name "sshd" :port "22"}
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
  :file [{:path "/root" :user "root"}
         {:path "/etc"}
@@ -202,10 +200,10 @@ The schema is:
   (optional-key :package-test)
   {Keyword {:installed? Bool}},
   (optional-key :netstat-test)
-  {Keyword {:ip Str,
-    :running? Bool,
+  {Keyword {:running? Bool,
     :port Str,
-    :exp-proto Str}},
+    (optional-key :ip) Str,
+    (optional-key :exp-proto) Str}},
   (optional-key :file-test)
   {s/Keyword {:exist? Bool
               (optional-key :mod) Str
