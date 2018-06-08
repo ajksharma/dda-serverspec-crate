@@ -20,7 +20,7 @@
 ## Features
 The dda-serverspec-crate allows you to specify expected state for target-systems and test against their current state. dda-serverspec-crate provides tests for:
  * execution against localhost, remote hoste or multiple remote hosts.
- * files or folders presence / absence.
+ * files or folders presence / absence, plus specific FilePermissions/group/owner.
  * packages are installed / uninstalled
  * services listening to ip & port
  * validity of local certificate files
@@ -49,7 +49,8 @@ Facts are collected via ssh & bash. Test utils, needed, can be installed by usin
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
  :file [{:path "/root/.bashrc"}                      ;check if file exists
         {:path "/etc"}                               ;check if folder exists
-        {:path "/absent" :exist? false}]             ;check if file doesn't exists
+        {:path "/absent" :exist? false}              ;check if file doesn't exists
+        {:path "/root/.profile" :mod "644" :user "root" :group "root"}]     ;check if file exists and has the given config       
  :netcat [{:host "www.google.com" :port 80}          ;check if host is reachable
           {:host "www.google.c" :port 80 :reachable? false}]
  :package [{:name "test" :installed? false}          ; check if package test is NOT installed
@@ -109,7 +110,7 @@ The ```provisioning-user``` has to be the same for all nodes that will be tested
 {:netstat [{:process-name "sshd" :port "11" :running? false}
            {:process-name "sshd" :port "22"}
            {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
- :file [{:path "/root"}
+ :file [{:path "/root" :user "root"}
         {:path "/etc"}
         {:path "/absent" :exist? false}]
  :netcat [{:host "www.google.com" :port 80}
@@ -117,7 +118,7 @@ The ```provisioning-user``` has to be the same for all nodes that will be tested
  :package [{:name "test" :installed? false}
            {:name "nano"}]}
 ```
-The serverspec config file determines the tests that are executed. For example the part containing ```{:path "/root"}``` checks if the folder ```/root``` exists.
+The serverspec config file determines the tests that are executed. For example the part containing ```{:path "/root" :user "root"}``` checks if the folder ```/root``` exists and is owned by the root user.
 There are different types of tests that can be used. More details can be found in the reference below.
 
 
@@ -163,7 +164,10 @@ The schema for the tests is:
                                (s/optional-key :ip) s/Str
                                (s/optional-key :exp-proto) s/Str}]
    (s/optional-key :file) [{:path s/Str
-                            (s/optional-key :exist?) s/Bool}]
+                            (s/optional-key :exist?) s/Bool}
+                            (s/optional-key :mod) s/Str}
+                            (s/optional-key :user) s/Str}
+                            (s/optional-key :group) s/Str}]
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
                               (s/optional-key :reachable?) s/Bool}]
@@ -204,9 +208,9 @@ The schema is:
     :exp-proto Str}},
   (optional-key :file-test)
   {s/Keyword {:exist? Bool
-              :mod Str
-              :user Str
-              :group Str}}
+              (optional-key :mod) Str
+              (optional-key :user) Str
+              (optional-key :group) Str}}
   (optional-key :netcat-test)
   {Keyword {:reachable? Bool}},
   (optional-key :certificate-file-test)

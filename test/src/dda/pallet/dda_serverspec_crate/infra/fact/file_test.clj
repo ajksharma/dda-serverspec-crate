@@ -36,6 +36,9 @@
 (def not-existing
   "find: `/not-existing`: No such file or directory")
 
+(def not-existing2
+  "find: \"/absent\": Datei oder Verzeichnis nicht gefunden")
+
 (def some-result
   "/home/gec/test/t1'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
 /home/gec/test/t2'0'gec'gec'664'f'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017'Fri May 12 19:06:04.0519157000 2017
@@ -56,8 +59,16 @@ find: `/not-existing`: No such file or directory
     (is (:fact-exist? (sut/parse-find-line one-file)))
     (is (= "f"
            (:fact-type (sut/parse-find-line one-file))))
-    (is (= "/not-existing"
-           (:path (sut/parse-find-line not-existing))))
+    (is (= "mje"
+           (:fact-user (sut/parse-find-line one-linked-dir))))
+    (is (= "mje"
+           (:fact-group (sut/parse-find-line one-linked-dir))))
+    (is (= "777"
+           (:fact-mod (sut/parse-find-line one-linked-dir))))
+    (is (= {:path "/not-existing" :fact-exist? false}
+           (sut/parse-find-line not-existing)))
+    (is (= {:path "/absent" :fact-exist? false}
+           (sut/parse-find-line not-existing2)))
     (is (not (:fact-exist? (sut/parse-find-line not-existing))))))
 
 

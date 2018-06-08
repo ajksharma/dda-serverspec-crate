@@ -36,14 +36,14 @@
           {:keys [exist? mod user group]} (val elem)
           present-elem  (get-in considered-map [(key elem)])
           {:keys [fact-exist? fact-mod fact-user fact-group]} present-elem
-          test-mod   (contains? elem :mod)
-          test-user  (contains? elem :user)
-          test-group (contains? elem :group)
-          passed?  (and (= exist? fact-exist?)
-                     (and
-                      (if test-mod (= mod fact-mod) true)
-                      (if test-user (= user fact-user) true)
-                      (if test-group (= group fact-group) true)))
+          test-mod   (contains? (val elem) :mod)
+          test-user  (contains? (val elem) :user)
+          test-group (contains? (val elem) :group)
+          passed? (and
+                    (= exist? fact-exist?)
+                    (if test-mod (= mod fact-mod) true)
+                    (if test-user (= user fact-user) true)
+                    (if test-group (= group fact-group) true))
           expected-settings (str (if exist?
                                     ", expected settings: exists,"
                                     ", expected settings: exists not,")

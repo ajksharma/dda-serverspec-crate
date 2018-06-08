@@ -54,7 +54,8 @@
     (if match
       {:path (clean-up-negative-find (nth split-string 0))
        :fact-exist? false}
-      (let [result-map (zipmap [:path :fact-size-in-bytes :fact-user :fact-group :fact-mod :fact-type :fact-created :fact-modified :fact-accessed]
+      (let [result-map (zipmap [:path :fact-size-in-bytes :fact-user :fact-group :fact-mod
+                                :fact-type :fact-created :fact-modified :fact-accessed]
                                split-string)
             cleaned-path (clean-up-sudo-string (:path result-map))]
         (merge
@@ -74,7 +75,7 @@
 (s/defn build-find-line
   "Builds the string for executing the find commands."
   [fact-config]
-  (str "find " (:path (val fact-config)) " -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\""))
+  (str "find " (:path (val fact-config)) " -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\" 2>&1"))
 
 (s/defn collect-file-fact
   "Collects the file facts."

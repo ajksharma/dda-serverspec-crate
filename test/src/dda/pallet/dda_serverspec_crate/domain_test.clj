@@ -23,9 +23,11 @@
 (def domain-config-1
   {:netstat '({:process-name "sshd" :port "22"})
    :package '({:name "firefox" :installed? false})
-   :file [{:path "/root"}
-          {:path "/etc" :exist? true}
-          {:path "/absent" :exist? false}]
+   :file [{:path "/root" :group "root"}
+          {:path "/etc" :exist? true :user "root"}
+          {:path "/absent" :exist? false}
+          {:path "/root/.ssh"}
+          {:path "/root/.profile" :exist? false :mod "644"}]
    :netcat '({:host "www.google.com" :port 80}
              {:host "www.google.c" :port 80 :reachable? false})})
 
@@ -56,12 +58,16 @@
                :package-fact nil
                :file-fact {:_root {:path "/root"}
                            :_etc {:path "/etc"}
-                           :_absent {:path "/absent"}}
+                           :_absent {:path "/absent"}
+                           :_root_.ssh {:path "/root/.ssh"}
+                           :_root_.profile {:path "/root/.profile"}}
                :netstat-test {:sshd_tcp_0.0.0.0:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}}
                :package-test {:firefox {:installed? false}}
-               :file-test {:_root {:exist? true}
-                           :_etc {:exist? true}
-                           :_absent {:exist? false}}
+               :file-test {:_root {:exist? true :group "root"}
+                           :_etc {:exist? true :user "root"}
+                           :_absent {:exist? false}
+                           :_root_.ssh {:exist? true}
+                           :_root_.profile {:exist? false :mod "644"}}
                :netcat-test {:www.google.com_80_8 {:reachable? true}
                              :www.google.c_80_8 {:reachable? false}}}}
           (sut/infra-configuration domain-config-1)))

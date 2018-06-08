@@ -31,10 +31,19 @@
 (def test-config-3 {:_etc_hosts {:exist? false}
                     :_root_.ssh_authorized_keys {:exist? true}})
 
+(def test-config-4 {:_etc_hosts {:exist? true :group "root"}
+                    :_root_.ssh_authorized_keys {:exist? true :user "root"}
+                    :_root_.profile {:mod "654"}})
+
 
 (def input
   {:_etc_hosts {:path "/etc/hosts" :fact-exist? true}
    :_root_.ssh_authorized_keys {:path "/root/.ssh/authorized_keys" :fact-exist? false}})
+
+(def input-2
+  {:_etc_hosts {:path "/etc/hosts" :fact-exist? true :fact-user "root" :fact-group "root" :fact-mod "644"}
+   :_root_.ssh_authorized_keys {:path "/root/.ssh/authorized_keys" :fact-exist? true :fact-user "root" :fact-group "root" :fact-mod "644"}
+   :_root_.profile {:path "/root/.profile" :fact-user "root" :fact-group "root" :fact-mod "644"}})
 
 (deftest test-file-internal
  (testing
@@ -46,4 +55,6 @@
     (is (= 1
           (:no-failed (sut/test-file-internal test-config-2 input))))
     (is (= 2
-          (:no-failed (sut/test-file-internal test-config-3 input))))))
+          (:no-failed (sut/test-file-internal test-config-3 input))))
+    (is (= 1
+          (:no-failed (sut/test-file-internal test-config-4 input-2))))))
