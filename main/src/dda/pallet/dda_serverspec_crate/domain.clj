@@ -83,7 +83,7 @@
                                   :port port}
                                  (when (contains? % :ip) {:ip ip})
                                  (when (contains? % :exp-proto) {:exp-proto exp-proto}))]
-             {(keyword (str process-name "_" exp-proto "_" ip ":" port)) test-map})
+             {(keyword (str process-name ":" port)) test-map})
           netstat-domain-config)))
 
 (defn- domain-2-packagetests [package-domain-config]

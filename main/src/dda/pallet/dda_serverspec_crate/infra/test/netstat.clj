@@ -41,16 +41,17 @@
                                running?)
           test-ip (contains? (val elem) :ip)
           test-exp-proto (contains? (val elem) :exp-proto)
+          detail-check   (when (some? present-elem)
+                          (and
+                            (= port local-port)
+                            (if test-ip (= ip local-ip) true)
+                            (if test-exp-proto (= exp-proto proto) true)))
           passed?   (or
-                      (and (= running? false) (= (some? present-elem) false))
-                      (and (= running? (some? present-elem))
-                         (and
-                              (= port local-port)
-                              (if test-ip (= ip local-ip) true)
-                              (if test-exp-proto (= exp-proto proto) true))))
+                      (and (= running? false) (if (not detail-check) true false))
+                      (and (= running? (some? present-elem)) detail-check))
           expected-settings (str (if running?
-                                    (str ", expected settings: running on port " port)
-                                    (str ", expected settings: not running on port " port))
+                                    (str ", expected settings: running on port " port ",")
+                                    (str ", expected settings: not running on port " port ","))
                                  (if (or test-ip test-exp-proto)
                                    (str
                                         (if test-ip (str " ip " ip ",") "")
@@ -72,7 +73,7 @@
 
 (s/defn result-to-map
   [input :- (seq netstat-fact/NetstatResult)]
-  (apply merge (map (fn [e] {(keyword (str (:process-name e) "_" (:proto e) "_" (:local-ip e) ":" (:local-port e))) e}) input)))
+  (apply merge (map (fn [e] {(keyword (str (:process-name e) ":" (:local-port e))) e}) input)))
 
 (s/defn test-netstat-internal :- server-test/TestResultHuman
   [test-config :- NetstatTestConfig

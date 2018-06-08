@@ -22,15 +22,15 @@
     [dda.pallet.dda-serverspec-crate.infra.test.netstat :as sut]))
 
 (def test-config-1 {:not-running {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}
-                    (keyword "apache2_tcp6_:::80") {:port "80" :ip "::" :exp-proto "tcp6" :running? true}
-                    :sshd_tcp_0.0.0.0:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}})
+                    (keyword "apache2:80") {:port "80" :ip "::" :exp-proto "tcp6" :running? true}
+                    :sshd:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}})
 (def test-config-2 {:not-running {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}
-                    (keyword "apache2_tcp6_:::81") {:port "81" :ip "::" :exp-proto "tcp6" :running? true}
-                    :sshd_tcp_0.0.0.0:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}})
+                    (keyword "apache2:81") {:port "81" :ip "::" :exp-proto "tcp6" :running? true}
+                    :sshd:22 {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? true}})
 (def test-config-3 {:not-running {:port "22" :ip "0.0.0.0" :exp-proto "tcp" :running? false}
-                    (keyword "apache2_tcp7_:::80") {:port "80" :ip "::" :exp-proto "tcp7" :running? false}})
-(def test-config-4 {(keyword "apache2_tcp6_:::80") {:port "80" :ip "::" :running? true}
-                    :sshd_tcp_0.0.0.0:22 {:port "22" :exp-proto "tcp" :running? true}})
+                    (keyword "apache2:80") {:port "80" :ip "::" :exp-proto "tcp7" :running? false}})
+(def test-config-4 {(keyword "apache2:80") {:port "80" :ip "::" :running? true}
+                    :sshd:22 {:port "22" :exp-proto "tcp" :running? true}})
 
 (def input
   '({:foreign-address ":::*",

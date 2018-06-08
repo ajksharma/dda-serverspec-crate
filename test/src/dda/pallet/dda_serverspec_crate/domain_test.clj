@@ -21,7 +21,8 @@
 
 ; -----------------------  test data  ------------------------
 (def domain-config-1
-  {:netstat '({:process-name "sshd" :port "22"})
+  {:netstat '({:process-name "sshd" :port "22"}
+              {:process-name "sshd" :port "11" :exp-proto "tcp7" :running? false})
    :package '({:name "firefox" :installed? false})
    :file [{:path "/root" :group "root"}
           {:path "/etc" :exist? true :user "root"}
@@ -61,7 +62,8 @@
                            :_absent {:path "/absent"}
                            :_root_.ssh {:path "/root/.ssh"}
                            :_root_.profile {:path "/root/.profile"}}
-               :netstat-test {:sshd__:22 {:port "22" :running? true}}
+               :netstat-test {:sshd:22 {:port "22" :running? true}
+                              :sshd:11 {:port "11" :exp-proto "tcp7" :running? false}}
                :package-test {:firefox {:installed? false}}
                :file-test {:_root {:exist? true :group "root"}
                            :_etc {:exist? true :user "root"}

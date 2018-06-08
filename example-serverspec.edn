@@ -1,7 +1,6 @@
 {:netstat [{:process-name "sshd" :port "11" :running? false}
-           {:process-name "sshd" :port "22"}
            {:process-name "sshd" :port "22" :exp-proto "tcp6"}
-           {:process-name "sshd" :port "22" :ip "::"}]
+           {:process-name "dhclient" :port "68" :ip "0.0.0.0"}]
  :file [{:path "/root/.bashrc" :user "root"}
         {:path "/etc"}
         {:path "/absent" :exist? false}
