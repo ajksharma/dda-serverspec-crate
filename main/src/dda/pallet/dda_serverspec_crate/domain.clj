@@ -16,6 +16,7 @@
 
 (ns dda.pallet.dda-serverspec-crate.domain
   (:require
+   [clojure.string :as st]
    [schema.core :as s]
    [dda.config.commons.map-utils :as map-utils]
    [dda.pallet.dda-serverspec-crate.infra :as infra]))
@@ -86,7 +87,11 @@
                                   :port port}
                                  (when (contains? % :ip) {:ip ip})
                                  (when (contains? % :exp-proto) {:exp-proto exp-proto}))]
-             {(keyword (str process-name ":" port)) test-map})
+             {(keyword
+                (str process-name
+                     (if (contains? % :ip) (str "_" (st/replace ip #":" "_") ""))
+                     "_" port))
+              test-map})
           netstat-domain-config)))
 
 (defn- domain-2-packagetests [package-domain-config]

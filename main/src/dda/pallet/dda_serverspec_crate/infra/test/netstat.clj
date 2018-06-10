@@ -16,6 +16,7 @@
 
 (ns dda.pallet.dda-serverspec-crate.infra.test.netstat
   (:require
+    [clojure.string :as st]
     [clojure.tools.logging :as logging]
     [schema.core :as s]
     [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
@@ -27,14 +28,21 @@
                                    :running? s/Bool}})
 
 (s/defn
-  service-key :- s/Keyword
-  [e :- netstat-fact/NetstatResult
-   fact-prefix :- s/Str]
+  strict-service-key :- s/Keyword
+  [e :- netstat-fact/NetstatResult]
   (keyword
     (str
-      ((keyword (str fact-prefix "process-name")) e) "_"
-      ((keyword (str fact-prefix "ip")) e) "_"
-      ((keyword (str fact-prefix "port")) e))))
+      (:fact-process-name e) "_"
+      (st/replace (:fact-ip e) #":" "_") "_"
+      (:fact-port e))))
+
+(s/defn
+  loose-service-key :- s/Keyword
+  [e :- netstat-fact/NetstatResult]
+  (keyword
+    (str
+      (:fact-process-name e) "_"
+      (:fact-port e))))
 
 (s/defn fact-check :- server-test/TestResult
   [result :- server-test/TestResult
@@ -44,27 +52,27 @@
     result
     (let [elem (first spec)
           {:keys [port ip exp-proto running?]} (val elem)
-          present-elem  (get-in considered-map [(key elem)])
-          {:keys [fact-port fact-ip fact-proto]} present-elem
+          fact-elem  (get-in considered-map [(key elem)])
+          {:keys [fact-port fact-ip fact-proto]} fact-elem
           present-running (and
-                               (some? present-elem)
+                               (some? fact-elem)
                                running?)
           test-ip (contains? (val elem) :ip)
           test-exp-proto (contains? (val elem) :exp-proto)
-          detail-check   (when (some? present-elem)
+          detail-check   (when (some? fact-elem)
                           (and
                             (= port fact-port)
                             (if test-ip (= ip fact-ip) true)
                             (if test-exp-proto (= exp-proto fact-proto) true)))
           passed?   (or
                       (and (= running? false) (if (not detail-check) true false))
-                      (and (= running? (some? present-elem)) detail-check))
+                      (and (= running? (some? fact-elem)) detail-check))
           expected-settings (str ", expected:: running?: " running? ", port: " port
                                  (if test-ip (str ", ip: " ip) "")
                                  (if test-exp-proto (str ", protocol: " exp-proto) ""))
-          actual-settings (str " - found facts:: running?: " (some? present-elem)
+          actual-settings (str " - found facts:: running?: " (some? fact-elem)
                                ", port: " fact-port ", ip: " fact-ip ", protocol " fact-proto)]
-      (recur
+        (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test netstat: " (name (key elem))
                               expected-settings
@@ -77,7 +85,10 @@
 
 (s/defn result-to-map
   [input :- (seq netstat-fact/NetstatResult)]
-  (apply merge (map (fn [e] {(keyword (str (:fact-process-name e) ":" (:fact-port e))) e}) input)))
+  (apply merge
+          (into
+            (map (fn [e] {(loose-service-key e) e}) input)
+            (map (fn [e] {(strict-service-key e) e}) input))))
 
 (s/defn test-netstat-internal :- server-test/TestResultHuman
   [test-config :- NetstatTestConfig

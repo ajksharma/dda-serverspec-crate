@@ -21,7 +21,8 @@
 
 ; -----------------------  test data  ------------------------
 (def domain-config-1
-  {:netstat '({:process-name "sshd" :port "22"}
+  {:netstat '({:process-name "sshd" :port "22" :ip "0.0.0.0"}
+              {:process-name "sshd" :port "22" :ip ":::"}
               {:process-name "sshd" :port "11" :exp-proto "tcp7" :running? false})
    :package '({:name "firefox" :installed? false})
    :file [{:path "/root" :group "root"}
@@ -53,18 +54,19 @@
   (testing
     "test creation of infra configuration"
     (is (=  {:dda-servertest
-              {:netcat-fact {:www.google.com_80_8 {:host "www.google.com" :port 80 :timeout 8}
-                             :www.google.c_80_8 {:host "www.google.c" :port 80 :timeout 8}}
+              {:package-fact nil
+               :package-test {:firefox {:installed? false}}
                :netstat-fact nil
-               :package-fact nil
+               :netstat-test {:sshd_0.0.0.0_22 {:port "22" :running? true :ip "0.0.0.0"}
+                              :sshd_____22 {:port "22" :ip ":::" :running? true}
+                              :sshd_11 {:port "11" :exp-proto "tcp7" :running? false}}
+               :netcat-fact {:www.google.com_80_8 {:host "www.google.com" :port 80 :timeout 8}
+                             :www.google.c_80_8 {:host "www.google.c" :port 80 :timeout 8}}
                :file-fact {:_root {:path "/root"}
                            :_etc {:path "/etc"}
                            :_absent {:path "/absent"}
                            :_root_.ssh {:path "/root/.ssh"}
                            :_root_.profile {:path "/root/.profile"}}
-               :netstat-test {:sshd:22 {:port "22" :running? true}
-                              :sshd:11 {:port "11" :exp-proto "tcp7" :running? false}}
-               :package-test {:firefox {:installed? false}}
                :file-test {:_root {:exist? true :group "root"}
                            :_etc {:exist? true :user "root"}
                            :_absent {:exist? false}
