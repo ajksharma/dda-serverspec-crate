@@ -33,28 +33,28 @@
                     :sshd:22 {:port "22" :exp-proto "tcp" :running? true}})
 
 (def input
-  '({:foreign-address ":::*",
-     :local-ip "::",
-     :local-port "80",
-     :recv-q "0",
-     :inode "44161",
-     :state "LISTEN",
-     :process-name "apache2",
-     :proto "tcp6",
-     :pid "4135",
-     :send-q "0",
-     :user "0"}
-    {:foreign-address "0.0.0.0:*",
-     :local-ip "0.0.0.0",
-     :local-port "22",
-     :recv-q "0",
-     :inode "10289",
-     :state "LISTEN",
-     :process-name "sshd",
-     :proto "tcp",
-     :pid "974",
-     :send-q "0",
-     :user "0"}))
+  '({:fact-foreign-adress ":::*",
+     :fact-ip "::",
+     :fact-port "80",
+     :fact-recv-q "0",
+     :fact-inode "44161",
+     :fact-state "LISTEN",
+     :fact-process-name "apache2",
+     :fact-proto "tcp6",
+     :fact-pid "4135",
+     :fact-send-q "0",
+     :fact-user "0"}
+    {:fact-foreign-adress "0.0.0.0:*",
+     :fact-ip "0.0.0.0",
+     :fact-port "22",
+     :fact-recv-q "0",
+     :fact-inode "10289",
+     :fact-state "LISTEN",
+     :fact-process-name "sshd",
+     :fact-proto "tcp",
+     :fact-pid "974",
+     :fact-send-q "0",
+     :fact-user "0"}))
 
 (deftest test-netstat-internal
  (testing
@@ -76,13 +76,13 @@
    (is (= 1
           (:no-failed (sut/test-netstat-internal
                        {:sshd {:port 22}}
-                       ({:foreign-adress "0.0.0.0:*", :local-adress "0.0.0.0:22",
-                         :recv-q "0", :inode "15261", :state "LISTEN",
-                         :proto "tcp", :pid "1200", :process-name "sshd",
-                         :send-q "0", :user "0"}
-                        {:foreign-adress ":::*", :local-adress ":::22", :recv-q "0",
-                         :inode "15263", :state "LISTEN", :proto "tcp6", :pid "1200",
-                         :process-name "sshd", :send-q "0", :user "0"}
-                        {:proto "udp", :recv-q "0", :send-q "0",
-                         :local-adress "0.0.0.0:68", :foreign-adress "0.0.0.0:*",
-                         :state "0", :user "13122", :inode "919", :pid "dhclient"})))))))
+                       ({:fact-foreign-adress "0.0.0.0:*", :local-adress "0.0.0.0:22",
+                         :fact-recv-q "0", :fact-inode "15261", :fact-state "LISTEN",
+                         :fact-proto "tcp", :fact-pid "1200", :fact-process-name "sshd",
+                         :fact-send-q "0", :fact-user "0"}
+                        {:fact-foreign-adress ":::*", :local-adress ":::22", :fact-recv-q "0",
+                         :fact-inode "15263", :fact-state "LISTEN", :fact-proto "tcp6", :fact-pid "1200",
+                         :fact-process-name "sshd", :fact-send-q "0", :fact-user "0"}
+                        {:fact-proto "udp", :fact-recv-q "0", :fact-send-q "0",
+                         :local-adress "0.0.0.0:68", :fact-foreign-adress "0.0.0.0:*",
+                         :fact-state "0", :fact-user "13122", :fact-inode "919", :fact-pid "dhclient"})))))))

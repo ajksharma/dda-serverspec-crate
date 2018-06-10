@@ -26,6 +26,16 @@
                                    (s/optional-key :exp-proto) s/Str
                                    :running? s/Bool}})
 
+(s/defn
+  service-key :- s/Keyword
+  [e :- netstat-fact/NetstatResult
+   fact-prefix :- s/Str]
+  (keyword
+    (str
+      ((keyword (str fact-prefix "process-name")) e) "_"
+      ((keyword (str fact-prefix "ip")) e) "_"
+      ((keyword (str fact-prefix "port")) e))))
+
 (s/defn fact-check :- server-test/TestResult
   [result :- server-test/TestResult
    spec :- NetstatTestConfig
@@ -35,7 +45,7 @@
     (let [elem (first spec)
           {:keys [port ip exp-proto running?]} (val elem)
           present-elem  (get-in considered-map [(key elem)])
-          {:keys [local-port local-ip proto]} present-elem
+          {:keys [fact-port fact-ip fact-proto]} present-elem
           present-running (and
                                (some? present-elem)
                                running?)
@@ -43,9 +53,9 @@
           test-exp-proto (contains? (val elem) :exp-proto)
           detail-check   (when (some? present-elem)
                           (and
-                            (= port local-port)
-                            (if test-ip (= ip local-ip) true)
-                            (if test-exp-proto (= exp-proto proto) true)))
+                            (= port fact-port)
+                            (if test-ip (= ip fact-ip) true)
+                            (if test-exp-proto (= exp-proto fact-proto) true)))
           passed?   (or
                       (and (= running? false) (if (not detail-check) true false))
                       (and (= running? (some? present-elem)) detail-check))
@@ -53,7 +63,7 @@
                                  (if test-ip (str ", ip: " ip) "")
                                  (if test-exp-proto (str ", protocol: " exp-proto) ""))
           actual-settings (str " - found facts:: running?: " (some? present-elem)
-                               ", port: " local-port ", ip: " local-ip ", protocol " proto)]
+                               ", port: " fact-port ", ip: " fact-ip ", protocol " fact-proto)]
       (recur
           {:test-passed (and (:test-passed result) passed?)
            :test-message (str (:test-message result) "test netstat: " (name (key elem))
@@ -67,7 +77,7 @@
 
 (s/defn result-to-map
   [input :- (seq netstat-fact/NetstatResult)]
-  (apply merge (map (fn [e] {(keyword (str (:process-name e) ":" (:local-port e))) e}) input)))
+  (apply merge (map (fn [e] {(keyword (str (:fact-process-name e) ":" (:fact-port e))) e}) input)))
 
 (s/defn test-netstat-internal :- server-test/TestResultHuman
   [test-config :- NetstatTestConfig

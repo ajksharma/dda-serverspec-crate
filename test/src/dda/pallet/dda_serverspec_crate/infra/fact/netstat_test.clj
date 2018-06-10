@@ -71,14 +71,14 @@
   (testing
     "test parsing netstat-output"
       (is (= "sshd"
-             (:process-name
+             (:fact-process-name
                (first (sut/parse-netstat netstat-resource1)))))
       (is (= "sshd"
-             (:process-name
+             (:fact-process-name
                (first (sut/parse-netstat netstat-resource2)))))
       (is (= "sshd"
-             (:process-name
+             (:fact-process-name
                (first (sut/parse-netstat netstat-resource3)))))
       (is (= "dhclient"
-             (:process-name
+             (:fact-process-name
                (nth (sut/parse-netstat netstat-resource4) 2))))))

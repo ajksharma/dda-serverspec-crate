@@ -22,17 +22,17 @@
 
 (def fact-id-netstat ::netstat)
 
-(def NetstatResult (seq {:proto s/Str
-                         :recv-q s/Str
-                         :send-q s/Str
-                         :local-ip s/Str
-                         :local-port s/Str
-                         :foreign-adress s/Str
-                         :state s/Str
-                         :user s/Str
-                         :inode s/Str
-                         :pid s/Str
-                         :process-name s/Str}))
+(def NetstatResult (seq {:fact-proto s/Str
+                         :fact-recv-q s/Str
+                         :fact-send-q s/Str
+                         :fact-ip s/Str
+                         :fact-port s/Str
+                         :fact-foreign-adress s/Str
+                         :fact-state s/Str
+                         :fact-user s/Str
+                         :fact-inode s/Str
+                         :fact-pid s/Str
+                         :fact-process-name s/Str}))
 
 (s/defn split-netstat-line :- '(s/Str)
   [line :- s/Str]
@@ -49,7 +49,7 @@
 (defn parse-netstat
   [netstat-resource]
   (map #(zipmap
-          [:proto :recv-q :send-q :local-ip :local-port :foreign-adress :state :user :inode :pid :process-name]
+          [:fact-proto :fact-recv-q :fact-send-q :fact-ip :fact-port :fact-foreign-adress :fact-state :fact-user :fact-inode :fact-pid :fact-process-name]
           (split-netstat-line (cs/trim %)))
      (drop-while #(not (re-matches #"\s*(tcp|udp).*" %))
        (cs/split netstat-resource #"\n"))))
