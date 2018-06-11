@@ -17,7 +17,7 @@
                    :resource-paths ["integration/resources"
                                     "test/resources"]
                    :dependencies
-                   [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2" :exclusions [com.palletops/pallet-common]]
+                   [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2" :exclusions [com.palletops/pallet-common com.palletops/pallet]]
                     [dda/pallet "0.8.13-SNAPSHOT" :classifier "tests"]
                     [org.clojure/tools.cli "0.3.5"]
                     [ch.qos.logback/logback-classic "1.3.0-alpha4"]
