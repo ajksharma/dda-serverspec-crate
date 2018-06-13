@@ -49,7 +49,7 @@ Facts are collected via ssh & bash. Test utils, needed, can be installed by usin
  :file [{:path "/root/.bashrc"}                                               ;check if file exists
         {:path "/etc"}                                                        ;check if folder exists
         {:path "/absent" :exist? false}                                       ;check if file doesn't exists
-        {:path "/root/.profile" :mod "644" :user "root" :group "root"}        ;check if file exists and has the given config       
+        {:path "/root/.profile" :mod "644" :user "root" :group "root"}        ;check if file exists and has the given config
         {:path "/etc/resolv.conf" :link-to "../run/resolvconf/resolv.conf"}]  ;check if link exists and has the given target
  :netcat [{:host "www.google.com" :port 80}          ;check if host is reachable
           {:host "www.google.c" :port 80 :reachable? false}]
@@ -204,9 +204,9 @@ The schema is:
   {Keyword {:installed? Bool}},
   (optional-key :netstat-test)
   {Keyword {:running? Bool,
-    :port Str,
-    (optional-key :ip) Str,
-    (optional-key :exp-proto) Str}},
+            :port Str,
+            (optional-key :ip) Str,
+            (optional-key :exp-proto) Str}},
   (optional-key :file-test)
   {s/Keyword {:exist? Bool
               (optional-key :mod) Str

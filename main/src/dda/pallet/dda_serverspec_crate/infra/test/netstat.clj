@@ -22,10 +22,10 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def NetstatTestConfig {s/Keyword {:port s/Str
+(def NetstatTestConfig {s/Keyword {:running? s/Bool
+                                   :port s/Str
                                    (s/optional-key :ip) s/Str
-                                   (s/optional-key :exp-proto) s/Str
-                                   :running? s/Bool}})
+                                   (s/optional-key :exp-proto) s/Str}})
 
 (s/defn
   strict-service-key :- s/Keyword
