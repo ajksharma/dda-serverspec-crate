@@ -29,7 +29,7 @@
                                                       :exclusions [commons-logging]]]}}
              :test {:test-paths ["test/src"]
                     :resource-paths ["test/resources"]
-                    :dependencies [[com.palletops/pallet "0.8.12" :classifier "tests"]]}
+                    :dependencies [[dda/pallet "0.8.13-SNAPSHOT" :classifier "tests"]]}
              :uberjar {:source-paths ["uberjar/src"]
                        :resource-paths ["uberjar/resources"]
                        :aot :all
