@@ -40,7 +40,7 @@ Facts are collected via ssh & bash. Test utils, needed, can be installed by usin
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
 ## Usage
-1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.1.1/dda-serverspec-crate-1.1.1-standalone.jar`)
+1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.1.2/dda-serverspec-crate-1.1.2-standalone.jar`)
 1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
 
 ```clojure
@@ -226,9 +226,9 @@ These results are returned in a map that follows the schema depicted above.
 
 ## Compatibility
 dda-pallet is compatible with the following versions
- * pallet 0.8
- * clojure 1.7
- * (x)ubunutu 16.0
+ * pallet 0.9
+ * clojure 1.9
+ * (x)ubunutu 16.04.x || 18.04
 
 ## License
 Copyright © 2015, 2016, 2017, 2018 meissa GmbH
