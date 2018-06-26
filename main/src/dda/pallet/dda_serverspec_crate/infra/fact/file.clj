@@ -17,8 +17,9 @@
 
 (ns dda.pallet.dda-serverspec-crate.infra.fact.file
   (:require
+    [clojure.string :as st]
     [schema.core :as s]
-    [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
+    [dda.pallet.dda-serverspec-crate.infra.core.fact :as fact]))
 
 (def fact-id-file ::file)
 
@@ -46,26 +47,29 @@
 (def FileFactResults {s/Keyword FileFactResult})
 
 (s/defn path-to-keyword :- s/Keyword
-  [path :- s/Str] (keyword (clojure.string/replace path #"/" "_")))
+  [path :- s/Str] (keyword (st/replace path #"/" "_")))
 
 (s/defn clean-up-negative-find :- s/Str
   "extracts path from error message"
   [negative-find :- s/Str]
-  (let [split-result (clojure.string/split negative-find #" ")
+  (let [split-result (st/split negative-find #" ")
         unclean-path (nth split-result 1)]
     (subs unclean-path 1 (- (count unclean-path) 2))))
 
 (s/defn parse-find-line :- FileFactResult
   [script-result-line :- s/Str]
-  (let [match (not= (.indexOf script-result-line "find:") -1)
-        split-string (clojure.string/split script-result-line #"'")]
-    (if match
-      {:path (clean-up-negative-find (nth split-string 0))
+  (let [not-found? (not= (.indexOf script-result-line "find:") -1)
+        split-string (st/split script-result-line #"'")
+        path (if not-found?
+               (clean-up-negative-find script-result-line)
+               (nth split-string 0))]
+    (if not-found?
+      {:path path
        :fact-exist? false}
       (let [result-map (zipmap [:path :fact-size-in-bytes :fact-user :fact-group :fact-mod
                                 :fact-type :fact-link-to :fact-created :fact-modified :fact-accessed]
                                split-string)
-            cleaned-path (clean-up-sudo-string (:path result-map))]
+            cleaned-path (fact/clean-up-sudo-string (:path result-map))]
         (merge
          (assoc result-map :path cleaned-path)
          {:fact-exist? true})))))
@@ -78,7 +82,7 @@
 (defn parse-find
   [script-result]
   (apply merge
-    (map create-line-parse-result (clojure.string/split script-result #"\n"))))
+    (map create-line-parse-result (st/split script-result #"\n"))))
 
 (s/defn build-find-line
   "Builds the string for executing the find commands."
@@ -88,10 +92,10 @@
 (s/defn collect-file-fact
   "Collects the file facts."
   [fact-configs :- FileFactConfig]
-  (collect-fact
+  (fact/collect-fact
     fact-id-file
     (str
-      (clojure.string/join
+      (st/join
        "; " (map #(build-find-line %) fact-configs))
       "; exit 0")
     :transform-fn parse-find))
