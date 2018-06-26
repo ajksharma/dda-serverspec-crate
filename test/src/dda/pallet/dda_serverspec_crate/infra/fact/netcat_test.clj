@@ -17,7 +17,6 @@
 (ns dda.pallet.dda-serverspec-crate.infra.fact.netcat-test
   (:require
    [clojure.test :refer :all]
-   [pallet.build-actions :as build-actions]
    [pallet.actions :as actions]
    [dda.pallet.dda-serverspec-crate.infra.fact.netcat :as sut]))
 

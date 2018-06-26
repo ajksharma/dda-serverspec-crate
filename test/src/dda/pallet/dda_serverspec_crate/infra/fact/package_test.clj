@@ -18,7 +18,6 @@
 (ns dda.pallet.dda-serverspec-crate.infra.fact.package-test
   (:require
     [clojure.test :refer :all]
-    [pallet.build-actions :as build-actions]
     [pallet.actions :as actions]
     [dda.pallet.dda-serverspec-crate.infra.fact.package :as sut]))
 
