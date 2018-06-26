@@ -16,10 +16,8 @@
                    :resource-paths ["integration/resources"
                                     "test/resources"]
                    :dependencies
-                   [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2"
-                     :exclusions [com.palletops/pallet]]
-                    [dda/pallet "0.9.0" :classifier "tests"]
-                    [org.clojure/tools.cli "0.3.5"]
+                   [[dda/pallet "0.9.0" :classifier "tests"]
+                    [org.clojure/tools.cli "0.3.7"]
                     [ch.qos.logback/logback-classic "1.3.0-alpha4"]
                     [org.slf4j/jcl-over-slf4j "1.8.0-beta2"]]
                    :plugins [[lein-sub "0.3.0"]
@@ -34,7 +32,7 @@
                        :resource-paths ["uberjar/resources"]
                        :aot :all
                        :main dda.pallet.dda-serverspec-crate.main
-                       :dependencies [[org.clojure/tools.cli "0.3.5"]
+                       :dependencies [[org.clojure/tools.cli "0.3.7"]
                                       [ch.qos.logback/logback-classic "1.3.0-alpha4"]
                                       [org.slf4j/jcl-over-slf4j "1.8.0-beta2"]]}}
   :release-tasks [["vcs" "assert-committed"]
