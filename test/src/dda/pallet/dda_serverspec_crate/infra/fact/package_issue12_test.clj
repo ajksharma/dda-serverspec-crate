@@ -26,15 +26,15 @@
 |/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
 ||/ Name                                  Version                                  Architecture Description
 +++-=====================================-========================================-============-===============================================================================
-ii  accountsservice                       0.6.40-2ubuntu11.3                       amd64        query and manipulate user account information
-ii  acl                                   2.2.52-3                                 amd64        Access control list utilities
-ii  acpid                                 1:2.0.26-1ubuntu2                        amd64        Advanced Configuration and Power Interface event daemon
-ii  adduser                               3.113+nmu3ubuntu4                        all          add and remove users and groups
+ii  openjdk-8-jdk: 8u171-b11-0u amd64        OpenJDK Development Kit (JDK)
+ii  openjdk-8-jdk- 8u171-b11-0u amd64        OpenJDK Development Kit (JDK) (he
+ii  openjdk-8-jre: 8u171-b11-0u amd64        OpenJDK Java runtime, using Hotsp
+ii  openjdk-8-jre- 8u171-b11-0u amd64        OpenJDK Java runtime, using Hotsp
 ")
 
 (deftest test-parse
   (testing
     "test parsing packages-output"
-      (is (= "accountsservice"
+      (is (= "openjdk-8-jdk"
              (:package
                (first (sut/parse-package package-resource)))))))
