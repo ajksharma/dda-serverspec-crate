@@ -15,7 +15,7 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.dda-serverspec-crate.infra.fact.package-test
+(ns dda.pallet.dda-serverspec-crate.infra.fact.package-issue12-test
   (:require
     [clojure.test :refer :all]
     [dda.pallet.dda-serverspec-crate.infra.fact.package :as sut]))

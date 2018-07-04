@@ -16,6 +16,7 @@
 
 (ns dda.pallet.dda-serverspec-crate.infra.fact.package
   (:require
+   [clojure.string :as st]
    [schema.core :as s]
    [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
 
@@ -27,13 +28,32 @@
                          :arch s/Str
                          :desc s/Str}))
 
+(s/defn cut-off-header :- [s/Str]
+  [script-result]
+  (drop-while #(re-matches #"\s*(Desired|\||\+).*" %)
+    (st/split-lines script-result)))
+
+(s/defn zipmap-packages :- PackageResult
+  [result-lines :- s/Str]
+  (map #(zipmap
+          [:state :package :version :arch :desc]
+          (st/split % #"\s+|/"))
+       result-lines))
+
+(s/defn remove-arch-from-name :- PackageResult
+  [result-maps :- PackageResult]
+  (map
+    (fn [e] (update-in
+              e [:package]
+              (fn [f] (first (st/split f #":")))))
+    result-maps))
+
 (s/defn parse-package :- PackageResult
   [script-result]
-  (map #(zipmap [:state :package :version :arch :desc]
-              (clojure.string/split % #"\s+|/"))
-       (drop-while #(re-matches #"\s*(Desired|\||\+).*" %)
-                   (clojure.string/split script-result #"\n"))))
-
+  (-> script-result
+      cut-off-header
+      zipmap-packages
+      remove-arch-from-name))
 
 (defn collect-package-fact
   "Defines the netstat resource.
