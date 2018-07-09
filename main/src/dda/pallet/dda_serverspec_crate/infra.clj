@@ -27,6 +27,7 @@
    [dda.pallet.dda-serverspec-crate.infra.fact.netcat :as netcat-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.certificate-file :as certificate-file-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.http :as http-fact]
+   [dda.pallet.dda-serverspec-crate.infra.fact.command :as command-fact]
    [dda.pallet.dda-serverspec-crate.infra.core.test :as core-test]
    [dda.pallet.dda-serverspec-crate.infra.test.package :as package-test]
    [dda.pallet.dda-serverspec-crate.infra.test.netstat :as netstat-test]
@@ -48,12 +49,15 @@
    netcat-fact/NetcatFactConfig
    (s/optional-key :certificate-file-fact) certificate-file-fact/CertificateFileFactConfig
    (s/optional-key :http-fact) http-fact/HttpFactConfig
+   (s/optional-key :command-fact) s/Any       ;TODO
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
    (s/optional-key :file-test) file-test/FileTestConfig
    (s/optional-key :netcat-test) netcat-test/NetcatTestConfig
    (s/optional-key :certificate-file-test) certificate-file-test/CertificateFileTestConfig
-   (s/optional-key :http-test) http-test/HttpTestConfig})
+   (s/optional-key :http-test) http-test/HttpTestConfig
+   (s/optional-key :command-test) s/Any       ;TODO
+   })
 
 ; -----------------------  functions and methods  ------------------------
 (s/defn ^:always-validate path-to-keyword :- s/Keyword
@@ -71,6 +75,10 @@
 (s/defn ^:always-validate url-to-keyword :- s/Keyword
   [url :- s/Str]
   (http-fact/url-to-keyword url))
+
+(s/defn ^:always-validate command-to-keyword :- s/Keyword
+  [command :- s/Str]
+  (command-fact/command-to-keyword command))
 
 (s/defmethod core-infra/dda-settings facility
   [core-infra config]
