@@ -34,7 +34,8 @@
    [dda.pallet.dda-serverspec-crate.infra.test.file :as file-test]
    [dda.pallet.dda-serverspec-crate.infra.test.netcat :as netcat-test]
    [dda.pallet.dda-serverspec-crate.infra.test.certificate-file :as certificate-file-test]
-   [dda.pallet.dda-serverspec-crate.infra.test.http :as http-test]))
+   [dda.pallet.dda-serverspec-crate.infra.test.http :as http-test]
+   [dda.pallet.dda-serverspec-crate.infra.test.command :as command-test]))
 
 ; -----------------------  fields and schemas  ----------------------
 (def facility :dda-servertest)
@@ -95,7 +96,9 @@
     (when (contains? config :certificate-file-fact)
       (certificate-file-fact/collect-certificate-file-fact certificate-file-fact))
     (when (contains? config :http-fact)
-      (http-fact/collect-http-fact http-fact))))
+      (http-fact/collect-http-fact http-fact))
+    (when (contains? config :command-fact)
+      (command-fact/collect-command-fact command-fact))))
 
 (s/defmethod core-infra/dda-install facility
   [dda-crate config]
@@ -116,7 +119,9 @@
   (when (contains? config :certificate-file-test)
     (certificate-file-test/test-certificate-file (:certificate-file-test config)))
   (when (contains? config :http-test)
-    (http-test/test-http (:http-test config))))
+    (http-test/test-http (:http-test config)))
+  (when (contains? config :command)
+    (command-test/test-command (:command config))))
 
 (def dda-serverspec-crate
   (core-infra/make-dda-crate-infra

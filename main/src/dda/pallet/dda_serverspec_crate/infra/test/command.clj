@@ -47,7 +47,7 @@
 
 (s/defn test-command-internal :- server-test/TestResultHuman
   [test-config :- CommandTestConfig
-   input :- {s/Keyword command-fact/NetcatFactResults}]
+   input :- {s/Keyword command-fact/CommandFactResults}]
   (let [fact-result (fact-check server-test/fact-check-seed test-config input)]
     (server-test/fact-result-to-test-result input fact-result)))
 
