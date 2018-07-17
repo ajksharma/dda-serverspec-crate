@@ -30,7 +30,7 @@
 
 (s/defn cut-off-header :- [s/Str]
   [script-result]
-  (drop-while #(re-matches #"\s*(Desired|\||\+).*" %)
+  (drop-while #(re-matches #"\s*(\[sudo\]|Desired|\||\+).*" %)
     (st/split-lines script-result)))
 
 (s/defn zipmap-packages :- PackageResult
@@ -43,9 +43,10 @@
 (s/defn remove-arch-from-name :- PackageResult
   [result-maps :- PackageResult]
   (map
-    (fn [e] (update-in
-              e [:package]
-              (fn [f] (first (st/split f #":")))))
+    (fn [e] (do
+              (update-in
+                e [:package]
+                (fn [f] (first (st/split f #":"))))))
     result-maps))
 
 (s/defn parse-package :- PackageResult
@@ -59,4 +60,4 @@
   "Defines the netstat resource.
    This is automatically done serverstate crate is used."
   []
-  (collect-fact fact-id-package '("dpkg" "-l") :transform-fn parse-package))
+  (collect-fact fact-id-package '("LC_ALL=C" "dpkg" "-l") :transform-fn parse-package))
