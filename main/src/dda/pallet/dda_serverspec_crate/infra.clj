@@ -119,8 +119,8 @@
     (certificate-file-test/test-certificate-file (:certificate-file-test config)))
   (when (contains? config :http-test)
     (http-test/test-http (:http-test config)))
-  (when (contains? config :command)
-    (command-test/test-command (:command config))))
+  (when (contains? config :command-test)
+    (command-test/test-command (:command-test config))))
 
 (def dda-serverspec-crate
   (core-infra/make-dda-crate-infra
