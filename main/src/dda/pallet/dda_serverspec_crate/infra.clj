@@ -39,7 +39,6 @@
 
 ; -----------------------  fields and schemas  ----------------------
 (def facility :dda-servertest)
-(def version  [0 1 0])
 
 (def ServerTestConfig
   {(s/optional-key :package-fact) s/Any       ; parsed result of "netstat -tulpen". Any is ignored.
@@ -50,7 +49,7 @@
    netcat-fact/NetcatFactConfig
    (s/optional-key :certificate-file-fact) certificate-file-fact/CertificateFileFactConfig
    (s/optional-key :http-fact) http-fact/HttpFactConfig
-   (s/optional-key :command-fact) s/Any       ;TODO
+   (s/optional-key :command-fact) command-fact/CommandFactConfig
    (s/optional-key :package-test) package-test/PackageTestConfig
    (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
    (s/optional-key :file-test) file-test/FileTestConfig
