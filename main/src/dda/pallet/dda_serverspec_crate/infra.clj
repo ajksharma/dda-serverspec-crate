@@ -60,30 +60,36 @@
    })
 
 ; -----------------------  functions and methods  ------------------------
-(s/defn ^:always-validate path-to-keyword :- s/Keyword
-  [path :- s/Str]
-  (file-fact/path-to-keyword path))
+(s/defn ^:always-validate
+ path-to-keyword :- s/Keyword
+ [path :- s/Str]
+ (file-fact/path-to-keyword path))
 
-(s/defn ^:always-validate config-to-string :- s/Str
-  [host :- s/Str port :- s/Num timeout :- s/Num]
-  (netcat-fact/config-to-string host port timeout))
+(s/defn ^:always-validate
+ config-to-string :- s/Str
+ [host :- s/Str port :- s/Num timeout :- s/Num]
+ (netcat-fact/config-to-string host port timeout))
 
-(s/defn ^:always-validate certificate-file-to-keyword :- s/Keyword
-  [file :- s/Str]
-  (certificate-file-fact/certificate-file-to-keyword file))
+(s/defn ^:always-validate
+ certificate-file-to-keyword :- s/Keyword
+ [file :- s/Str]
+ (certificate-file-fact/certificate-file-to-keyword file))
 
-(s/defn ^:always-validate url-to-keyword :- s/Keyword
-  [url :- s/Str]
-  (http-fact/url-to-keyword url))
+(s/defn ^:always-validate
+ url-to-keyword :- s/Keyword
+ [url :- s/Str]
+ (http-fact/url-to-keyword url))
 
-(s/defn ^:always-validate command-to-keyword :- s/Keyword
-  [command :- s/Str]
-  (command-fact/command-to-keyword command))
+(s/defn ^:always-validate
+ command-to-keyword :- s/Keyword
+ [command :- s/Str]
+ (command-fact/command-to-keyword command))
 
 (s/defmethod core-infra/dda-settings facility
   [core-infra config]
   "dda-serverspec: setting"
-  (let [{:keys [file-fact netcat-fact certificate-file-fact http-fact]} config]
+  (let [{:keys [file-fact netcat-fact certificate-file-fact
+                http-fact command-fact]} config]
     (when (contains? config :package-fact)
       (package-fact/collect-package-fact))
     (when (contains? config :netstat-fact)
