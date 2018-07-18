@@ -22,7 +22,7 @@
 
 (def CommandTestConfig {s/Keyword {:exit-status s/Num}})
 
-(s/def fact-check :- server-test/TestResult
+(s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
   [result :- server-test/TestResult
    spec :- CommandTestConfig
