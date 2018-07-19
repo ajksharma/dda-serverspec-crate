@@ -16,6 +16,7 @@
 
 (ns dda.pallet.dda-serverspec-crate.infra.fact.command
   (:require
+    [clojure.tools.logging :as logging]
     [schema.core :as s]
     [clojure.string :as string]
     [dda.pallet.dda-serverspec-crate.infra.core.fact :refer :all]))
@@ -36,17 +37,19 @@
   "creates a keyword from a bash command"
   [command :- s/Str] (keyword (string/replace command #"[:/ ]" "-")))
 
-(defn parse-exit-status
+(defn parse-exit-code
   [command-output]
   (let [result-lines (string/split command-output #"\n")
         result-key (first result-lines)
-        status (int (read-string (last result-lines)))]
+        result-out (second result-lines)
+        status (int (read-string (nth result-lines 2)))]
     {(keyword result-key) {:exit-status status}}))
 
 (s/defn parse-command-outputs :- CommandFactResult
   [script-result]
+  ;(logging/info script-result)
   (apply merge
-    (map parse-exit-status (string/split script-result (re-pattern output-separator)))))
+    (map parse-exit-code (string/split script-result (re-pattern output-separator)))))
 
 (s/defn build-command-script
   "Builds the script for executing the commands"
@@ -55,8 +58,8 @@
         config-key (key command-config)
         {:keys [cmd]} config-val]
     (str "echo '" (name config-key) "';"
-         cmd "; echo -n $?;"
-         "echo -n '" output-separator "'")))
+         cmd "; echo $?;"
+         "echo '" output-separator "'")))
 
 (s/defn collect-command-fact
   [fact-config :- CommandFactConfig]
@@ -65,5 +68,5 @@
     (str
       (string/join
         "; " (map #(build-command-script %) fact-config))
-      "; exit 0")
+      "; echo -n ''")
     :transform-fn parse-command-outputs))
