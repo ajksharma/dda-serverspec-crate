@@ -1,0 +1,3 @@
+{:certificate-file
+ [{:file "/etc/ssl/certs/GeoTrust_Global_CA.pem"
+   :expiration-days 1}]}

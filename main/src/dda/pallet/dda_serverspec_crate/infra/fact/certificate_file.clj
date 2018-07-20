@@ -74,6 +74,5 @@
     fact-id-certificate-file
     (str
       (clojure.string/join
-       "; " (map #(build-certificate-script %) fact-config))
-      "; exit 0")
+       "; " (map #(build-certificate-script %) fact-config)))
     :transform-fn parse-certificate-script-responses))

@@ -172,8 +172,8 @@ The schema for the tests is:
    (s/optional-key :netcat) [{:host s/Str
                               :port s/Num
                               (s/optional-key :reachable?) s/Bool}]
-   (s/optional-key :certificate) [{:file s/Str                ; incl path as e.g. /path/file.crt
-                                   :expiration-days s/Num}]   ; min days certificate must be valid
+   (s/optional-key :certificate-file) [{:file s/Str                ; incl path as e.g. /path/file.crt
+                                        :expiration-days s/Num}]   ; min days certificate must be valid
    (s/optional-key :http) [{:url s/Str                        ; url e.g. http://google.com
                             :expiration-days s/Num}]})        ; min days certificate must be valid
 ```
