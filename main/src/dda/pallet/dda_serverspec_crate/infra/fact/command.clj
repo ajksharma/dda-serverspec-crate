@@ -44,8 +44,12 @@
         result-key (first result-lines)
         result-out (second result-lines)
         status (int (read-string (nth result-lines 2)))]
-    {(keyword result-key) {:exit-code status
-                           :stout result-out}}))
+    (if (zero? status)
+      {(keyword result-key) {:exit-code 1
+                             :stout result-out}}
+      {(keyword result-key) {:exit-code 0
+                             :stout result-out}})))
+
 
 (s/defn parse-command-outputs :- CommandFactResult
   [script-result]

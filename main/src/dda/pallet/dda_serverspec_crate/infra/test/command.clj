@@ -33,12 +33,12 @@
           expected-exit-code (:exit-code (val elem))
           fact-elem (get-in fact-map [(key elem)])
           fact-exit-code (:exit-code fact-elem)
-          passed? (= expected-exit-code fact-exit-code)]
+          passed? (if (nil? fact-exit-code) (= expected-exit-code 0) (= expected-exit-code fact-exit-code))]
       (recur
         {:test-passed (and (:test-passed result) passed?)
          :test-message (str (:test-message result) "test command: " (name (key elem))
                             ", expected:: exit-code: " expected-exit-code
-                            " - found facts:: exit-code: " fact-exit-code
+                            " - found facts:: exit-code: " (if (nil? fact-exit-code) 0 fact-exit-code)
                             " - passed?: " passed? "\n")
          :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
          :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}
