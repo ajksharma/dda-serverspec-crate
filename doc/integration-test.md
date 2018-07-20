@@ -43,3 +43,13 @@
 (serverspec :domain "integration/resources/http-cert.edn"
             :targets "integration/resources/remote-key-target.edn")
 ```
+
+# netcat
+```
+(serverspec :domain "integration/resources/netcat.edn"
+            :targets "integration/resources/remote-pwd-target.edn")
+(serverspec :domain "integration/resources/netcat.edn"
+            :targets "integration/resources/localhost-target.edn")
+(serverspec :domain "integration/resources/netcat.edn"
+            :targets "integration/resources/remote-key-target.edn")
+```
