@@ -24,46 +24,65 @@
   {
    :input
    "find--absent
-find: ‘/absent’: Datei oder Verzeichnis nicht gefunden
+find: ‘/absent‘: Datei oder Verzeichnis nicht gefunden
 2
 ----- command output separator -----
-echo-Hallo-Welt
-Hallo Welt
-0
------ command output separator -----"
+"
    :expected
    {:find--absent
     {:exit-code 2,
-     :stout "find: ‘/absent’: Datei oder Verzeichnis nicht gefunden"},
-    :echo-Hallo-Welt
-    {:exit-code 0,
-     :stout "Hallo Welt"}}})
+     :stout
+     "find: ‘/absent‘: Datei oder Verzeichnis nicht gefunden"}}})
 
 (def localhost
-  {
-   :input
+  {:input
    "find--absent
 find: \"/absent\": Datei oder Verzeichnis nicht gefunden
 1
 ----- command output separator -----
-
-echo-Hallo-Welt
+echo--Hallo-Welt-
 Hallo Welt
 0
 ----- command output separator -----
-"})
-:expected
-{:find--absent
- {:exit-code 1,
-  :stout "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"},
- :echo-Hallo-Welt
- {:exit-code 0,
-  :stout "Hallo Welt"}}
+echo--Hallo-Welt---echo--second-line-
+Hallo Welt
+second line
+0
+----- command output separator -----
+"
+   :expected
+   {:find--absent
+    {:exit-code 1,
+     :stout
+     "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"},
+    :echo--Hallo-Welt- {:exit-code 0, :stout "Hallo Welt"},
+    :echo--Hallo-Welt---echo--second-line-
+    {:exit-code 0, :stout "Hallo Welt\nsecond line"}}})
 
 (deftest test-parse-command-outputs
   (testing
-    "test parsing ls output"
     (is (= (:expected remote)
            (sut/parse-command-outputs (:input remote))))
     (is (= (:expected localhost)
            (sut/parse-command-outputs (:input localhost))))))
+
+(deftest test-parse-single-command-output
+  (testing
+    (is (= {:find--absent
+            {:exit-code 1,
+             :stout "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"}}
+           (sut/parse-single-command-output "find--absent\nfind: \"/absent\": Datei oder Verzeichnis nicht gefunden\n1\n")))
+    (is (= {:echo--Hallo-Welt {:exit-code 0, :stout "Hallo Welt"}}
+           (sut/parse-single-command-output "echo--Hallo-Welt\nHallo Welt\n0\n")))
+    (is (= {:echo--Hallo-Welt---echo-second-line
+            {:exit-code 0, :stout "Hallo Welt\nsecond-line"}}
+           (sut/parse-single-command-output "echo--Hallo-Welt---echo-second-line\nHallo Welt\nsecond line\n0\n")))))
+
+(deftest test-command-to-keyword
+  (testing
+    (is (= :find--absent
+           (sut/command-to-keyword "find /absent")))
+    (is (= :echo--Hallo-Welt-
+           (sut/command-to-keyword "echo 'Hallo Welt'")))
+    (is (= :echo--Hallo-Welt---echo--second-line-
+           (sut/command-to-keyword "echo 'Hallo Welt'; echo 'second line'")))))

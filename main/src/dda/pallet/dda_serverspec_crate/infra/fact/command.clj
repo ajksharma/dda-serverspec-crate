@@ -31,27 +31,32 @@
 
 (def CommandFactResults {s/Keyword CommandFactResult})
 
-(def output-separator "----- command output separator -----\n")
+(def output-separator "----- command output separator -----")
 
 ; -----------------------  functions  -------------------------------
 (s/defn command-to-keyword :- s/Keyword
   "creates a keyword from a bash command"
-  [command :- s/Str] (keyword (string/replace command #"[:/ ]" "-")))
+  [command :- s/Str] (keyword (string/replace command #"[:/;\\' ]" "-")))
 
-(defn parse-exit-code
+(defn parse-single-command-output
   [command-output]
-  (let [result-lines (string/split-lines command-output)
+  (let [result-lines (filter #(not (string/blank? %))
+                       (string/split-lines command-output))
         result-key (first result-lines)
         result-out (second result-lines)
-        code (int (read-string (nth result-lines 2)))]
+        code (int (read-string (last result-lines)))]
+      (logging/info "----------")
+      (logging/info result-key)
+      (logging/info (str command-output))
       {(keyword result-key) {:exit-code code
                              :stout result-out}}))
 
 (s/defn parse-command-outputs :- CommandFactResult
   [script-result]
-  ;(logging/info script-result)
   (apply merge
-    (map parse-exit-code (string/split script-result (re-pattern output-separator)))))
+    (map parse-single-command-output
+         (filter #(not (string/blank? %))
+           (string/split script-result (re-pattern output-separator))))))
 
 (s/defn build-command-script
   "Builds the script for executing the commands"
@@ -61,7 +66,7 @@
         {:keys [cmd]} config-val]
     (str "echo '" (name config-key) "'; "
          cmd " 2>&1; echo $?;"
-         "echo -n '" output-separator "'")))
+         "echo '" output-separator "'")))
 
 (s/defn collect-command-fact
   [fact-config :- CommandFactConfig]

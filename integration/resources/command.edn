@@ -1,2 +1,3 @@
 {:command [{:cmd "find /absent" :exit-code 1}
-           {:cmd "echo 'Hallo Welt'" :exit-code 0}]}
+           {:cmd "echo 'Hallo Welt'" :exit-code 0}
+           {:cmd "echo 'Hallo Welt'; echo 'second line'" :exit-code 0}]}
