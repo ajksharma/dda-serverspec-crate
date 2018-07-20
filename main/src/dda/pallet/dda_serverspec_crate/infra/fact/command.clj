@@ -31,7 +31,7 @@
 
 (def CommandFactResults {s/Keyword CommandFactResult})
 
-(def output-separator "----- command output separator -----\n")
+(def output-separator "----- command output separator -----")
 
 ; -----------------------  functions  -------------------------------
 (s/defn command-to-keyword :- s/Keyword
@@ -43,7 +43,7 @@
   (let [result-lines (string/split command-output #"\n")
         result-key (first result-lines)
         result-out (second result-lines)
-        status (int (read-string (nth result-lines 2)))]
+        status (int (read-string (last result-lines)))]
       {(keyword result-key) {:exit-code (if (zero? status) 1 0)
                              :stout result-out}}))
 
@@ -65,10 +65,10 @@
 
 (s/defn collect-command-fact
   [fact-config :- CommandFactConfig]
+  (print fact-config)
   (collect-fact
     fact-id-command
     (str
       (string/join
-        "; " (map #(build-command-script %) fact-config))
-      "; echo -n ''")
+        "; " (map #(build-command-script %) fact-config)))
     :transform-fn parse-command-outputs))
