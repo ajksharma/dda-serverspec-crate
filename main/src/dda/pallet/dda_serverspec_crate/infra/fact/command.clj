@@ -40,7 +40,7 @@
 
 (defn parse-exit-code
   [command-output]
-  (let [result-lines (string/split command-output #"\n")
+  (let [result-lines (string/split-lines command-output)
         result-key (first result-lines)
         result-out (second result-lines)
         status (int (read-string (last result-lines)))]

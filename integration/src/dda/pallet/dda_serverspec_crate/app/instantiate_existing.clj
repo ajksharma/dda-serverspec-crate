@@ -24,7 +24,7 @@
   [& options]
   (let [{:keys [domain targets summarize-session]
          :or {domain "integration/resources/command.edn"
-              targets "integration/resources/remote-pwd-targets.edn"
+              targets "integration/resources/remote-pwd-target.edn"
               summarize-session true}} options]
     (core-app/existing-install app/crate-app
                           {:domain domain
@@ -34,7 +34,7 @@
  [& options]
  (let [{:keys [domain targets summarize-session]
         :or {domain "integration/resources/command.edn"
-             targets "integration/resources/remote-pwd-targets.edn"
+             targets "integration/resources/remote-pwd-target.edn"
              summarize-session true}} options]
   (core-app/existing-configure app/crate-app
                           {:domain domain
@@ -44,7 +44,7 @@
   [& options]
   (let [{:keys [domain targets summarize-session]
          :or {domain "integration/resources/command.edn"
-              targets "integration/resources/remote-pwd-targets.edn"
+              targets "integration/resources/remote-pwd-target.edn"
               summarize-session true}} options]
     (core-app/existing-serverspec app/crate-app
                              {:domain domain
