@@ -20,7 +20,7 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.command :as command-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def CommandTestConfig {s/Keyword {:exit-status s/Num}})
+(def CommandTestConfig {s/Keyword {:exit-code s/Num}})
 
 (s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
@@ -30,15 +30,15 @@
   (if (<= (count spec) 0)
     result
     (let [elem (first spec)
-          expected-exit-status (:exit-status (val elem))
+          expected-exit-code (:exit-code (val elem))
           fact-elem (get-in fact-map [(key elem)])
-          fact-exit-status (:exit-status fact-elem)
-          passed? (= expected-exit-status fact-exit-status)]
+          fact-exit-code (:exit-code fact-elem)
+          passed? (= expected-exit-code fact-exit-code)]
       (recur
         {:test-passed (and (:test-passed result) passed?)
          :test-message (str (:test-message result) "test command: " (name (key elem))
-                            ", expected:: exit-status: " expected-exit-status
-                            " - found facts:: exit-status: " fact-exit-status
+                            ", expected:: exit-code: " expected-exit-code
+                            " - found facts:: exit-code: " fact-exit-code
                             " - passed?: " passed? "\n")
          :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
          :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}

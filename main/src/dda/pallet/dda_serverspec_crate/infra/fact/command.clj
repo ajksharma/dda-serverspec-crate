@@ -26,7 +26,8 @@
 
 (def CommandFactConfig {s/Keyword {:cmd s/Str}})
 
-(def CommandFactResult {:exit-status s/Num}) ;TODO: stdout, stderr
+(def CommandFactResult {:exit-code s/Num
+                        :stdout s/Str}) ;TODO:  stderr
 
 (def CommandFactResults {s/Keyword CommandFactResult})
 
@@ -43,7 +44,8 @@
         result-key (first result-lines)
         result-out (second result-lines)
         status (int (read-string (nth result-lines 2)))]
-    {(keyword result-key) {:exit-status status}}))
+    {(keyword result-key) {:exit-code status
+                           :stout result-out}}))
 
 (s/defn parse-command-outputs :- CommandFactResult
   [script-result]

@@ -31,7 +31,13 @@ echo-Hallo-Welt
 Hallo Welt
 0
 ----- command output separator -----"
-   :expected {}})
+   :expected
+   {:find--absent
+    {:exit-code 1,
+     :stout "find: ‘/absent’: Datei oder Verzeichnis nicht gefunden"},
+    :echo-Hallo-Welt
+    {:exit-code 0,
+     :stout "Hallo Welt"}}})
 
 (deftest test-parse-command-outputs
   (testing

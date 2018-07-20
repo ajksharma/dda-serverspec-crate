@@ -146,7 +146,7 @@
          (map
            #(let [{:keys [cmd exit-code]} %]
               {(infra/command-to-keyword cmd)
-               {:exit-status exit-code}})
+               {:exit-code exit-code}})
            command-domain-config)))
 
 (s/defn ^:always-validate
