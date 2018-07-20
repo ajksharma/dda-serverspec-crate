@@ -79,6 +79,7 @@
             nil))]
     (do
       (logging/debug "result-lines:" result-lines)
+      (spit "http-input.txt" result-lines)
       (logging/debug "result-key:" result-key)
       (logging/debug "result-text:" result-text)
       (logging/debug "expiration-date-text:" expiration-date-text)
@@ -89,6 +90,7 @@
 (s/defn parse-http-script-responses :- HttpFactResult
   "returns a HttpFactResult from the result text of one http check"
   [raw-script-results :- s/Str]
+  ()
   (apply merge
     (map parse-http-response
          (string/split raw-script-results (re-pattern output-separator)))))
@@ -100,8 +102,7 @@
     fact-id-http
     (str
       (string/join
-       "; " (map #(build-http-script %) fact-config))
-      "; exit 0")
+       "; " (map #(build-http-script %) fact-config)))
     :transform-fn parse-http-script-responses))
 
 (s/defn install
