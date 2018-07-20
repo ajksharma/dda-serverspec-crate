@@ -20,12 +20,12 @@
     [pallet.actions :as actions]
     [dda.pallet.dda-serverspec-crate.infra.fact.command :as sut]))
 
-(def with-password
+(def remote
   {
    :input
    "find--absent
 find: ‘/absent’: Datei oder Verzeichnis nicht gefunden
-1
+2
 ----- command output separator -----
 echo-Hallo-Welt
 Hallo Welt
@@ -33,14 +33,37 @@ Hallo Welt
 ----- command output separator -----"
    :expected
    {:find--absent
-    {:exit-code 1,
+    {:exit-code 2,
      :stout "find: ‘/absent’: Datei oder Verzeichnis nicht gefunden"},
     :echo-Hallo-Welt
     {:exit-code 0,
      :stout "Hallo Welt"}}})
 
+(def localhost
+  {
+   :input
+   "find--absent
+find: \"/absent\": Datei oder Verzeichnis nicht gefunden
+1
+----- command output separator -----
+
+echo-Hallo-Welt
+Hallo Welt
+0
+----- command output separator -----
+"})
+:expected
+{:find--absent
+ {:exit-code 1,
+  :stout "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"},
+ :echo-Hallo-Welt
+ {:exit-code 0,
+  :stout "Hallo Welt"}}
+
 (deftest test-parse-command-outputs
   (testing
     "test parsing ls output"
-    (is (= (:expected with-password)
-           (sut/parse-command-outputs (:input with-password))))))
+    (is (= (:expected remote)
+           (sut/parse-command-outputs (:input remote))))
+    (is (= (:expected localhost)
+           (sut/parse-command-outputs (:input localhost))))))
