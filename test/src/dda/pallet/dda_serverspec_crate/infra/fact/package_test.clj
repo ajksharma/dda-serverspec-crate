@@ -21,7 +21,7 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.package :as sut]))
 
 
-(def package-resource "Desired=Unknown/Install/Remove/Purge/Hold
+(def package-resource-wo-password "Desired=Unknown/Install/Remove/Purge/Hold
 | Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
 |/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
 ||/ Name                                  Version                                  Architecture Description
@@ -32,9 +32,24 @@ ii  acpid                                 1:2.0.26-1ubuntu2                     
 ii  adduser                               3.113+nmu3ubuntu4                        all          add and remove users and groups
 ")
 
+(def package-resource-w-password "[sudo] Passwort für initial: Desired=Unknown/Install/Remove/Purge/Hold
+| Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+|/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad)
+||/ Name           Version      Architecture Description
++++-==============-============-============-=================================
+ii  accountsservic 0.6.45-1ubun amd64        query and manipulate user account
+ii  acl            2.2.52-3buil amd64        Access control list utilities
+ii  acpi-support   0.142        amd64        scripts for handling many ACPI ev
+ii  acpid          1:2.0.28-1ub amd64        Advanced Configuration and Power
+ii  adduser        3.116ubuntu1 all          add and remove users and groups
+")
+
 (deftest test-parse
   (testing
     "test parsing packages-output"
       (is (= "accountsservice"
              (:package
-               (first (sut/parse-package package-resource)))))))
+               (first (sut/parse-package package-resource-wo-password)))))
+      (is (= "accountsservic"
+             (:package
+               (first (sut/parse-package package-resource-w-password)))))))
