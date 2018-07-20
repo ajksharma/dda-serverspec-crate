@@ -1,0 +1,2 @@
+{:file [{:path "/etc"}
+        {:path "/absent" :exist? false}]}

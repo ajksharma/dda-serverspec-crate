@@ -70,5 +70,6 @@
     fact-id-command
     (str
       (string/join
-        "; " (map #(build-command-script %) fact-config)))
+        "; " (map #(build-command-script %) fact-config))
+      "; echo -n ''")
     :transform-fn parse-command-outputs))

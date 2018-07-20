@@ -97,5 +97,5 @@
     (str
       (st/join
        "; " (map #(build-find-line %) fact-configs))
-      "; exit 0")
+      "; echo -n ''")
     :transform-fn parse-find))

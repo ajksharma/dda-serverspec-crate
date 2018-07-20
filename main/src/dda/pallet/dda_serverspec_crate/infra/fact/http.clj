@@ -114,7 +114,8 @@
     fact-id-http
     (str
       (string/join
-       "; " (map #(build-http-script %) fact-config)))
+       "; " (map #(build-http-script %) fact-config))
+      "; echo -n ''")
     :transform-fn parse-http-script-responses))
 
 (s/defn install
