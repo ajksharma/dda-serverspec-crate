@@ -46,15 +46,23 @@
         {:keys [url]} config-val]
     (str
       "echo '" (name config-key) "';"
-      "curl --head --insecure --trace-ascii - " url ";"
+      "LC_ALL=C curl --head --insecure --trace-ascii - " url ";"
       "echo -n '" output-separator "'")))
 
-(s/defn parse-date :- java.time.LocalDate
+(s/defn parse-date-16-04 :- java.time.LocalDate
   [date-string :- s/Str]
   (let [date-format "EEE, d MMM yyyy HH:mm:ss z"
         locale (java.util.Locale. "en" "US")];
     (java.time.LocalDate/parse date-string
       (java.time.format.DateTimeFormatter/ofPattern date-format locale))))
+
+(s/defn parse-date-18-04 :- java.time.LocalDate
+  [date-string :- s/Str]
+  (let [date-format "MMM d HH:mm:ss yyyy z"
+        locale (java.util.Locale. "en" "US")];
+    (java.time.LocalDate/parse date-string
+      (java.time.format.DateTimeFormatter/ofPattern date-format locale))))
+
 
 (s/defn parse-http-response :- HttpFactResult
   "returns a HttpFactResult from the result text of one http check"
@@ -70,16 +78,20 @@
           (try
             (.between (java.time.temporal.ChronoUnit/DAYS)
                       (java.time.LocalDate/now)
-                      (parse-date expiration-date-text))
+                      (parse-date-18-04 expiration-date-text))
             (catch java.time.DateTimeException ex
-              (logging/warn "Exception parsing http certificate date (" expiration-date-text ") : " ex)
-              nil))
+              (try
+                (.between (java.time.temporal.ChronoUnit/DAYS)
+                          (java.time.LocalDate/now)
+                          (parse-date-16-04 expiration-date-text))
+                (catch java.time.DateTimeException ex
+                  (logging/warn "Exception parsing http certificate date (" expiration-date-text ") : " ex)
+                  nil))))
           (do
             (logging/warn "No 'expire date' found in the http response below:\n" result-text)
             nil))]
     (do
       (logging/debug "result-lines:" result-lines)
-      (spit "http-input.txt" result-lines)
       (logging/debug "result-key:" result-key)
       (logging/debug "result-text:" result-text)
       (logging/debug "expiration-date-text:" expiration-date-text)
