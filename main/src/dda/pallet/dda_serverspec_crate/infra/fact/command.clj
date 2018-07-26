@@ -38,23 +38,21 @@
   "creates a keyword from a bash command"
   [command :- s/Str] (keyword (string/replace command #"[:/;\\' ]" "-")))
 
-(defn parse-single-command-output
+(defn parse-command-output
   [command-output]
   (let [result-lines (filter #(not (string/blank? %))
                        (string/split-lines command-output))
         result-key (first result-lines)
-        result-out (second result-lines)
+        result-out (next (drop-last result-lines))
         code (int (read-string (last result-lines)))]
-      (logging/info "----------")
-      (logging/info result-key)
-      (logging/info (str command-output))
+      (logging/info (str "----------" "\n" result-key "\n" (string/join "\n" result-out) "\n" code "\n"))
       {(keyword result-key) {:exit-code code
                              :stout result-out}}))
 
 (s/defn parse-command-outputs :- CommandFactResult
   [script-result]
   (apply merge
-    (map parse-single-command-output
+    (map parse-command-output
          (filter #(not (string/blank? %))
            (string/split script-result (re-pattern output-separator))))))
 
