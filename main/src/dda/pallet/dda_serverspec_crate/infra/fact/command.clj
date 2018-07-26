@@ -47,7 +47,7 @@
         code (int (read-string (last result-lines)))]
       (logging/info (str "----------" "\n" result-key "\n" (string/join "\n" result-out) "\n" code "\n"))
       {(keyword result-key) {:exit-code code
-                             :stout result-out}}))
+                             :stout (string/join "\n" result-out)}}))
 
 (s/defn parse-command-outputs :- CommandFactResult
   [script-result]

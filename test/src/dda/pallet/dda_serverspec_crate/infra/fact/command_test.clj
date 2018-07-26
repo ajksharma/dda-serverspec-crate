@@ -66,17 +66,17 @@ second line
     (is (= (:expected localhost)
            (sut/parse-command-outputs (:input localhost))))))
 
-(deftest test-parse-single-command-output
+(deftest test-parse-command-output
   (testing
     (is (= {:find--absent
             {:exit-code 1,
              :stout "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"}}
-           (sut/parse-single-command-output "find--absent\nfind: \"/absent\": Datei oder Verzeichnis nicht gefunden\n1\n")))
+           (sut/parse-command-output "find--absent\nfind: \"/absent\": Datei oder Verzeichnis nicht gefunden\n1\n")))
     (is (= {:echo--Hallo-Welt {:exit-code 0, :stout "Hallo Welt"}}
-           (sut/parse-single-command-output "echo--Hallo-Welt\nHallo Welt\n0\n")))
+           (sut/parse-command-output "echo--Hallo-Welt\nHallo Welt\n0\n")))
     (is (= {:echo--Hallo-Welt---echo-second-line
             {:exit-code 0, :stout "Hallo Welt\nsecond-line"}}
-           (sut/parse-single-command-output "echo--Hallo-Welt---echo-second-line\nHallo Welt\nsecond line\n0\n")))))
+           (sut/parse-command-output "echo--Hallo-Welt---echo-second-line\nHallo Welt\nsecond-line\n0\n")))))
 
 (deftest test-command-to-keyword
   (testing
