@@ -31,7 +31,7 @@ find: ‘/absent‘: Datei oder Verzeichnis nicht gefunden
    :expected
    {:find--absent
     {:exit-code 2,
-     :stout
+     :stdout
      "find: ‘/absent‘: Datei oder Verzeichnis nicht gefunden"}}})
 
 (def localhost
@@ -53,11 +53,11 @@ second line
    :expected
    {:find--absent
     {:exit-code 1,
-     :stout
+     :stdout
      "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"},
-    :echo--Hallo-Welt- {:exit-code 0, :stout "Hallo Welt"},
+    :echo--Hallo-Welt- {:exit-code 0, :stdout "Hallo Welt"},
     :echo--Hallo-Welt---echo--second-line-
-    {:exit-code 0, :stout "Hallo Welt\nsecond line"}}})
+    {:exit-code 0, :stdout "Hallo Welt\nsecond line"}}})
 
 (deftest test-parse-command-outputs
   (testing
@@ -70,12 +70,12 @@ second line
   (testing
     (is (= {:find--absent
             {:exit-code 1,
-             :stout "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"}}
+             :stdout "find: \"/absent\": Datei oder Verzeichnis nicht gefunden"}}
            (sut/parse-command-output "find--absent\nfind: \"/absent\": Datei oder Verzeichnis nicht gefunden\n1\n")))
-    (is (= {:echo--Hallo-Welt {:exit-code 0, :stout "Hallo Welt"}}
+    (is (= {:echo--Hallo-Welt {:exit-code 0, :stdout "Hallo Welt"}}
            (sut/parse-command-output "echo--Hallo-Welt\nHallo Welt\n0\n")))
     (is (= {:echo--Hallo-Welt---echo-second-line
-            {:exit-code 0, :stout "Hallo Welt\nsecond-line"}}
+            {:exit-code 0, :stdout "Hallo Welt\nsecond-line"}}
            (sut/parse-command-output "echo--Hallo-Welt---echo-second-line\nHallo Welt\nsecond-line\n0\n")))))
 
 (deftest test-command-to-keyword
