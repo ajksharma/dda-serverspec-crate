@@ -62,9 +62,9 @@ second line
 (deftest test-parse-command-outputs
   (testing
     (is (= (:expected remote)
-           (sut/parse-command-outputs (:input remote))))
+           (sut/split-output (:input remote))))
     (is (= (:expected localhost)
-           (sut/parse-command-outputs (:input localhost))))))
+           (sut/split-output (:input localhost))))))
 
 (deftest test-parse-command-output
   (testing

@@ -27,7 +27,7 @@
 (def CommandFactConfig {s/Keyword {:cmd s/Str}})
 
 (def CommandFactResult {:exit-code s/Num
-                        :stdout s/Str}) ;TODO:  stderr
+                        :stdout s/Str})
 
 (def CommandFactResults {s/Keyword CommandFactResult})
 
@@ -45,11 +45,10 @@
         result-key (first result-lines)
         result-out (next (drop-last result-lines))
         code (int (read-string (last result-lines)))]
-      (logging/info (str "----------" "\n" result-key "\n" (string/join "\n" result-out) "\n" code "\n"))
       {(keyword result-key) {:exit-code code
-                             :stout (string/join "\n" result-out)}}))
+                             :stdout (string/join "\n" result-out)}}))
 
-(s/defn parse-command-outputs :- CommandFactResult
+(s/defn split-output :- CommandFactResult
   [script-result]
   (apply merge
     (map parse-command-output
@@ -75,4 +74,4 @@
       (string/join
         "; " (map #(build-command-script %) fact-config))
       "; echo -n ''")
-    :transform-fn parse-command-outputs))
+    :transform-fn split-output))

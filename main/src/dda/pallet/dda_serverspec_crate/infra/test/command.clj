@@ -20,7 +20,8 @@
     [dda.pallet.dda-serverspec-crate.infra.fact.command :as command-fact]
     [dda.pallet.dda-serverspec-crate.infra.core.test :as server-test]))
 
-(def CommandTestConfig {s/Keyword {:exit-code s/Num}})
+(def CommandTestConfig {s/Keyword {:exit-code s/Num
+                                   (s/optional-key :stdout) s/Str}})
 
 (s/defn fact-check :- server-test/TestResult
   "Compare facts & expectation in order to return test-results."
@@ -30,15 +31,23 @@
   (if (<= (count spec) 0)
     result
     (let [elem (first spec)
-          expected-exit-code (:exit-code (val elem))
           fact-elem (get-in fact-map [(key elem)])
+          expected-exit-code (:exit-code (val elem))
+          expected-stdout (if (contains? (val elem) :stdout) (:stdout (val elem)) nil)
           fact-exit-code (:exit-code fact-elem)
-          passed? (if (nil? fact-exit-code) (= expected-exit-code 0) (= expected-exit-code fact-exit-code))]
+          fact-stdout (if (contains? (val elem) :stdout) (:stdout fact-elem) nil)
+          passed? (if (nil? fact-exit-code)
+                    (and (= expected-exit-code 0) (= expected-stdout fact-stdout))
+                    (and (= expected-exit-code fact-exit-code) (= expected-stdout fact-stdout)))
+          expected-settings (str ", expected:: exit-code: " expected-exit-code
+                                 (if (not (nil? expected-stdout)) (str ", stdout: " expected-stdout)))
+          actual-settings (str ", found facts:: exit-code: " (if (nil? fact-exit-code) 0 fact-exit-code)
+                                 (if (not (nil? expected-stdout)) (str ", stdout: " fact-stdout)))]
       (recur
         {:test-passed (and (:test-passed result) passed?)
          :test-message (str (:test-message result) "test command: " (name (key elem))
-                            ", expected:: exit-code: " expected-exit-code
-                            " - found facts:: exit-code: " (if (nil? fact-exit-code) 0 fact-exit-code)
+                            expected-settings
+                            actual-settings
                             " - passed?: " passed? "\n")
          :no-passed (if passed? (inc (:no-passed result)) (:no-passed result))
          :no-failed (if (not passed?) (inc (:no-failed result)) (:no-failed result))}

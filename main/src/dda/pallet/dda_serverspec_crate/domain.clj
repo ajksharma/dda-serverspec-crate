@@ -43,7 +43,8 @@
    (s/optional-key :http) [{:url s/Str                            ;full url e.g. http://google.com
                             :expiration-days s/Num}]              ;minimum days the certificate must be valid
    (s/optional-key :command) [{:cmd s/Str
-                               :exit-code s/Num}]})
+                               :exit-code s/Num
+                               (s/optional-key :stdout) s/Str}]})
 
 (def InfraResult {infra/facility infra/ServerTestConfig})
 
@@ -136,7 +137,7 @@
 (defn- domain-2-commandfacts [command-domain-config]
   (apply merge
          (map
-           #(let [{:keys [cmd exit-code]} %]
+           #(let [{:keys [cmd exit-code stdout]} %]
               {(infra/command-to-keyword cmd)
                {:cmd cmd}})
            command-domain-config)))
@@ -144,9 +145,11 @@
 (defn- domain-2-commandtests [command-domain-config]
   (apply merge
          (map
-           #(let [{:keys [cmd exit-code]} %]
+           #(let [{:keys [cmd exit-code stdout]} %]
               {(infra/command-to-keyword cmd)
-               {:exit-code exit-code}})
+               (merge
+                {:exit-code exit-code}
+                (when (contains? % :stdout) {:stdout stdout}))})
            command-domain-config)))
 
 (s/defn ^:always-validate
