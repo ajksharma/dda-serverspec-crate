@@ -1,0 +1,8 @@
+ARG uberjar
+
+FROM java:8
+RUN echo "Oh dang look at that $uberjar"
+COPY $uberjar dda-serverspec-crate-standalone.jar
+COPY example-serverspec.edn example-serverspec.edn
+COPY example-serverspec-nonroot.edn example-serverspec-nonroot.edn
+CMD java -jar dda-serverspec-crate-standalone.jar example-serverspec-nonroot.edn
