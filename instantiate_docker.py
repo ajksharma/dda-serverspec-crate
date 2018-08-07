@@ -2,8 +2,12 @@ import docker
 import sys
 import os
 
+# Please perform the following steps in order to use this script
+# 1) Install pyton 3 and pip3: sudo apt install python3 pip3
+# 2) Install the docker sdk with pip: pip3 install docker
+# 3) Make sure you have the ubuntu image: docker image pull ubuntu
+
 # TODO add cli documentation
-# TODO make sure ubuntu image is pulled: docker image pull ubuntu
 
 docker_logs = os.getcwd() + '/docker-logs/'
 
@@ -21,7 +25,7 @@ print(debug_map)
 client = docker.APIClient()
 
 container = client.create_container(
-    image='ubuntu-test:latest',
+    image='ubuntu:latest',
     command='java -jar /app/uberjar.jar /app/config.edn',
     volumes=['/app/config.edn', '/app/uberjar.jar', '/logs'],
 
