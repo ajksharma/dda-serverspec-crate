@@ -3,7 +3,7 @@ import sys
 import os
 
 # Please perform the following steps in order to use this script
-# 1) Install pyton 3 and pip3: sudo apt install python3 pip3
+# 1) Install pyton 3 and pip3: sudo apt install python3-pip python3
 # 2) Install the docker sdk with pip: pip3 install docker
 # 3) Make sure you have the ubuntu image: docker image pull ubuntu
 # 4) Build the image ubuntu-test from the Dockerfile in the repo.
