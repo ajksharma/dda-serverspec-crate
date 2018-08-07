@@ -25,7 +25,7 @@ print(debug_map)
 client = docker.APIClient()
 
 container = client.create_container(
-    image='ubuntu:latest',
+    image='ubuntu-test:latest',
     command='java -jar /app/uberjar.jar /app/config.edn',
     volumes=['/app/config.edn', '/app/uberjar.jar', '/logs'],
 
