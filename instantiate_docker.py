@@ -8,8 +8,8 @@ import argparse
 # 2) Install the docker sdk with pip: pip3 install docker
 
 parser = argparse.ArgumentParser()
-parser.add_argument("jar", help="relative or absolute path (on the docker container) to the dda-serverspec-crate uberjar.")
-parser.add_argument("config", help="relative or absolute path (on the docker container) to the config file in edn format.")
+parser.add_argument("jar", help="relative or absolute path to the dda-serverspec-crate uberjar.")
+parser.add_argument("config", help="relative or absolute path to the config file in edn format.")
 parser.add_argument("-c", "--cmd", help="alternative command to execute in the docker container.\
                     Default is to run the given uberjar with the given config.")
 parser.add_argument("-i", "--image", help="image for the docker container. Default image is openjdk:8 (where netstat tests do not work since net-tools is not installed).")
