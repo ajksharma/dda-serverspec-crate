@@ -101,24 +101,24 @@ Example content of the file, `example-serverspec.edn`:
 ```
 
 ### Watch log for debug reasons
-In case of problems you may want to have a look at the log-file:
+In case any problems occur, you may want to have a look at the log-file:
 `less logs/pallet.log`
 
 ## Reference
-You will find here the reference for
+Some details about the architecture:
 * target: How targets can be specified
-* Domain-Level-API: The high level API with many built-in conventions.
-* Infra-Level-API: If the domain conventions don't fit your needs, you can use our low-level API (infra) and easily realize your own conventions.
+* Domain-Level-API: The high level API with built-in conventions.
+* Infra-Level-API: If these conventions don't fit your needs, you can use our low-level API (infra) and easily realize your own conventions.
 
 ### Targets
 You can define provisioning targets using the [targets-schema](https://github.com/DomainDrivenArchitecture/dda-pallet-commons/blob/master/doc/existing_spec.md)
 
 ### Domain API
-You can use our conventions as a smooth starting point:
+You can use our conventions as a starting point:
 [see domain reference](doc/reference_domain.md)
 
 ### Infra API
-Or you can build your own conventions using our low level infra API. We will keep this API backward compatible whenever it will be possible:
+Or you can build your own conventions using our low level infra API. We will keep this API backward compatible whenever possible:
 [see infra reference](doc/reference_infra.md)
 
 ## License
