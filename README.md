@@ -6,16 +6,22 @@
 [![Slack](https://img.shields.io/badge/chat-clojurians-green.svg?style=flat)](https://clojurians.slack.com/messages/#dda-pallet/) | [<img src="https://domaindrivenarchitecture.org/img/meetup.svg" width=50 alt="DevOps Hacking with Clojure Meetup"> DevOps Hacking with Clojure](https://www.meetup.com/de-DE/preview/dda-pallet-DevOps-Hacking-with-Clojure) | [Website & Blog](https://domaindrivenarchitecture.org)
 
 ## Jump to
-[Local-remote-testing](#local-remote-testing)
-[Usage](#usage)
-[Additional-info-about-the-configuration](#additional-info-about-the-configuration)
-[Targets-config-example](#targets-config-example)
-[Serverspec-config-example](#serverspec-config-example)
-[Reference-Targets](#targets)
-[Reference-Domain-API](#domain-api)
-[Reference-Infra-API](#infra-api)
-[Compatibility](#compatibility)
+[Compatibility](#compatibility)  
+[Features](#features)  
+[Local-remote-testing](#local-remote-testing)  
+[Usage Summary](#usage-summary)  
+[Targets-config-example](#targets-config-example)  
+[Serverspec-config-example](#serverspec-config-example)  
+[Reference-Targets](#targets)  
+[Reference-Domain-API](#domain-api)  
+[Reference-Infra-API](#infra-api)  
 [License](#license)
+
+## Compatibility
+dda-pallet is compatible with the following versions
+ * pallet 0.9
+ * clojure 1.9
+ * (x)ubunutu 16.04.x || 18.04
 
 ## Features
 The dda-serverspec-crate allows you to specify expected state for target-systems and test against their current state. dda-serverspec-crate provides tests for:
@@ -39,196 +45,81 @@ Facts are collected via ssh & bash. Test utils, needed, can be installed by usin
 
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
-## Usage
+## Usage Summary
 1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.1.2/dda-serverspec-crate-1.1.2-standalone.jar`)
-1. **Create the ```serverspec.edn``` configruration** file in the same folder where you saved the jar-file. The ```serverspec.edn``` file specifies the tests that are performed against the server(s). You may use the following example as a starting point and adjust it according to your own needs:
+1. Deploy the jar-file on the source machine
+1. Create the files `serverspec.edn` (Domain-Schema for all your tests) and `target.edn` (Schema for Targets to be provisioned) according to the reference and our example configurations. Please create them in the same folder where you've saved the jar-file. For more information about these files refer to the corresponding information below.
 
-```clojure
-{:netstat [{:process-name "sshd" :port "11" :running? false}  ;check if sshd is NOT running on port 11
-           {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]      ;check if sshd is running on port 22 with the given config
- :file [{:path "/root/.bashrc"}                                               ;check if file exists
-        {:path "/etc"}                                                        ;check if folder exists
-        {:path "/absent" :exist? false}                                       ;check if file doesn't exists
-        {:path "/root/.profile" :mod "644" :user "root" :group "root"}        ;check if file exists and has the given config
-        {:path "/etc/resolv.conf" :link-to "../run/resolvconf/resolv.conf"}]  ;check if link exists and has the given target
- :netcat [{:host "www.google.com" :port 80}          ;check if host is reachable
-          {:host "www.google.c" :port 80 :reachable? false}]
- :package [{:name "test" :installed? false}          ; check if package test is NOT installed
-           {:name "nano"}]                           ; check if package nano is installed
- :http [{:url "https://domaindrivenarchitecture.org" ;provide full url
-         :expiration-days 15}]}                      ; check if certificate of url is at least 15 days valid
-  ```
-3. (optional) If you want to perform the tests on a remote server, please create additionally a `targets.edn` file. In this file you define gainst which server(s) the tests are performed and the corresponding login information. You may use and adjust the following example config:
-
-```clojure
-{:existing [{:node-name "target1"                      ; semantic name (keep the default or use a name that suits you)
-             :node-ip "192.168.56.104"}]               ; the ip4 address of the machine to be provisioned
-             {:node-name "target2"                     ; semantic name (keep the default or use a name that suits you)
-                          :node-ip "192.168.56.105"}]  ; the ip4 address of the machine to be provisioned
- :provisioning-user {:login "initial"                  ; user on the target machine, must have sudo rights
-                     :password {:plain "secure1234"}}} ; password can be ommited, if a ssh key is authorized
-````
-
-4. (optional) If you want to ensure, that certain test tools (like netcat or netstat) are present on the target system, you can once use the ```--install-dependencies``` option:
-
-  ```bash
-  java -jar dda-serverspec-crate-standalone.jar --install-dependencies --targets targets.edn test.edn
-  ```
-
-5. **Run the jar** with the following options and inspect the output.
-  For testing against localhost:
-  ```bash
-java -jar dda-serverspec-crate-standalone.jar serverspec.edn
-  ```
-
-  For testing remote server(s) please specify the targets file:
-
-  ```bash
+5. Start testing:
+```bash
 java -jar dda-serverspec-crate-standalone.jar --targets targets.edn serverspec.edn
 ```
+If you want to test on your localhost you don't need a target config.
+```bash
+java -jar dda-serverspec-crate-standalone.jar serverspec.edn
+```
 
-## Additional-info-about-the-configuration
-Two configuration files are required by the dda-serverspec-crate:: "serverspec.edn" and "targets.edn" (or similar names). These files specify both WHAT to test resp. WHERE. In detail: the first file defines the configuration for the actual tests performed, while the second configuration file specifies the target nodes/systems, on which the tests will be performed. The following examples will explain these files more in details.
+## Configuration
+The configuration consists of two files defining both WHERE to test and WHAT to test.
+- example-targets.edn: describes on which target system(s) the software will be installed  
+- example-ide.edn: describes which software/packages will be installed  
 
-(**Remark:** The second file "targets.edn" is *optional*. This means, if none is specified, then a default file is used, which defines that the tests are performed against  **localhost**.)
+You can download examples of these configuration files from  
+[example-targets.edn](example-targets.edn) and   
+[example-serverspec.edn](example-serverspec.edn) respectively.
 
-
-### Targets-config-example
+#### Targets config example
+Example content of the file, `example-targets.edn`:
 ```clojure
-{:existing [{:node-name "test-vm1"
-             :node-ip "35.157.19.218"}
+{:existing [{:node-name "test-vm1"          ; semantic name
+             :node-ip "35.157.19.218"}      ; the ip4 address of the machine to be provisioned
             {:node-name "test-vm2"
              :node-ip "18.194.113.138"}]
- :provisioning-user {:login "ubuntu"}}
+ :provisioning-user
+  {:login "initial"                         ; account used to provision
+   :password {:plain "secure1234"}}}        ; optional password, if no ssh key is authorized
 ```
-The keyword ```:existing``` has to be assigned a vector, that contains maps with the information about the nodes.
-The nodes are the target machines that will be tested. The ```node-name``` has to be set to be able to identify the target machine and the ```node-ip``` has to be set so that the source machine can reach it.
-The ```provisioning-user``` has to be the same for all nodes that will be tested. Furthermore, if the ssh-key of the executing host is authorized on all target nodes, a password for authorization can be omitted. If this is not the case, the provisioning user has to contain a password.
 
-### Serverspec-config-example
+#### Serverspec config example
+Example content of the file, `example-serverspec.edn`:
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}
-           {:process-name "sshd" :port "22" :exp-proto "tcp6" :ip "::"}]
- :file [{:path "/root" :user "root"}
+           {:process-name "sshd" :port "22" :ip "0.0.0.0" :exp-proto "tcp"}
+           {:process-name "sshd" :port "22" :ip "::" :exp-proto "tcp6"}
+           {:process-name "dhclient" :port "68" :ip "0.0.0.0"}]
+ :file [{:path "/root/.bashrc" :user "root"}
         {:path "/etc"}
         {:path "/absent" :exist? false}
+        {:path "/root/.profile" :mod "644" :user "root" :group "root"}
         {:path "/etc/resolv.conf" :link-to "../run/resolvconf/resolv.conf"}]
  :netcat [{:host "www.google.com" :port 80}
           {:host "www.google.c" :port 80 :reachable? false}]
  :package [{:name "test" :installed? false}
-           {:name "nano"}]}
+           {:name "nano"}]
+ :http [{:url "https://domaindrivenarchitecture.org"
+         :expiration-days 15}]}
 ```
-The serverspec config file determines the tests that are executed. For example the part containing ```{:path "/root" :user "root"}``` checks if the folder ```/root``` exists and is owned by the root user.
-There are different types of tests that can be used. More details can be found in the reference below.
 
+### Watch log for debug reasons
+In case any problems occur, you may want to have a look at the log-file:
+`less logs/pallet.log`
 
 ## Reference
-You will find here the reference for
+Some details about the architecture:
 * target: How targets can be specified
-* Domain-Level-API: The high level API with many built-in conventions.
-* Infra-Level-API: If the domain conventions don't fit your needs, you can use our low-level API (infra) and easily realize your own conventions.
+* Domain-Level-API: The high level API with built-in conventions.
+* Infra-Level-API: If these conventions don't fit your needs, you can use our low-level API (infra) and easily realize your own conventions.
 
 ### Targets
-The schema of the domain layer for the targets is:
-```clojure
-(def ExistingNode
-  "Represents a target node with ip and its name."
-  {:node-name s/Str   ; semantic name (keep the default or use a name that suits you)
-   :node-ip s/Str})   ; the ip4 address of the machine to be provisioned
+You can define provisioning targets using the [targets-schema](https://github.com/DomainDrivenArchitecture/dda-pallet-commons/blob/master/doc/existing_spec.md)
 
-(def ExistingNodes
-  "A sequence of ExistingNodes."
-  {s/Keyword [ExistingNode]})
+### Domain API
+You can use our conventions as a starting point:
+[see domain reference](doc/reference_domain.md)
 
-(def ProvisioningUser
-  "User used for provisioning."
-  {:login s/Str                                ; user on the target machine, must have sudo rights
-   (s/optional-key :password) secret/Secret})  ; password can be ommited, if a ssh key is authorized
-
-(def Targets
-  "Targets to be used during provisioning."
-  {:existing [ExistingNode]                                ; one ore more target nodes.
-   (s/optional-key :provisioning-user) ProvisioningUser})  ; user can be ommited to execute on localhost with current user
-```
-The "targets.edn" file has to match this schema.
-
-### Domain-API
-The schema for the tests is:
-```clojure
-(def ServerTestDomainConfig
-  {(s/optional-key :package) [{:name s/Str
-                               (s/optional-key :installed?) s/Bool}]
-   (s/optional-key :netstat) [{:process-name s/Str             ; works only for sudoer.
-                               :port s/Str
-                               (s/optional-key :running?) s/Bool
-                               (s/optional-key :ip) s/Str
-                               (s/optional-key :exp-proto) s/Str}]
-   (s/optional-key :file) [{:path s/Str
-                            (s/optional-key :exist?) s/Bool
-                            (s/optional-key :mod) s/Str
-                            (s/optional-key :user) s/Str
-                            (s/optional-key :group) s/Str
-                            (s/optional-key :link-to) s/Str}]
-   (s/optional-key :netcat) [{:host s/Str
-                              :port s/Num
-                              (s/optional-key :reachable?) s/Bool}]
-   (s/optional-key :certificate) [{:file s/Str                ; incl path as e.g. /path/file.crt
-                                   :expiration-days s/Num}]   ; min days certificate must be valid
-   (s/optional-key :http) [{:url s/Str                        ; url e.g. http://google.com
-                            :expiration-days s/Num}]})        ; min days certificate must be valid
-```
-The "tests.edn" file has to match this schema.
-The default value is that the test expects a positive boolean (e.g. :reachable? true) and this value can be omitted.
-
-### Infra-API
-The infra configuration is a configuration on the infrastructure level of a crate. It contains the complete configuration options that are possible with the crate functions.
-On infra level we distinguish between collecting facts (done in the settings phase without side effects) and testing (done in test phase intentionally without side effects).
-Settings can also be used without tests in order to provide informations for conditional installations / configurations.
-
-The schema is:
-```clojure
-(def ServerTestConfig {
-  (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored. Fact can only be collected by sudoers / root.
-  (optional-key :package-fact) Any})     ; parsed result of "dpkg -l". Any is ignored.
-  (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\", fact can be collected only if executing user has access.
-  {Keyword {:path Str}},
-  (optional-key :netcat-fact)            ; parsed result of "nc [host] -w [timeout] && echo $?"
-  {Keyword {:port Num,
-            :host Str,                   ; may be ip or fqdn
-            :timeout Num}},              ; timeout given in seconds
-  (optional-key :certificate-file-fact)  ; fact can only be collected is executing user has access.
-  {Keyword {:file Str}}                  ; with full path
-  (optional-key :http-fact)
-  {Keyword {:url Str}}                   ; full url e.g. https://google.com
-  (optional-key :package-test)
-  {Keyword {:installed? Bool}},
-  (optional-key :netstat-test)
-  {Keyword {:running? Bool,
-            :port Str,
-            (optional-key :ip) Str,
-            (optional-key :exp-proto) Str}},
-  (optional-key :file-test)
-  {s/Keyword {:exist? Bool
-              (optional-key :mod) Str
-              (optional-key :user) Str
-              (optional-key :group) Str
-              (optional-key :type) Str
-              (optional-key :link-to) Str}}
-  (optional-key :netcat-test)
-  {Keyword {:reachable? Bool}},
-  (optional-key :certificate-file-test)
-  {Keyword {:expiration-days Num}}
-  (optional-key :http-test)
-  {Keyword {:expiration-days Num}}})
-```
-On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
-These results are returned in a map that follows the schema depicted above.
-
-## Compatibility
-dda-pallet is compatible with the following versions
- * pallet 0.9
- * clojure 1.9
- * (x)ubunutu 16.04.x || 18.04
+### Infra API
+Or you can build your own conventions using our low level infra API. We will keep this API backward compatible whenever possible:
+[see infra reference](doc/reference_infra.md)
 
 ## License
 Copyright © 2015, 2016, 2017, 2018 meissa GmbH

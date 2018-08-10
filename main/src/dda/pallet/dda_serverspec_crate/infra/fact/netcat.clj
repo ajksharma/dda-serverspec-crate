@@ -85,5 +85,5 @@
    (str
     (clojure.string/join
      "; " (map #(build-netcat-script %) netcat-configs))
-    "; exit 0")
+    "; echo -n ''")
    :transform-fn parse-netcat))
