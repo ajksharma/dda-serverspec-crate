@@ -18,12 +18,14 @@
 [License](#license)
 
 ## Compatibility
+
 dda-pallet is compatible with the following versions
  * pallet 0.9
  * clojure 1.9
  * (x)ubunutu 16.04.x || 18.04
 
 ## Features
+
 The dda-serverspec-crate allows you to specify expected state for target-systems and test against their current state. dda-serverspec-crate provides tests for:
  * execution against localhost, remote hoste or multiple remote hosts.
  * files or folders presence / absence, plus specific FilePermissions/group/owner.
@@ -36,6 +38,7 @@ The dda-serverspec-crate allows you to specify expected state for target-systems
   <a href="https://asciinema.org/a/163372?autoplay=1"><img src="https://asciinema.org/a/163372.png" width="836"/></a>
 
 ## Local-remote-testing
+
 There are two modes of testing targets, either local or remote. Local tests are executed on the system the jar is running on. Local tests are executed by the current user.
 
 ![ServerSpecLocalWhitebox](./doc/ServerSpecLocalWhitebox.png)
@@ -46,11 +49,10 @@ Facts are collected via ssh & bash. Test utils, needed, can be installed by usin
 ![ServerSpecRemoteWhitebox](./doc/ServerSpecRemoteWhitebox.png)
 
 ## Usage Summary
-1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.1.2/dda-serverspec-crate-1.1.2-standalone.jar`)
-1. Deploy the jar-file on the source machine
-1. Create the files `serverspec.edn` (Domain-Schema for all your tests) and `target.edn` (Schema for Targets to be provisioned) according to the reference and our example configurations. Please create them in the same folder where you've saved the jar-file. For more information about these files refer to the corresponding information below.
 
-5. Start testing:
+1. **Download the jar-file** from the releases page of this repository (e.g. `curl -L -o serverspec.jar https://github.com/DomainDrivenArchitecture/dda-serverspec-crate/releases/download/1.2.1/dda-serverspec-crate-1.2.1-standalone.jar`)
+2. Create the files `serverspec.edn` (Domain-Schema for all your tests) and `target.edn` (Schema for Targets to be provisioned) according to the reference and our example configurations. Please create them in the same folder where you've saved the jar-file. For more information about these files refer to the corresponding information below.
+3. Start testing:
 ```bash
 java -jar dda-serverspec-crate-standalone.jar --targets targets.edn serverspec.edn
 ```
@@ -68,7 +70,7 @@ You can download examples of these configuration files from
 [example-targets.edn](example-targets.edn) and   
 [example-serverspec.edn](example-serverspec.edn) respectively.
 
-#### Targets config example
+### Targets config example
 Example content of the file, `example-targets.edn`:
 ```clojure
 {:existing [{:node-name "test-vm1"          ; semantic name
@@ -80,7 +82,7 @@ Example content of the file, `example-targets.edn`:
    :password {:plain "secure1234"}}}        ; optional password, if no ssh key is authorized
 ```
 
-#### Serverspec config example
+### Serverspec config example
 Example content of the file, `example-serverspec.edn`:
 ```clojure
 {:netstat [{:process-name "sshd" :port "11" :running? false}
@@ -101,26 +103,32 @@ Example content of the file, `example-serverspec.edn`:
 ```
 
 ### Watch log for debug reasons
+
 In case any problems occur, you may want to have a look at the log-file:
 `less logs/pallet.log`
 
 ## Reference
+
 Some details about the architecture:
 * target: How targets can be specified
 * Domain-Level-API: The high level API with built-in conventions.
 * Infra-Level-API: If these conventions don't fit your needs, you can use our low-level API (infra) and easily realize your own conventions.
 
 ### Targets
+
 You can define provisioning targets using the [targets-schema](https://github.com/DomainDrivenArchitecture/dda-pallet-commons/blob/master/doc/existing_spec.md)
 
 ### Domain API
+
 You can use our conventions as a starting point:
 [see domain reference](doc/reference_domain.md)
 
 ### Infra API
+
 Or you can build your own conventions using our low level infra API. We will keep this API backward compatible whenever possible:
 [see infra reference](doc/reference_infra.md)
 
 ## License
+
 Copyright © 2015, 2016, 2017, 2018 meissa GmbH
 Published under [apache2.0 license](LICENSE.md)
