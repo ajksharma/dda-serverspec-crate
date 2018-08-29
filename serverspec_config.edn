@@ -1,0 +1,6 @@
+{:file [{:path "~/repo/books/ddaArchitecture"}
+        {:path "~/repo/dda-pallet/dda-config-commons"}
+        {:path "~/repo/dda-pallet/dda-pallet-commons"}
+        {:path "~/repo/dda-pallet/dda-pallet"}
+        {:path "~/repo/dda-pallet/dda-user-crate"}
+        {:path "~/repo/password-store/password-store-for-teams"}]}
