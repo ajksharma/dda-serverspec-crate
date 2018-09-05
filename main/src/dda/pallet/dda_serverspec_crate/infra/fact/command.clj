@@ -67,7 +67,6 @@
 
 (s/defn collect-command-fact
   [fact-config :- CommandFactConfig]
-  (print fact-config)
   (collect-fact
     fact-id-command
     (str
