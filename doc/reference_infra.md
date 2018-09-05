@@ -5,39 +5,61 @@ Settings can also be used without tests in order to provide informations for con
 
 The schema is:
 ```clojure
-(def ServerTestConfig {
-  (optional-key :netstat-fact) Any,      ; parsed result of "netstat -tulpen". Any is ignored. Fact can only be collected by sudoers / root.
-  (optional-key :package-fact) Any})     ; parsed result of "dpkg -l". Any is ignored.
-  (optional-key :file-fact)              ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\", fact can be collected only if executing user has access.
-  {Keyword {:path Str}},
-  (optional-key :netcat-fact)            ; parsed result of "nc [host] -w [timeout] && echo $?"
-  {Keyword {:port Num,
-            :host Str,                   ; may be ip or fqdn
-            :timeout Num}},              ; timeout given in seconds
-  (optional-key :certificate-file-fact)  ; fact can only be collected is executing user has access.
-  {Keyword {:file Str}}                  ; with full path
-  (optional-key :http-fact)
-  {Keyword {:url Str}}                   ; full url e.g. https://google.com
-  (optional-key :package-test)
-  {Keyword {:installed? Bool}},
-  (optional-key :netstat-test)
-  {Keyword {:running? Bool,
-            :port Str,
-            (optional-key :ip) Str,
-            (optional-key :exp-proto) Str}},
-  (optional-key :file-test)
-  {s/Keyword {:exist? Bool
-              (optional-key :mod) Str
-              (optional-key :user) Str
-              (optional-key :group) Str
-              (optional-key :type) Str
-              (optional-key :link-to) Str}}
-  (optional-key :netcat-test)
-  {Keyword {:reachable? Bool}},
-  (optional-key :certificate-file-test)
-  {Keyword {:expiration-days Num}}
-  (optional-key :http-test)
-  {Keyword {:expiration-days Num}}})
+(def FileFactConfig {s/Keyword {:path s/Str}})
+
+(def NetcatFactConfig
+  {s/Keyword
+   {:host s/Str
+    :port s/Num
+    :timeout s/Num}})
+
+(def CertificateFileFactConfig {s/Keyword {:file s/Str}})  ;with full path
+
+(def HttpFactConfig {s/Keyword {:url s/Str}})   ;full url e.g. https://google.com
+
+(def CommandFactConfig {s/Keyword {:cmd s/Str}})
+
+(def CertificateFileTestConfig {s/Keyword {:expiration-days s/Num}})
+
+(def CommandTestConfig {s/Keyword {:exit-code s/Num
+                                   (s/optional-key :stdout) s/Str}})
+
+(def FileTestConfig {s/Keyword {:exist? s/Bool
+                               (s/optional-key :mod) s/Str
+                               (s/optional-key :user) s/Str
+                               (s/optional-key :group) s/Str
+                               (s/optional-key :type) s/Str
+                               (s/optional-key :link-to) s/Str}})
+
+(def HttpTestConfig {s/Keyword {:expiration-days s/Num}})
+
+(def NetcatTestConfig {s/Keyword {:reachable? s/Bool}})
+
+(def NetstatTestConfig {s/Keyword {:running? s/Bool
+                                   :port s/Str
+                                   (s/optional-key :ip) s/Str
+                                   (s/optional-key :exp-proto) s/Str}})
+
+(def PackageTestConfig {s/Keyword {:installed? s/Bool}})                                   
+
+(def ServerTestConfig
+  {(s/optional-key :package-fact) s/Any       ; parsed result of "netstat -tulpen". Any is ignored.
+   (s/optional-key :netstat-fact) s/Any       ; parsed result of "dpkg -l". Any is ignored.
+   (s/optional-key :file-fact)                ; parsed result of "find [path] -prune -printf \"%p'%s'%u'%g'%m'%y'%c'%t'%a\\n\"
+   file-fact/FileFactConfig
+   (s/optional-key :netcat-fact)              ; parsed result of "nc [host] -w [timeout] && echo $?"
+   netcat-fact/NetcatFactConfig
+   (s/optional-key :certificate-file-fact) certificate-file-fact/CertificateFileFactConfig
+   (s/optional-key :http-fact) http-fact/HttpFactConfig
+   (s/optional-key :command-fact) command-fact/CommandFactConfig
+   (s/optional-key :package-test) package-test/PackageTestConfig
+   (s/optional-key :netstat-test) netstat-test/NetstatTestConfig
+   (s/optional-key :file-test) file-test/FileTestConfig
+   (s/optional-key :netcat-test) netcat-test/NetcatTestConfig
+   (s/optional-key :certificate-file-test) certificate-file-test/CertificateFileTestConfig
+   (s/optional-key :http-test) http-test/HttpTestConfig
+   (s/optional-key :command-test) command-test/CommandTestConfig      ; the expected exit code or output for specified command
+   })
 ```
 On the level of the infrastructure we break down the tests into gathering the facts and testing them against the expected value.
 These results are returned in a map that follows the schema depicted above.

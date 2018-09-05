@@ -21,6 +21,7 @@
    [pallet.api :as api]
    [pallet.actions :as actions]
    [dda.pallet.core.infra :as core-infra]
+   [dda.pallet.dda-serverspec-crate.infra.core.fact :as core-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.package :as package-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.netstat :as netstat-fact]
    [dda.pallet.dda-serverspec-crate.infra.fact.file :as file-fact]
@@ -40,6 +41,10 @@
 ; -----------------------  fields and schemas  ----------------------
 (def facility :dda-servertest)
 
+(def fact-facility core-fact/fact-facility)
+
+(def fact-id-file file-fact/fact-id-file)
+
 (def ServerTestConfig
   {(s/optional-key :package-fact) s/Any       ; parsed result of "netstat -tulpen". Any is ignored.
    (s/optional-key :netstat-fact) s/Any       ; parsed result of "dpkg -l". Any is ignored.
@@ -56,7 +61,7 @@
    (s/optional-key :netcat-test) netcat-test/NetcatTestConfig
    (s/optional-key :certificate-file-test) certificate-file-test/CertificateFileTestConfig
    (s/optional-key :http-test) http-test/HttpTestConfig
-   (s/optional-key :command-test) s/Any       ;TODO
+   (s/optional-key :command-test) command-test/CommandTestConfig      ; the expected exit code or output for specified command
    })
 
 ; -----------------------  functions and methods  ------------------------

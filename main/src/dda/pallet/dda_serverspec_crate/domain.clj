@@ -21,6 +21,8 @@
    [dda.config.commons.map-utils :as map-utils]
    [dda.pallet.dda-serverspec-crate.infra :as infra]))
 
+(def fact-id-file infra/fact-id-file)
+
 (def ServerTestDomainConfig
   {(s/optional-key :package) [{:name s/Str
                                (s/optional-key :installed?) s/Bool}]
